@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">FouFouFood</string>
+    <string name="welcome" translatable="true">Welcome to FouFouFood</string>
+</resources>
