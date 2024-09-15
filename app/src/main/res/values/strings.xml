@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name" translatable="false">FouFouFood</string>
-    <string name="welcome" translatable="true">Welcome to FouFouFood</string>
+    <string name="welcome" translatable="true">Bienvenue sur FouFouFood</string>
+    <string name="welcome_text" translatable="true">Commandez vos plats préférés et dégustez les à la maison !</string>
+    <string name="next" translatable="true">Suivant</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="password" translatable="true">Mot de passe</string>
+    <string name="forgot_password" translatable="true">Mot de passe oublié ?</string>
+    <string name="validate" translatable="true">Valider</string>
+    <string name="sign_in_with" translatable="true">Se connecter avec</string>
+    <string name="sign_up" translatable="true">S\'inscrire</string>
 </resources>
