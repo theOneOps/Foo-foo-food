@@ -31,3 +31,11 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+android/
+caches/
+daemon/
+jdks/
+kotlin-profile/
+native/
+wrapper/
