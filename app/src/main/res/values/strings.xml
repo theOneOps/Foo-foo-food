@@ -36,4 +36,20 @@
 
     <string name="next" translatable="true">Suivant</string>
 
+    <string name="deliver_to" translatable="true">Livré à</string>
+    <string name="location" translatable="true">10 Adresse de livraison Sherbrooke</string>
+    <string name="home_title" translatable="true">Que souhaiteriez-vous commander ?</string>
+    <string name="finder" translatable="true">Rechercher un plat ou un restaurant</string>
+    <string name="category1" translatable="true">burger</string>
+    <string name="featured_restaurant" translatable="true">Restaurant à la une</string>
+    <string name="view_all" translatable="true">Voir Tous</string>
+    <string name="popular_items" translatable="true">Les plats préférés</string>
+    <!--
+    <string name="" translatable="true"></string>
+    <string name="" translatable="true"></string>
+    <string name="" translatable="true"></string>
+    <string name="" translatable="true"></string>
+    -->
+
+
 </resources>

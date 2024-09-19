@@ -10,4 +10,5 @@
     <color name="grey_edit_text">#C4C4C4</color>
     <color name="black">#000000</color>
     <color name="grey_stroke">#EEEEEE</color>
+    <color name="grey_location">#8C9099</color>
 </resources>
