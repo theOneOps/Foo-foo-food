@@ -3,7 +3,7 @@
     <!-- Ombre -->
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="34dp" />
+            <corners android:radius="10dp" />
             <solid android:color="#11000000" /> <!-- Couleur de l'ombre (noir semi-transparent) -->
             <padding
 
@@ -15,7 +15,7 @@
     <!-- Forme principale -->
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="34dp" />
+            <corners android:radius="10dp" />
             <solid android:color="@color/white" />
         </shape>
     </item>

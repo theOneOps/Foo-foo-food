@@ -2,11 +2,38 @@
     <string name="app_name" translatable="false">FouFouFood</string>
     <string name="welcome" translatable="true">Bienvenue sur FouFouFood</string>
     <string name="welcome_text" translatable="true">Commandez vos plats préférés et dégustez les à la maison !</string>
-    <string name="next" translatable="true">Suivant</string>
-    <string name="email" translatable="false">Email</string>
-    <string name="password" translatable="true">Mot de passe</string>
-    <string name="forgot_password" translatable="true">Mot de passe oublié ?</string>
-    <string name="validate" translatable="true">Valider</string>
-    <string name="sign_in_with" translatable="true">Se connecter avec</string>
+    <string name="sign_in_with" translatable="true">se connecter avec</string>
+    <string name="facebook" translatable="false">FACEBOOK</string>
+    <string name="google" translatable="false">GOOGLE</string>
+    <string name="start_email" translatable="true">Commencer avec son adresse mail</string>
+    <string name="already_account" translatable="true">Déjà un compte ?</string>
+    <string name="sign_in_underligned" translatable="true"><u>Se connecter</u></string>
+    <string name="sign_in" translatable="true">Se connecter</string>
+
     <string name="sign_up" translatable="true">S\'inscrire</string>
+    <string name="sign_up_underligned" translatable="true"><u>S\'inscrire</u></string>
+    <string name="full_name" translatable="true">Nom complet</string>
+    <string name="email" translatable="false">E-mail</string>
+    <string name="email_example" translatable="false">Votre adresse e-mail</string>
+    <string name="password" translatable="true">Mot de passe</string>
+
+    <string name="forgot_password" translatable="true">Mot de passe oublié ?</string>
+    <string name="no_account" translatable="true">Pas encore de compte ?</string>
+
+    <string name="verification_code" translatable="true">Code de vérification</string>
+    <string name="verification_text" translatable="true">Un code de vérification a été envoyé à votre adresse mail</string>
+    <string name="no_receive" translatable="true">Je n\'ai pas reçu de code</string>
+    <string name="resend" translatable="true">Renvoyer un code</string>
+
+    <string name="reset_password" translatable="true"> Réinitialiser le mot de passe</string>
+    <string name="enter_email" translatable="true">Entrez votre adresse email pour demander un nouveau mot de passe</string>
+    <string name="validate" translatable="true">Valider</string>
+
+    <string name="change_email" translatable="true">Changer de mail</string>
+    <string name="password_constraint" translatable="true">Votre mot de passe doit être long d\'au moins 8 caractères</string>
+    <string name="new_password" translatable="true">Entrez votre nouveau mot de passe</string>
+    <string name="confirm_new_password" translatable="true">Confirmez le nouveau mot de passe</string>
+
+    <string name="next" translatable="true">Suivant</string>
+
 </resources>

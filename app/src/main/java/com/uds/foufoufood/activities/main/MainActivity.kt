@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.uds.foufoufood.R
 import android.widget.Button
+import android.widget.TextView
 import com.uds.foufoufood.activities.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
@@ -22,10 +23,11 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val buttonClick = findViewById<Button>(R.id.button_login)
+        val buttonClick = findViewById<TextView>(R.id.button_login)
         buttonClick.setOnClickListener{
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+
     }
 }
