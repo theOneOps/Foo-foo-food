@@ -19,6 +19,5 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
         window.statusBarColor = ContextCompat.getColor(this, R.color.orange_bg)
-
     }
 }
