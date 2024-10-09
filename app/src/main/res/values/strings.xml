@@ -2,6 +2,9 @@
     <string name="app_name" translatable="false">FouFouFood</string>
     <string name="welcome" translatable="true">Bienvenue sur FouFouFood</string>
     <string name="welcome_text" translatable="true">Commandez vos plats préférés et dégustez les à la maison !</string>
+
+    <string name="back" translatable="true">Retour</string>
+
     <string name="sign_in_with" translatable="true">se connecter avec</string>
     <string name="facebook" translatable="false">FACEBOOK</string>
     <string name="google" translatable="false">GOOGLE</string>
@@ -22,12 +25,23 @@
 
     <string name="verification_code" translatable="true">Code de vérification</string>
     <string name="verification_text" translatable="true">Un code de vérification a été envoyé à votre adresse mail</string>
-    <string name="no_receive" translatable="true">Je n\'ai pas reçu de code</string>
+    <string name="no_receive" translatable="true">Je n\'ai pas reçu de code !</string>
     <string name="resend" translatable="true">Renvoyer un code</string>
+
+    <string name="who_are_you" translatable="true">Qui êtes-vous ?</string>
+    <string name="who_are_you_text" translatable="true">Veuillez entrer votre statut parmi les trois suivants</string>
+    <string name="customer" translatable="true">Client</string>
+    <string name="owner_restau" translatable="true">Restaurateur</string>
+    <string name="delivery_man" translatable="true">Livreur</string>
+    <string name="select_option" translatable="true">Sélectionnez une option</string>
+    <string name="customer_choice" translatable="true">En temps que client, vous pouvez commander vos plats préférés afin de vous les faire livrer à domicile</string>
+    <string name="owner_choice" translatable="true">En temps que restaurateur, vous recevrez une notification pour vous signaler que votre restaurant vous a été attribué. Vous pourrez ensuite ajouter vos plats et les gérer</string>
+    <string name="delivery_choice" translatable="true">En temps que livreur, vous pourrez recevoir des notifications pour vous signaler qu\'une commande est prête à être livrée, ainsi que l\'ensemble des informations nécessaires pour la livraison</string>
 
     <string name="reset_password" translatable="true"> Réinitialiser le mot de passe</string>
     <string name="enter_email" translatable="true">Entrez votre adresse email pour demander un nouveau mot de passe</string>
     <string name="validate" translatable="true">Valider</string>
+    <string name="add_address" translatable="true">Ajouter une adresse</string>
 
     <string name="change_email" translatable="true">Changer de mail</string>
     <string name="password_constraint" translatable="true">Votre mot de passe doit être long d\'au moins 8 caractères</string>
@@ -37,7 +51,14 @@
     <string name="next" translatable="true">Suivant</string>
 
     <string name="deliver_to" translatable="true">Livré à</string>
+    <string name="address_example" translatable="true">Exemple : 10 rue de la paix, Paris</string>
     <string name="location" translatable="true">10 Adresse de livraison Sherbrooke</string>
+    <string name="no_address" translatable="true">Aucune adresse enregistrée pour le moment</string>
+    <string name="street_number_hint">N°</string>
+    <string name="street_name_hint">Rue</string>
+    <string name="postal_code_hint">Code postal</string>
+    <string name="city_hint">Ville</string>
+
     <string name="home_title" translatable="true">Que souhaiteriez-vous commander ?</string>
     <string name="finder" translatable="true">Rechercher un plat ou un restaurant</string>
     <string name="category1" translatable="true">burger</string>

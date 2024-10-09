@@ -3,6 +3,12 @@ package com.uds.foufoufood.activities.main
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.RadioGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -26,18 +32,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.layout_welcome)
+        setContentView(R.layout.layout_profile)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        val buttonClick = findViewById<TextView>(R.id.button_login)
+        /*val buttonClick = findViewById<TextView>(R.id.button_login)
         buttonClick.setOnClickListener{
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
-        }
+        }*/
 
         // Configurer Retrofit
         val retrofit = Retrofit.Builder()
