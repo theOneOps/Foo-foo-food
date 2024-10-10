@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main"
+    android:id="@+id/main_profile"
     android:padding="16dp">
 
     <LinearLayout
+        android:id="@+id/layout_principal_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -14,7 +15,7 @@
         android:layout_marginTop="50dp">
 
         <ImageView
-            android:id="@+id/profile_image"
+            android:id="@+id/imageViewProfileImage"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginBottom="16dp"
@@ -22,7 +23,7 @@
             android:background="@drawable/circle_background" />
 
         <TextView
-            android:id="@+id/profile_name"
+            android:id="@+id/textViewPofileName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nom complet"
@@ -31,9 +32,8 @@
             android:textColor="@color/orange"
             android:layout_marginBottom="8dp" />
 
-        <!-- Type de profil -->
         <TextView
-            android:id="@+id/profile_type"
+            android:id="@+id/textViewProfileType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Type de profil"
@@ -42,7 +42,7 @@
             android:layout_marginBottom="24dp" />
 
         <LinearLayout
-            android:id="@+id/layout_email"
+            android:id="@+id/layout_profile_email"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -56,7 +56,7 @@
                 android:gravity="center_vertical">
 
                 <TextView
-                    android:id="@+id/textViewEmail"
+                    android:id="@+id/textViewProfileEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sofiapro_regular"
@@ -67,17 +67,17 @@
                     tools:ignore="RtlSymmetry" />
 
                 <ImageButton
-                    android:id="@+id/edit_email_button"
+                    android:id="@+id/imageButtonEditEmail"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:background="@drawable/pen_square_icon"
-                    android:contentDescription="Modifier l'email"
                     android:layout_marginStart="8dp" />
 
+                <!-- todo ajouter un bouton icon ImageButtonSaveEmail -->
             </LinearLayout>
 
             <EditText
-                android:id="@+id/editTextTextEmailAddress"
+                android:id="@+id/editTextProfileEmailAddress"
                 android:layout_width="match_parent"
                 android:layout_height="65dp"
                 android:layout_marginTop="10dp"
@@ -91,14 +91,13 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layout_address"
+            android:id="@+id/layout_profile_address"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_margin="10dp"
             android:padding="10dp">
 
-            <!-- Groupe pour l'adresse existante -->
             <LinearLayout
                 android:id="@+id/group_address_existing"
                 android:layout_width="match_parent"
@@ -115,7 +114,7 @@
                     android:layout_marginBottom="10dp">
 
                     <TextView
-                        android:id="@+id/textViewAddress"
+                        android:id="@+id/textViewProfileAddress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/sofiapro_regular"
@@ -126,7 +125,7 @@
                         tools:ignore="RtlSymmetry" />
 
                     <ImageButton
-                        android:id="@+id/edit_address_button"
+                        android:id="@+id/imageButtonProfileEditAddress"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:background="@drawable/pen_square_icon"
@@ -140,7 +139,7 @@
                     android:layout_marginBottom="10dp">
 
                     <EditText
-                        android:id="@+id/editTextStreetNumber"
+                        android:id="@+id/editTextProfileStreetNumber"
                         android:layout_width="0dp"
                         android:layout_height="65dp"
                         android:layout_weight="1"
@@ -157,7 +156,7 @@
                         android:layout_height="match_parent" />
 
                     <EditText
-                        android:id="@+id/editTextStreetName"
+                        android:id="@+id/editTextProfileStreetName"
                         android:layout_width="0dp"
                         android:layout_height="65dp"
                         android:layout_weight="3"
@@ -177,7 +176,7 @@
                     android:layout_marginBottom="10dp">
 
                     <EditText
-                        android:id="@+id/editTextPostalCode"
+                        android:id="@+id/editTextProfilePostalCode"
                         android:layout_width="0dp"
                         android:layout_height="65dp"
                         android:layout_weight="1.3"
@@ -194,7 +193,7 @@
                         android:layout_height="match_parent" />
 
                     <EditText
-                        android:id="@+id/editTextCity"
+                        android:id="@+id/editTextProfileCity"
                         android:layout_width="0dp"
                         android:layout_height="65dp"
                         android:layout_weight="1.7"
@@ -208,7 +207,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Groupe pour l'absence d'adresse -->
             <LinearLayout
                 android:id="@+id/group_no_address"
                 android:layout_width="match_parent"
@@ -217,7 +215,7 @@
                 android:visibility="gone">
 
                 <TextView
-                    android:id="@+id/textViewNoAddress"
+                    android:id="@+id/textViewProfileNoAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sofiapro_regular"
@@ -230,7 +228,7 @@
                     tools:ignore="RtlSymmetry" />
 
                 <Button
-                    android:id="@+id/add_address_button"
+                    android:id="@+id/buttonProfileAddAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="60dp"
                     android:background="@drawable/orange_rounded_button"

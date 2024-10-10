@@ -2,20 +2,20 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/main_register"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    tools:context=".activities.login.LoginActivity">
+    tools:context=".activities.auth.LoginActivity">
 
     <LinearLayout
-        android:id="@+id/layout_principal"
+        android:id="@+id/layout_principal_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/layout_form_signup"
+            android:id="@+id/layout_form_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -23,7 +23,7 @@
             android:padding="15sp">
 
             <TextView
-                android:id="@+id/textViewSignUp"
+                android:id="@+id/textViewRegisterSignUp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="27dp"
@@ -35,7 +35,7 @@
                 android:textAlignment="center"/>
 
             <LinearLayout
-                android:id="@+id/layout_name"
+                android:id="@+id/layout_register_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -43,7 +43,7 @@
                 android:padding="10dp">
 
                 <TextView
-                    android:id="@+id/textViewName"
+                    android:id="@+id/textViewRegisterName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sofiapro_regular"
@@ -52,7 +52,7 @@
                     android:textSize="16sp" />
 
                 <EditText
-                    android:id="@+id/editTextTextFullName"
+                    android:id="@+id/editTextRegisterName"
                     android:layout_width="match_parent"
                     android:layout_height="65dp"
                     android:layout_marginTop="10dp"
@@ -67,7 +67,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layout_email"
+                android:id="@+id/layout_regiter_email"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -75,7 +75,7 @@
                 android:padding="10dp">
 
                 <TextView
-                    android:id="@+id/textViewEmail"
+                    android:id="@+id/textViewRegisterEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sofiapro_regular"
@@ -84,7 +84,7 @@
                     android:textSize="16sp" />
 
                 <EditText
-                    android:id="@+id/editTextTextEmailAddress"
+                    android:id="@+id/editTextRegisterEmail"
                     android:layout_width="match_parent"
                     android:layout_height="65dp"
                     android:layout_marginTop="10dp"
@@ -99,7 +99,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layout_mdp"
+                android:id="@+id/layout_register_password"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -107,7 +107,7 @@
                 android:padding="10dp">
 
                 <TextView
-                    android:id="@+id/textViewPassword"
+                    android:id="@+id/textViewRegisterPassword"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sofiapro_regular"
@@ -116,7 +116,7 @@
                     android:textSize="16sp" />
 
                 <EditText
-                    android:id="@+id/editTextTextPassword"
+                    android:id="@+id/editTextRegisterPassword"
                     android:layout_width="match_parent"
                     android:layout_height="65dp"
                     android:layout_marginTop="10dp"
@@ -130,19 +130,8 @@
                     tools:ignore="RtlSymmetry" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/sofiapro_medium"
-                android:text="@string/forgot_password"
-                android:textColor="@color/orange"
-                android:textSize="14sp"
-                android:textAlignment="center"
-                android:layout_marginTop="20dp"/>
-
             <Button
-                android:id="@+id/button"
+                android:id="@+id/buttonRegister"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:background="@drawable/orange_rounded_button"
@@ -157,7 +146,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layout_text_sign_in"
+            android:id="@+id/layout_text_register_sign_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -165,7 +154,7 @@
             android:padding="20dp">
 
             <TextView
-                android:id="@+id/textView10"
+                android:id="@+id/textViewRegisterAlreadyAccount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/sofiapro_medium"
@@ -175,7 +164,7 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/textView11"
+                android:id="@+id/linkToSignIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/sofiapro_medium"
@@ -185,7 +174,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layout_login_fcb_google"
+            android:id="@+id/layout_register_fcb_google"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -193,7 +182,7 @@
             android:padding="20dp">
 
             <LinearLayout
-                android:id="@+id/linearLayout"
+                android:id="@+id/layout_register_text_networks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -208,7 +197,7 @@
                     android:background="@color/grey_text" />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/textViewRegisterSignUpWith"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -216,7 +205,7 @@
                     android:gravity="center"
                     android:paddingStart="0dp"
                     android:paddingEnd="0dp"
-                    android:text="@string/sign_in_with"
+                    android:text="@string/sign_up_with"
                     android:textColor="@color/grey_text"
                     android:textSize="16sp" />
 
@@ -229,6 +218,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_register_fcb_google_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -236,6 +226,7 @@
                 android:padding="20dp">
 
                 <LinearLayout
+                    android:id="@+id/layout_register_facebook_button"
                     android:layout_width="140dp"
                     android:layout_height="54dp"
                     android:layout_weight="1"
@@ -244,6 +235,7 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/imageViewRegisterFacebookIcon"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginEnd="8dp"
@@ -259,6 +251,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/layout_register_google_button"
                     android:layout_width="140dp"
                     android:layout_height="54dp"
                     android:layout_marginStart="35dp"
@@ -268,6 +261,7 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/imageViewRegisterGoogleIcon"
                         android:layout_width="44dp"
                         android:layout_height="44dp"
                         android:src="@drawable/google_icon" />

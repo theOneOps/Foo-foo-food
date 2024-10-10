@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Define Profile -->
+    <item name="main_define_profile" type="id" />
+    <item name="layout_principal_define_profile" type="id" />
+    <item name="layout_form_who_are_you" type="id" />
+    <item name="textViewWhoAreYou" type="id" />
+    <item name="layout_define_profile_choice" type="id" />
+    <item name="textViewChooseProfile" type="id" />
+    <item name="radioGroupTypeProfile" type="id" />
+    <item name="radioButtonCustomer" type="id" />
+    <item name="radioButtonOwner" type="id" />
+    <item name="radioButtonDeliveryMan" type="id" />
+    <item name="textViewResult" type="id" />
+    <item name="buttonValidateChoiceProfile" type="id" />
+
+    <!-- Forgot Password -->
+    <item name="main_forgot_password" type="id" />
+
+    <!-- Login -->
+    <item name="main_login" type="id" />
+    <item name="layout_principal_login" type="id" />
+    <item name="layout_back_button" type="id" />
+    <item name="imageViewBackButton" type="id" />
+    <item name="layout_form_login" type="id" />
+    <item name="textViewLoginSignIn" type="id" />
+    <item name="layout_login_email" type="id" />
+    <item name="textViewLoginEmail" type="id" />
+    <item name="editTextLoginEmailAddress" type="id" />
+    <item name="layout_login_password" type="id" />
+    <item name="textViewLoginPassword" type="id" />
+    <item name="editTextLoginPassword" type="id" />
+    <item name="textViewLoginForgotPassword" type="id" />
+    <item name="buttonLogin" type="id" />
+    <item name="layout_text_login_sign_up" type="id" />
+    <item name="textViewLoginNoAccount" type="id" />
+    <item name="linkToSignUp" type="id" />
+    <item name="layout_login_fcb_google" type="id" />
+    <item name="layout_login_text_networks" type="id" />
+    <item name="textViewLoginSignInWith" type="id" />
+    <item name="layout_login_fcb_google_buttons" type="id" />
+    <item name="layout_login_facebook_button" type="id" />
+    <item name="imageViewLoginFacebookIcon" type="id" />
+    <item name="layout_login_google_button" type="id" />
+    <item name="imageViewLoginGoogleIcon" type="id" />
+
+    <!-- Profile -->
+    <item name="main_profile" type="id" />
+    <item name="layout_principal_profile" type="id" />
+    <item name="imageViewProfileImage" type="id" />
+    <item name="textViewProfileName" type="id" />
+    <item name="textViewProfileType" type="id" />
+    <item name="layout_profile_email" type="id" />
+    <item name="textViewProfileEmail" type="id" />
+    <item name="imageButtonEditEmail" type="id" />
+    <item name="editTextProfileEmailAddress" type="id" />
+    <item name="layout_profile_address" type="id" />
+    <item name="group_address_existing" type="id" />
+    <item name="layout_address_existing" type="id" />
+    <item name="textViewProfileAddress" type="id" />
+    <item name="imageButtonProfileEditAddress" type="id" />
+    <item name="editTextProfileStreetNumber" type="id" />
+    <item name="editTextProfileStreetName" type="id" />
+    <item name="editTextProfilePostalCode" type="id" />
+    <item name="group_no_address" type="id" />
+    <item name="textViewProfileNoAddress" type="id" />
+    <item name="buttonProfileAddAddress" type="id" />
+
+    <!-- Register -->
+    <item name="main_register" type="id" />
+    <item name="layout_principal_register" type="id" />
+    <item name="layout_form_register" type="id" />
+    <item name="textViewRegisterSignUp" type="id" />
+    <item name="layout_register_name" type="id" />
+    <item name="textViewRegisterName" type="id" />
+    <item name="editTextRegisterName" type="id" />
+    <item name="layout_register_email" type="id" />
+    <item name="textViewRegisterEmail" type="id" />
+    <item name="editTextRegisterEmail" type="id" />
+    <item name="layout_register_password" type="id" />
+    <item name="textViewRegisterPassword" type="id" />
+    <item name="editTextRegisterPassword" type="id" />
+    <item name="buttonRegister" type="id" />
+    <item name="layout_text_register_sign_in" type="id" />
+    <item name="textViewRegisterAlreadyAccount" type="id" />
+    <item name="linkToSignIn" type="id" />
+    <item name="layout_register_fcb_google" type="id" />
+    <item name="layout_register_text_networks" type="id" />
+    <item name="textViewRegisterSignUpWith" type="id" />
+    <item name="layout_register_fcb_google_buttons" type="id" />
+    <item name="layout_register_facebook_button" type="id" />
+    <item name="imageViewRegisterFacebookIcon" type="id" />
+    <item name="layout_register_google_button" type="id" />
+    <item name="imageViewRegisterGoogleIcon" type="id" />
+
+    <!-- Verify Code -->
+    <item name="main_verify_code" type="id" />
+    <item name="layout_principal_verify_code" type="id" />
+    <item name="layout_form_validation" type="id" />
+    <item name="textViewVerification" type="id" />
+    <item name="layout_verification" type="id" />
+    <item name="textViewVerificationInstructions" type="id" />
+    <item name="editTextVerificationCode1" type="id" />
+    <item name="editTextVerificationCode2" type="id" />
+    <item name="editTextVerificationCode3" type="id" />
+    <item name="editTextVerificationCode4" type="id" />
+    <item name="editTextVerificationCode5" type="id" />
+    <item name="editTextVerificationCode6" type="id" />
+    <item name="layout_verification_no_receive" type="id" />
+    <item name="textViewVerificationNoReceive" type="id" />
+    <item name="buttonVerificationResend" type="id" />
+    <item name="buttonVerificationValidate" type="id" />
+
+    <!-- Welcome -->
+    <item name="main_welcome" type="id" />
+    <item name="layout_principal_welcome" type="id" />
+    <item name="layout_welcome_top_part" type="id" />
+    <item name="imageViewWelcomeLogo" type="id" />
+    <item name="textViewWelcomeTitle" type="id" />
+    <item name="textViewWelcomeDescription" type="id" />
+    <item name="layout_welcome_bottom_part" type="id" />
+    <item name="layout_welcome_login_fcb_google" type="id" />
+    <item name="layout_welcome_login_text_networks" type="id" />
+    <item name="textViewWelcomeSignInWith" type="id" />
+    <item name="layout_welcome_login_fcb_google_buttons" type="id" />
+    <item name="layout_welcome_facebook_button" type="id" />
+    <item name="imageViewWelcomeFacebookIcon" type="id" />
+    <item name="layout_welcome_google_button" type="id" />
+    <item name="imageViewWelcomeGoogleIcon" type="id" />
+    <item name="buttonWelcomeStartWithEmail" type="id" />
+    <item name="textViewWelcomeAlreadyAccount" type="id" />
+    <item name="welcomeLinkToSignIn" type="id" />
+</resources>

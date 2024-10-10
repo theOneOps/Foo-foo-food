@@ -2,19 +2,19 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/main_define_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.login.LoginActivity">
+    tools:context=".activities.auth.LoginActivity">
 
     <LinearLayout
-        android:id="@+id/layout_principal"
+        android:id="@+id/layout_principal_define_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/layout_form_validation"
+            android:id="@+id/layout_form_who_are_you"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -22,7 +22,7 @@
             android:padding="15dp">
 
             <TextView
-                android:id="@+id/textViewVerification"
+                android:id="@+id/textViewWhoAreYou"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="27dp"
@@ -34,7 +34,7 @@
                 android:textAlignment="center"/>
 
             <LinearLayout
-                android:id="@+id/layout_verification"
+                android:id="@+id/layout_define_profile_choice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -42,7 +42,7 @@
                 android:padding="10dp">
 
                 <TextView
-                    android:id="@+id/textViewVerificationText"
+                    android:id="@+id/textViewChooseProfile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sofiapro_regular"
@@ -57,13 +57,13 @@
                     android:padding="16dp">
 
                     <RadioGroup
-                        android:id="@+id/radioGroup"
+                        android:id="@+id/radioGroupTypeProfile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
                         <RadioButton
-                            android:id="@+id/radioButton1"
+                            android:id="@+id/radioButtonCustomer"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/sofiapro_regular"
@@ -74,7 +74,7 @@
                             android:text="@string/customer" />
 
                         <RadioButton
-                            android:id="@+id/radioButton2"
+                            android:id="@+id/radioButtonOwner"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/sofiapro_regular"
@@ -85,7 +85,7 @@
                             android:text="@string/owner_restau" />
 
                         <RadioButton
-                            android:id="@+id/radioButton3"
+                            android:id="@+id/radioButtonDeliveryMan"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/sofiapro_regular"
@@ -96,7 +96,6 @@
                             android:text="@string/delivery_man" />
                     </RadioGroup>
 
-                    <!-- TextView qui affichera le texte dynamique -->
                     <TextView
                         android:id="@+id/textViewResult"
                         android:layout_width="wrap_content"
@@ -111,7 +110,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/buttonValidateChoiceProfile"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:background="@drawable/orange_rounded_button"

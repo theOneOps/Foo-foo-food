@@ -2,13 +2,13 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/main_verify_code"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.login.LoginActivity">
+    tools:context=".activities.auth.LoginActivity">
 
     <LinearLayout
-        android:id="@+id/layout_principal"
+        android:id="@+id/layout_principal_verify_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -42,7 +42,7 @@
                 android:padding="10dp">
 
                 <TextView
-                    android:id="@+id/textViewVerificationText"
+                    android:id="@+id/textViewVerificationInstructions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sofiapro_regular"
@@ -60,7 +60,7 @@
                     android:weightSum="6"> <!-- Le sum des poids pour 6 éléments -->
 
                     <EditText
-                        android:id="@+id/editTextTextVerificationCode1"
+                        android:id="@+id/editTextVerificationCode1"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
@@ -74,7 +74,7 @@
                         android:textColorHint="@color/grey_edit_text" />
 
                     <EditText
-                        android:id="@+id/editTextTextVerificationCode2"
+                        android:id="@+id/editTextVerificationCode2"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
@@ -88,7 +88,7 @@
                         android:textColorHint="@color/grey_edit_text" />
 
                     <EditText
-                        android:id="@+id/editTextTextVerificationCode3"
+                        android:id="@+id/editTextVerificationCode3"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
@@ -102,7 +102,7 @@
                         android:textColorHint="@color/grey_edit_text" />
 
                     <EditText
-                        android:id="@+id/editTextTextVerificationCode4"
+                        android:id="@+id/editTextVerificationCode4"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
@@ -116,7 +116,7 @@
                         android:textColorHint="@color/grey_edit_text" />
 
                     <EditText
-                        android:id="@+id/editTextTextVerificationCode5"
+                        android:id="@+id/editTextVerificationCode5"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
@@ -130,7 +130,7 @@
                         android:textColorHint="@color/grey_edit_text" />
 
                     <EditText
-                        android:id="@+id/editTextTextVerificationCode6"
+                        android:id="@+id/editTextVerificationCode6"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
@@ -148,7 +148,7 @@
 
 
             <LinearLayout
-                android:id="@+id/layout_text_sign_in"
+                android:id="@+id/layout_verification_no_receive"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -156,7 +156,7 @@
                 android:padding="15dp">
 
                 <TextView
-                    android:id="@+id/textView10"
+                    android:id="@+id/textViewVerificationNoReceive"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sofiapro_medium"
@@ -166,7 +166,7 @@
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/textView11"
+                    android:id="@+id/textViewVerificationResend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sofiapro_medium"
@@ -176,7 +176,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/buttonVerificationValidate"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:background="@drawable/orange_rounded_button"

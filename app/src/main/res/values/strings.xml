@@ -6,6 +6,7 @@
     <string name="back" translatable="true">Retour</string>
 
     <string name="sign_in_with" translatable="true">se connecter avec</string>
+    <string name="sign_up_with" translatable="true">s\'incrire avec</string>
     <string name="facebook" translatable="false">FACEBOOK</string>
     <string name="google" translatable="false">GOOGLE</string>
     <string name="start_email" translatable="true">Commencer avec son adresse mail</string>
