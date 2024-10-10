@@ -1,4 +1,4 @@
-package com.uds.foufoufood.models
+package com.uds.foufoufood.request
 
 data class LoginRequest(
     val email: String,

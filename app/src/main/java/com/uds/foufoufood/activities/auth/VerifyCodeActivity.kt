@@ -1,87 +1,120 @@
 package com.uds.foufoufood.activities.auth
 
+import UserRepository
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.KeyEvent
-import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.uds.foufoufood.R
+import com.uds.foufoufood.databinding.LayoutVerifyCodeBinding
+import com.uds.foufoufood.factory.UserViewModelFactory
+import com.uds.foufoufood.models.User
+import com.uds.foufoufood.network.RetrofitHelper
+import com.uds.foufoufood.network.UserApi
+import com.uds.foufoufood.network.UserServiceImpl
+import com.uds.foufoufood.viewmodel.UserViewModel
 
 class VerifyCodeActivity : AppCompatActivity() {
+
+    private lateinit var binding: LayoutVerifyCodeBinding
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var email: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.layout_verify_code)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_verify_code)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+
+        binding = LayoutVerifyCodeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         window.statusBarColor = ContextCompat.getColor(this, R.color.orange_bg)
 
-        val editText1 = findViewById<EditText>(R.id.editTextVerificationCode1)
-        val editText2 = findViewById<EditText>(R.id.editTextVerificationCode2)
-        val editText3 = findViewById<EditText>(R.id.editTextVerificationCode3)
-        val editText4 = findViewById<EditText>(R.id.editTextVerificationCode4)
-        val editText5 = findViewById<EditText>(R.id.editTextVerificationCode5)
-        val editText6 = findViewById<EditText>(R.id.editTextVerificationCode6)
+        // Récupération de l'email passé en paramètre
+        email = intent.getStringExtra("email") ?: throw IllegalArgumentException("Email is missing")
 
-        val editTexts = listOf(editText1, editText2, editText3, editText4, editText5, editText6)
+        // Initialisation du ViewModel
+        val retrofit = RetrofitHelper.getRetrofitInstance()
+        val userApi = retrofit.create(UserApi::class.java)
+        val userService = UserServiceImpl(userApi)
+        val userRepository = UserRepository(userService)
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(userRepository)).get(UserViewModel::class.java)
+
+        val editTexts = listOf(
+            binding.editTextVerificationCode1,
+            binding.editTextVerificationCode2,
+            binding.editTextVerificationCode3,
+            binding.editTextVerificationCode4,
+            binding.editTextVerificationCode5,
+            binding.editTextVerificationCode6
+        )
 
         for (i in editTexts.indices) {
             editTexts[i].addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                    // Aucune action nécessaire ici
+                    // Pas nécessaire
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    // Vérifie si un caractère a été saisi
                     if (s?.length == 1 && i < editTexts.size - 1) {
-                        editTexts[i + 1].requestFocus() // Passer au champ suivant
-                    } else if (s != null) {
-                        if (s.isEmpty() && i > 0) {
-                            // Si le champ devient vide, passe au champ précédent
-                            editTexts[i - 1].requestFocus()
-                        }
+                        // Aller au champ suivant
+                        editTexts[i + 1].requestFocus()
+                    } else if (s.isNullOrEmpty() && i > 0) {
+                        // Retourner au champ précédent si vide
+                        editTexts[i - 1].requestFocus()
                     }
                 }
 
                 override fun afterTextChanged(s: Editable?) {
-                    // Aucune action nécessaire ici
+                    // Pas nécessaire
                 }
             })
 
-            // Ajoute un écouteur pour la suppression
-            editTexts[i].setOnKeyListener { v, keyCode, event ->
+            // Gestion de la suppression avec la touche Retour arrière
+            editTexts[i].setOnKeyListener { _, keyCode, event ->
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DEL) {
-                    // Si la case actuelle est vide
-                    if (editTexts[i].text.isEmpty()) {
-                        if (i > 0) {
-                            // Supprime le caractère dans la case précédente
-                            editTexts[i - 1].setText("") // Supprime le chiffre dans la case précédente
-                            editTexts[i - 1].requestFocus() // Passe au champ précédent
-                        }
-                    } else if (i == editTexts.size - 1) {
-                        // Si on est dans la dernière case et on supprime un caractère
-                        if (editTexts[i].text.length == 1) {
-                            editTexts[i].setText("") // Supprime le chiffre
-                            editTexts[i].requestFocus() // Reste dans la même case
-                        }
+                    if (editTexts[i].text.isEmpty() && i > 0) {
+                        // Supprimer dans le champ précédent
+                        editTexts[i - 1].setText("")
+                        editTexts[i - 1].requestFocus()
                     }
-                    return@setOnKeyListener true // Consomme l'événement
+                    return@setOnKeyListener true
                 }
-                false // Laisse l'événement continuer si ce n'est pas un cas géré
+                false
             }
         }
 
-        // todo -> Ajouter un écouteur pour le bouton de validation, si le code est bon -> redirection vers la page choix du profil
+        binding.buttonVerificationValidate.setOnClickListener {
+            val enteredCode = editTexts.joinToString("") { it.text.toString() }
+            if (enteredCode.length == 6) {
+                userViewModel.verifyCode(email, enteredCode)
+            } else {
+                Toast.makeText(this, "Veuillez entrer le code complet", Toast.LENGTH_SHORT).show()
+            }
+        }
 
-        // todo -> gestion resend mail avec un autre code
+        binding.textViewVerificationResend.setOnClickListener {
+            userViewModel.resendVerificationCode(email)
+        }
+
+        // Observer l'événement de vérification
+        userViewModel.codeVerificationSuccess.observe(this, Observer { isSuccess ->
+            if (isSuccess) {
+                val intent = Intent(this, DefineProfileActivity::class.java)
+                intent.putExtra("email", email)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Le code est incorrect", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

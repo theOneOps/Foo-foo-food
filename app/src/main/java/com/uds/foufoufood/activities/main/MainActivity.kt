@@ -2,111 +2,40 @@ package com.uds.foufoufood.activities.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.uds.foufoufood.R
 import com.uds.foufoufood.activities.auth.LoginActivity
 import com.uds.foufoufood.activities.auth.RegisterActivity
-import com.uds.foufoufood.models.AuthResponse
-import com.uds.foufoufood.models.LoginRequest
-import com.uds.foufoufood.models.User
-import com.uds.foufoufood.network.ApiService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.uds.foufoufood.databinding.LayoutWelcomeBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var apiService: ApiService
+    private lateinit var binding: LayoutWelcomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.layout_welcome)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_welcome)) { v, insets ->
+
+        binding = LayoutWelcomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        val linkToSingIn = findViewById<TextView>(R.id.welcomeLinkToSignIn)
-        linkToSingIn.setOnClickListener{
+        binding.welcomeLinkToSignIn.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
-        val buttonRegister = findViewById<TextView>(R.id.buttonWelcomeStartWithEmail)
-        buttonRegister.setOnClickListener{
+        binding.buttonWelcomeStartWithEmail.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
 
-        // todo -> gestion connexion avec google et facebook
-
-        // Configurer Retrofit
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        apiService = retrofit.create(ApiService::class.java)
-
-        // Exemple d'inscription d'un utilisateur
-        val newUser = User(
-            name = "John Doe",
-            email = "john@example.com",
-            password = "password123",
-            isAdmin = false
-        )
-        registerUser(newUser)
-
-        // Exemple de connexion d'un utilisateur
-        val loginRequest = LoginRequest("john@example.com", "password123")
-        loginUser(loginRequest)
-    }
-
-    // Méthode pour enregistrer un utilisateur
-    private fun registerUser(user: User) {
-        val call = apiService.registerUser(user)
-        call.enqueue(object : Callback<AuthResponse> {
-            override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
-                if (response.isSuccessful) {
-                    val authResponse = response.body()
-                    Log.d("MainActivity", "Registration Successful: ${authResponse?.user}")
-                    Log.d("MainActivity", "Token: ${authResponse?.token}")
-                } else {
-                    Log.e("MainActivity", "Registration Failed: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                Log.e("MainActivity", "API Call Failed", t)
-            }
-        })
-    }
-
-    // Méthode pour se connecter
-    private fun loginUser(loginRequest: LoginRequest) {
-        val call = apiService.loginUser(loginRequest)
-        call.enqueue(object : Callback<AuthResponse> {
-            override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
-                if (response.isSuccessful) {
-                    val authResponse = response.body()
-                    Log.d("MainActivity", "Login Successful: ${authResponse?.user}")
-                    Log.d("MainActivity", "Token: ${authResponse?.token}")
-                } else {
-                    Log.e("MainActivity", "Login Failed: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                Log.e("MainActivity", "API Call Failed", t)
-            }
-        })
+        // todo -> gestion connexion avec Google et Facebook
     }
 }
