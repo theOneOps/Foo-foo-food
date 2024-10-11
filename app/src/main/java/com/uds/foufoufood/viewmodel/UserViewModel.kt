@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uds.foufoufood.models.User
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     val user: MutableLiveData<User?> = MutableLiveData()
@@ -26,15 +27,19 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
             try {
                 val response = userRepository.login(email, password)
                 Log.d("UserViewModel", "login response: $response")
-                response?.let {
-                    Log.d("UserViewModel", "User: ${it.user}, Token: ${it.token}")
-                    user.value = it.user
-                    token.value = it.token
-                } ?: run {
+                if (response != null) {
+                    user.value = response.user
+                    token.value = response.token
+                } else {
                     Log.d("UserViewModel", "Connexion échouée")
                     errorMessage.value = "Connexion échouée"
                 }
+            } catch (e: IOException) {
+                // Pour gérer les erreurs réseau
+                Log.e("UserViewModel", "Erreur réseau", e)
+                errorMessage.value = "Erreur réseau, veuillez vérifier votre connexion"
             } catch (e: Exception) {
+                // Pour toute autre exception
                 Log.e("UserViewModel", "Erreur lors de la connexion", e)
                 errorMessage.value = "Erreur lors de la connexion"
             } finally {

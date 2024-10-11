@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder
 
 class RetrofitHelper {
     companion object {
-        private const val BASE_URL: String = "http://localhost:3000"
+        private const val BASE_URL: String = "http://192.168.21.13:3000"
 
         fun getRetrofitInstance(): Retrofit {
             // Crée un intercepteur de logging

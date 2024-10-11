@@ -1,11 +1,14 @@
 import android.util.Log
 import com.uds.foufoufood.network.UserService
 import com.uds.foufoufood.response.AuthResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class UserRepository(private val userService: UserService) {
-    suspend fun login(email: String, password: String): AuthResponse? {
+    suspend fun login(email: String, password: String): AuthResponse? = withContext(Dispatchers.IO){
         Log.d("UserRepository", "login")
-        return userService.login(email, password)
+        return@withContext userService.login(email, password)
+
     }
 
     // Inscription - Étape 1 : Collecter email, nom, mot de passe et envoyer un email de vérification

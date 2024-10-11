@@ -8,12 +8,15 @@ import com.uds.foufoufood.request.ProfileRequest
 import com.uds.foufoufood.request.RegistrationRequest
 import com.uds.foufoufood.request.VerificationRequest
 import com.uds.foufoufood.response.AuthResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class UserServiceImpl(private val userApi: UserApi) : UserService {
-    override suspend fun login(email: String, password: String): AuthResponse? {
+    override suspend fun login(email: String, password: String): AuthResponse? = withContext(
+        Dispatchers.IO){
         Log.d("UserServiceImpl", "login")
         val request = LoginRequest(email, password)
-        return try {
+        try {
             Log.d("UserServiceImplTry", "login")
             val response = userApi.login(request).execute()
             if (response.isSuccessful) {
