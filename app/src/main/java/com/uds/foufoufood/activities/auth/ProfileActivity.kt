@@ -1,58 +1,59 @@
 package com.uds.foufoufood.activities.auth
 
 import android.os.Bundle
-import android.view.View
-import android.widget.EditText
-import android.widget.LinearLayout
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.uds.foufoufood.R
+import com.uds.foufoufood.ui.page.ProfileScreen
+import com.uds.foufoufood.viewmodel.UserViewModel
 
 class ProfileActivity : AppCompatActivity() {
+
+    private lateinit var userViewModel: UserViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.layout_profile)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_profile)) { v, insets ->
+
+        // Charger les données utilisateur
+        userViewModel.getUserProfile()
+
+        // Utilisation de Jetpack Compose pour afficher l'interface utilisateur
+        setContent {
+            Profile(userViewModel = userViewModel)
+        }
+
+        // Appliquer des insets système
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            window.decorView.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // Modifier la couleur de la barre d'état
         window.statusBarColor = ContextCompat.getColor(this, R.color.orange_bg)
+    }
+}
 
-        val groupAddressExisting: LinearLayout = findViewById(R.id.group_address_existing)
-        val groupNoAddress: LinearLayout = findViewById(R.id.group_no_address)
+@Composable
+fun Profile(userViewModel: UserViewModel) {
+    // Observer les données de l'utilisateur connecté
+    val user by userViewModel.user.observeAsState()
 
-        // todo -> modifier les valeurs des champs en fonction de l'utilisateur connecté
-        // profileName, profileType
-
-        // todo : par défaut bloquer la modification du champ email
-        // editTextProfileEmailAddress
-        // si clique sur ImageButtonEditEmail -> activer la modification du champ email
-        // si clique sur ImageButtonSaveEmail -> sauvegarder la modification du champ email
-
-        if (true) {
-            groupAddressExisting.visibility = View.VISIBLE
-            groupNoAddress.visibility = View.GONE
-
-            // Afficher l'adresse existante
-            val editTextStreetNumber: EditText = findViewById(R.id.editTextProfileStreetNumber)
-            val editTextStreetName: EditText = findViewById(R.id.editTextProfileStreetName)
-            val editTextPostalCode: EditText = findViewById(R.id.editTextProfilePostalCode)
-            val editTextCity: EditText = findViewById(R.id.editTextProfileCity)
-
-            // Supposons que getUserAddress() retourne un objet Address avec les propriétés appropriées
-
-            editTextStreetNumber.setText("123")
-            editTextStreetName.setText("Rue de la Paix")
-            editTextPostalCode.setText("75000")
-            editTextCity.setText("Paris")
-        } else {
-            groupAddressExisting.visibility = View.GONE
-            groupNoAddress.visibility = View.VISIBLE
-        }
+    // Si l'utilisateur est non nul, afficher ses informations
+    user?.let {
+        ProfileScreen(user = it)
+    } ?: run {
+        Text("Chargement des données de l'utilisateur...")
     }
 }

@@ -1,4 +1,4 @@
-package com.uds.foufoufood.models
+package com.uds.foufoufood.model
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -9,7 +9,8 @@ data class User(
     val password: String,
     var code: String,
     val isAdmin: Boolean,
-    var type: String? = null
+    var role: String? = null,
+    var address: Address? = null
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -26,7 +27,7 @@ data class User(
         parcel.writeString(password)
         parcel.writeString(code)
         parcel.writeByte(if (isAdmin) 1 else 0)
-        parcel.writeString(type)
+        parcel.writeString(role)
     }
 
     override fun describeContents(): Int {

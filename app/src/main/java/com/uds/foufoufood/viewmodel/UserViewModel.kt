@@ -2,49 +2,74 @@ package com.uds.foufoufood.viewmodel
 
 import UserRepository
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uds.foufoufood.models.User
+import com.uds.foufoufood.model.User
 import kotlinx.coroutines.launch
 import java.io.IOException
 
 class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
-    val user: MutableLiveData<User?> = MutableLiveData()
-    val token: MutableLiveData<String?> = MutableLiveData()
-    val loading: MutableLiveData<Boolean> = MutableLiveData()
-    val errorMessage: MutableLiveData<String?> = MutableLiveData()
+    private val _user = MutableLiveData<User?>()
+    val user: LiveData<User?> get() = _user
 
-    val registrationInitSuccess = MutableLiveData<Boolean>()
-    val codeVerificationSuccess = MutableLiveData<Boolean>()
-    val registrationCompleteSuccess = MutableLiveData<Boolean>()
-    val resendCodeEvent = MutableLiveData<Pair<String, String>>()
+    private val _token = MutableLiveData<String?>()
+    val token: LiveData<String?> get() = _token
 
-    fun login(email: String, password: String) {
-        Log.d("UserViewModel", "login - email: $email, password: $password")
+    private val _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean> get() = _loading
+
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> get() = _errorMessage
+
+    private val _registrationInitSuccess = MutableLiveData<Boolean>()
+    val registrationInitSuccess: LiveData<Boolean> get() = _registrationInitSuccess
+
+    private val _codeVerificationSuccess = MutableLiveData<Boolean>()
+    val codeVerificationSuccess: LiveData<Boolean> get() = _codeVerificationSuccess
+
+    private val _registrationCompleteSuccess = MutableLiveData<Boolean>()
+    val registrationCompleteSuccess: LiveData<Boolean> get() = _registrationCompleteSuccess
+
+    private val _resendCodeEvent = MutableLiveData<Boolean>()
+    val resendCodeEvent: LiveData<Boolean> get() = _resendCodeEvent
+
+
+    // Fonction pour charger l'utilisateur connecté (par exemple depuis une API ou base de données)
+    fun getUserProfile() {
         viewModelScope.launch {
-            loading.value = true
+            _loading.value = true
+            try {
+                val user = userRepository.getUserProfile(_token.value!!)
+                _user.value = user?.user
+            } catch (e: Exception) {
+                _errorMessage.value = "Erreur lors du chargement de l'utilisateur"
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    // Fonctions
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            _loading.value = true
             try {
                 val response = userRepository.login(email, password)
-                Log.d("UserViewModel", "login response: $response")
+                Log.d("UserViewModel", response.toString())
                 if (response != null) {
-                    user.value = response.user
-                    token.value = response.token
+                    _user.value = response.user
+                    _token.value = response.token
                 } else {
-                    Log.d("UserViewModel", "Connexion échouée")
-                    errorMessage.value = "Connexion échouée"
+                    _errorMessage.value = "Connexion échouée"
                 }
             } catch (e: IOException) {
-                // Pour gérer les erreurs réseau
-                Log.e("UserViewModel", "Erreur réseau", e)
-                errorMessage.value = "Erreur réseau, veuillez vérifier votre connexion"
+                _errorMessage.value = "Erreur réseau, veuillez vérifier votre connexion"
             } catch (e: Exception) {
-                // Pour toute autre exception
-                Log.e("UserViewModel", "Erreur lors de la connexion", e)
-                errorMessage.value = "Erreur lors de la connexion"
+                _errorMessage.value = "Erreur lors de la connexion"
             } finally {
-                loading.value = false
-                Log.d("UserViewModel", "Login process finished")
+                _loading.value = false
             }
         }
     }
@@ -53,9 +78,9 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val success = userRepository.initiateRegistration(name, email, password)
-                registrationInitSuccess.value = success
+                _registrationInitSuccess.value = success
             } catch (e: Exception) {
-                registrationInitSuccess.value = false
+                _registrationInitSuccess.value = false
             }
         }
     }
@@ -64,9 +89,9 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val success = userRepository.verifyCode(email, code)
-                codeVerificationSuccess.value = success
+                _codeVerificationSuccess.value = success
             } catch (e: Exception) {
-                codeVerificationSuccess.value = false
+                _codeVerificationSuccess.value = false
             }
         }
     }
@@ -75,22 +100,23 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val success = userRepository.completeRegistration(email, profileType)
-                registrationCompleteSuccess.value = success
+                _registrationCompleteSuccess.value = success
             } catch (e: Exception) {
-                registrationCompleteSuccess.value = false
+                _registrationCompleteSuccess.value = false
             }
         }
     }
 
+
+    // Fonction pour charger l'utilisateur connecté (par exemple depuis une API ou base de données)
     fun resendVerificationCode(email: String) {
         viewModelScope.launch {
             try {
-                userRepository.resendVerificationCode(email)
+                val success = userRepository.resendVerificationCode(email)
+                _resendCodeEvent.value = success
             } catch (e: Exception) {
-                // handle error if needed
+                _resendCodeEvent.value = false
             }
         }
     }
 }
-
-

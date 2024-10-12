@@ -1,7 +1,6 @@
 package com.uds.foufoufood.network
 
 import android.util.Log
-import com.uds.foufoufood.models.User
 import com.uds.foufoufood.request.EmailRequest
 import com.uds.foufoufood.request.LoginRequest
 import com.uds.foufoufood.request.ProfileRequest
@@ -18,7 +17,22 @@ class UserServiceImpl(private val userApi: UserApi) : UserService {
         val request = LoginRequest(email, password)
         try {
             Log.d("UserServiceImplTry", "login")
-            val response = userApi.login(request).execute()
+            val response = userApi.login(request)
+            if (response.isSuccessful) {
+                Log.d("UserServiceImplTry", response.body().toString())
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun getUserProfile(token: String): AuthResponse? = withContext(
+        Dispatchers.IO){
+        try {
+            val response = userApi.getUserProfile(token)
             if (response.isSuccessful) {
                 response.body()
             } else {
@@ -32,6 +46,7 @@ class UserServiceImpl(private val userApi: UserApi) : UserService {
     override suspend fun initiateRegistration(name: String, email: String, password: String): Boolean {
         val request = RegistrationRequest(name, email, password)
         val response = userApi.initiateRegistration(request)
+        Log.d("UserServiceImplReg", response.body().toString())
         return response.isSuccessful && response.body()?.success == true
     }
 
@@ -47,8 +62,9 @@ class UserServiceImpl(private val userApi: UserApi) : UserService {
         return response.isSuccessful && response.body()?.success == true
     }
 
-    override suspend fun resendVerificationCode(email: String) {
+    override suspend fun resendVerificationCode(email: String): Boolean = withContext(Dispatchers.IO){
         val request = EmailRequest(email)
-        userApi.resendVerificationCode(request)
+        val response = userApi.resendVerificationCode(request)
+        response.isSuccessful && response.body()?.success == true
     }
 }

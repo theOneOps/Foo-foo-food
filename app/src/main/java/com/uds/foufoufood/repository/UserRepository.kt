@@ -8,13 +8,18 @@ class UserRepository(private val userService: UserService) {
     suspend fun login(email: String, password: String): AuthResponse? = withContext(Dispatchers.IO){
         Log.d("UserRepository", "login")
         return@withContext userService.login(email, password)
+    }
 
+    suspend fun getUserProfile(token: String): AuthResponse? = withContext(Dispatchers.IO){
+        Log.d("UserRepository", "getUserProfile")
+        return@withContext userService.getUserProfile(token)
     }
 
     // Inscription - Étape 1 : Collecter email, nom, mot de passe et envoyer un email de vérification
     suspend fun initiateRegistration(name: String, email: String, password: String): Boolean {
         return try {
             val response = userService.initiateRegistration(name, email, password)
+            Log.d("UserRepository", response.toString())
             response // True si réussi
         } catch (e: Exception) {
             false // En cas d'erreur
@@ -42,11 +47,7 @@ class UserRepository(private val userService: UserService) {
     }
 
     // Renvoi du code de vérification
-    suspend fun resendVerificationCode(email: String) {
-        try {
-            userService.resendVerificationCode(email)
-        } catch (e: Exception) {
-            // Gérer l'exception si besoin
-        }
+    suspend fun resendVerificationCode(email: String) = withContext(Dispatchers.IO){
+        return@withContext userService.resendVerificationCode(email)
     }
 }

@@ -4,11 +4,10 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import com.google.gson.GsonBuilder
 
 class RetrofitHelper {
     companion object {
-        private const val BASE_URL: String = "http://192.168.21.13:3000"
+        private const val BASE_URL: String = "http://10.0.2.2:3000"  // Adresse du serveur local
 
         fun getRetrofitInstance(): Retrofit {
             // Crée un intercepteur de logging

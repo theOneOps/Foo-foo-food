@@ -4,36 +4,35 @@ import UserRepository
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.uds.foufoufood.R
-import com.uds.foufoufood.databinding.LayoutDefineProfileBinding
 import com.uds.foufoufood.factory.UserViewModelFactory
-import com.uds.foufoufood.models.User
 import com.uds.foufoufood.network.RetrofitHelper
 import com.uds.foufoufood.network.UserApi
 import com.uds.foufoufood.network.UserServiceImpl
+import com.uds.foufoufood.ui.page.DefineProfileScreen
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 class DefineProfileActivity : AppCompatActivity() {
 
-    private lateinit var binding: LayoutDefineProfileBinding
     private lateinit var userViewModel: UserViewModel
     private lateinit var email: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        binding = LayoutDefineProfileBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        window.statusBarColor = ContextCompat.getColor(this, R.color.orange_bg)
 
         // Récupération de l'email
         email = intent.getStringExtra("email") ?: throw IllegalArgumentException("Email is missing")
@@ -45,36 +44,53 @@ class DefineProfileActivity : AppCompatActivity() {
         val userRepository = UserRepository(userService)
         userViewModel = ViewModelProvider(this, UserViewModelFactory(userRepository)).get(UserViewModel::class.java)
 
-        binding.radioGroupTypeProfile.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.radioButtonCustomer -> binding.textViewResult.text = getString(R.string.customer_choice)
-                R.id.radioButtonOwner -> binding.textViewResult.text = getString(R.string.owner_choice)
-                R.id.radioButtonDeliveryMan -> binding.textViewResult.text = getString(R.string.delivery_choice)
-            }
+        setContent {
+            DefineProfile(
+                userViewModel = userViewModel,
+                email = email,
+                onProfileValidated = { navigateToProfileActivity() }
+            )
         }
 
-        binding.buttonValidateChoiceProfile.setOnClickListener {
-            val selectedProfile = when (binding.radioGroupTypeProfile.checkedRadioButtonId) {
-                R.id.radioButtonCustomer -> "customer"
-                R.id.radioButtonOwner -> "owner"
-                R.id.radioButtonDeliveryMan -> "delivery"
-                else -> {
-                    Toast.makeText(this, "Veuillez choisir un type de profil", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-            }
-            userViewModel.completeRegistration(email, selectedProfile)
-        }
+        window.statusBarColor = ContextCompat.getColor(this, R.color.orange_bg)
+    }
 
-        // Observer l'événement de succès de l'enregistrement final
-        userViewModel.registrationCompleteSuccess.observe(this, Observer { isSuccess ->
-            if (isSuccess) {
-                val intent = Intent(this, ProfileActivity::class.java)
-                startActivity(intent)
-            } else {
-                Toast.makeText(this, "Échec de l'inscription", Toast.LENGTH_SHORT).show()
-            }
-        })
+    private fun navigateToProfileActivity() {
+        val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
     }
 }
 
+@Composable
+fun DefineProfile(
+    userViewModel: UserViewModel,
+    email: String,
+    onProfileValidated: () -> Unit
+) {
+    // Observer l'état du succès de l'enregistrement final avec observeAsState
+    val registrationCompleteSuccess by userViewModel.registrationCompleteSuccess.observeAsState()
+
+    var selectedProfile by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
+
+    // Réagir au succès de l'enregistrement final
+    LaunchedEffect(registrationCompleteSuccess) {
+        if (registrationCompleteSuccess == true) {
+            onProfileValidated()
+        } else if (registrationCompleteSuccess == false) {
+            Toast.makeText(context, "Échec de l'inscription", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Interface de sélection du profil
+    DefineProfileScreen(
+        onValidateClick = {
+            if (selectedProfile.isNullOrEmpty()) {
+                Toast.makeText(context, "Veuillez choisir un type de profil", Toast.LENGTH_SHORT).show()
+            } else {
+                // Appeler le ViewModel pour compléter l'enregistrement
+                userViewModel.completeRegistration(email, selectedProfile!!)
+            }
+        }
+    )
+}

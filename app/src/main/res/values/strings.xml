@@ -11,15 +11,17 @@
     <string name="google" translatable="false">GOOGLE</string>
     <string name="start_email" translatable="true">Commencer avec son adresse mail</string>
     <string name="already_account" translatable="true">Déjà un compte ?</string>
-    <string name="sign_in_underligned" translatable="true"><u>Se connecter</u></string>
+    <string name="sign_in_underlined" translatable="true"><u>Se connecter</u></string>
     <string name="sign_in" translatable="true">Se connecter</string>
 
     <string name="sign_up" translatable="true">S\'inscrire</string>
-    <string name="sign_up_underligned" translatable="true"><u>S\'inscrire</u></string>
+    <string name="sign_up_underlined" translatable="true"><u>S\'inscrire</u></string>
     <string name="full_name" translatable="true">Nom complet</string>
+    <string name="full_name_example" translatable="true">Votre nom complet</string>
     <string name="email" translatable="false">E-mail</string>
     <string name="email_example" translatable="false">Votre adresse e-mail</string>
     <string name="password" translatable="true">Mot de passe</string>
+    <string name="password_example" translatable="true">Votre mot de passe</string>
 
     <string name="forgot_password" translatable="true">Mot de passe oublié ?</string>
     <string name="no_account" translatable="true">Pas encore de compte ?</string>
@@ -28,6 +30,7 @@
     <string name="verification_text" translatable="true">Un code de vérification a été envoyé à votre adresse mail</string>
     <string name="no_receive" translatable="true">Je n\'ai pas reçu de code !</string>
     <string name="resend" translatable="true">Renvoyer un code</string>
+    <string name="verify" translatable="true">Vérifier</string>
 
     <string name="who_are_you" translatable="true">Qui êtes-vous ?</string>
     <string name="who_are_you_text" translatable="true">Veuillez entrer votre statut parmi les trois suivants</string>
