@@ -66,6 +66,16 @@ dependencies {
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.compose.ui.ui)                        // Bibliothèque de base Compose UI
+    implementation(libs.androidx.compose.ui.ui.tooling.preview)         // Pour l'aperçu des UI dans Android Studio
+    implementation(libs.material3)
+    implementation (libs.google.accompanist.coil)
+    implementation (libs.coil.kt.coil.svg)
+    implementation (libs.androidx.navigation.compose)
+
+
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
