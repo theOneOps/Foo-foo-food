@@ -1,5 +1,6 @@
-package com.uds.foufoufood.ui.page
+package com.uds.foufoufood.view
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,13 +19,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -34,17 +38,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.ui.theme.TextLink
 import com.uds.foufoufood.ui.theme.TitlePage
 import com.uds.foufoufood.ui.theme.ValidateButton
+import com.uds.foufoufood.viewmodel.UserViewModel
 
 @Composable
 fun VerifyCodeScreen(
-    onVerifyClick: (String) -> Unit,
-    onResendClick: () -> Unit
+    navController: NavController,
+    userViewModel: UserViewModel,
+    email: String
 ) {
     var code by remember { mutableStateOf(List(6) { "" }) }
+
+    val context = LocalContext.current
+
+    val codeVerificationSuccess by userViewModel.codeVerificationSuccess.observeAsState()
+
+    LaunchedEffect(codeVerificationSuccess) {
+        if (codeVerificationSuccess == true) {
+            navController.navigate("define_profile/${email}")
+        } else if (codeVerificationSuccess == false) {
+            Toast.makeText(context, "Le code est incorrect", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -67,14 +86,20 @@ fun VerifyCodeScreen(
         )
 
         // Section "Pas reçu de code"
-        NoCodeReceivedSection(onResendClick = onResendClick)
+        NoCodeReceivedSection {
+            userViewModel.resendVerificationCode(email)
+        }
 
         // Bouton de validation
         ValidateButton(
             label = stringResource(id = R.string.verify),
             onClick = {
                 val enteredCode = code.joinToString("")
-                onVerifyClick(enteredCode) // Appelle la fonction de vérification
+                if (enteredCode.length == 6) {
+                    userViewModel.verifyCode(email, enteredCode)
+                } else {
+                    Toast.makeText(context, "Veuillez entrer le code complet", Toast.LENGTH_SHORT).show()
+                }
             }
         )
     }
@@ -154,13 +179,4 @@ fun NoCodeReceivedSection(onResendClick: () -> Unit) {
             onClick = onResendClick // Appelle la fonction de renvoi du code
         )
     }
-}
-
-@Preview
-@Composable
-fun Preview() {
-    VerifyCodeScreen(
-        onVerifyClick = {},
-        onResendClick = {}
-    )
 }

@@ -1,53 +1,93 @@
 import android.util.Log
-import com.uds.foufoufood.network.UserService
+import com.uds.foufoufood.network.UserApi
+import com.uds.foufoufood.request.EmailRequest
+import com.uds.foufoufood.request.LoginRequest
+import com.uds.foufoufood.request.ProfileRequest
+import com.uds.foufoufood.request.RegistrationRequest
+import com.uds.foufoufood.request.VerificationRequest
 import com.uds.foufoufood.response.AuthResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class UserRepository(private val userService: UserService) {
-    suspend fun login(email: String, password: String): AuthResponse? = withContext(Dispatchers.IO){
-        Log.d("UserRepository", "login")
-        return@withContext userService.login(email, password)
-    }
+class UserRepository(private val userApi: UserApi) {
 
-    suspend fun getUserProfile(token: String): AuthResponse? = withContext(Dispatchers.IO){
-        Log.d("UserRepository", "getUserProfile")
-        return@withContext userService.getUserProfile(token)
-    }
-
-    // Inscription - Étape 1 : Collecter email, nom, mot de passe et envoyer un email de vérification
-    suspend fun initiateRegistration(name: String, email: String, password: String): Boolean {
-        return try {
-            val response = userService.initiateRegistration(name, email, password)
-            Log.d("UserRepository", response.toString())
-            response // True si réussi
+    suspend fun login(email: String, password: String): AuthResponse? = withContext(Dispatchers.IO) {
+        try {
+            val request = LoginRequest(email, password)
+            val response = userApi.login(request)  // Appel API direct
+            if (response.isSuccessful) {
+                response.body()  // Retourner les données d'authentification si tout va bien
+            } else {
+                Log.e("UserRepository", "Erreur de connexion: ${response.code()}")
+                null
+            }
         } catch (e: Exception) {
-            false // En cas d'erreur
+            Log.e("UserRepository", "Erreur réseau: ${e.message}")
+            null
         }
     }
 
-    // Vérification du code - Étape 2 : Confirmer le code reçu
-    suspend fun verifyCode(email: String, code: String): Boolean {
-        return try {
-            val response = userService.verifyCode(email, code)
-            response
+    // Récupérer le profil utilisateur
+    suspend fun getUserProfile(token: String): AuthResponse? = withContext(Dispatchers.IO) {
+        try {
+            val response = userApi.getUserProfile(token)  // Appel API direct
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                Log.e("UserRepository", "Erreur lors de la récupération du profil: ${response.code()}")
+                null
+            }
         } catch (e: Exception) {
-            false // En cas d'erreur
+            Log.e("UserRepository", "Erreur réseau: ${e.message}")
+            null
         }
     }
 
-    // Inscription complète - Étape 3 : Choisir le type de profil
-    suspend fun completeRegistration(email: String, profileType: String): Boolean {
-        return try {
-            val response = userService.completeRegistration(email, profileType)
-            response
+    // Inscription - Étape 1
+    suspend fun initiateRegistration(name: String, email: String, password: String): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val request = RegistrationRequest(name, email, password)
+            val response = userApi.initiateRegistration(request)
+            response.isSuccessful && response.body()?.success == true  // Retourne true si succès
         } catch (e: Exception) {
-            false // En cas d'erreur
+            Log.e("UserRepository", "Erreur d'inscription: ${e.message}")
+            false
+        }
+    }
+
+    // Vérification du code - Étape 2
+    suspend fun verifyCode(email: String, code: String): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val request = VerificationRequest(email, code)
+            val response = userApi.verifyCode(request)
+            response.isSuccessful && response.body()?.success == true
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Erreur de vérification: ${e.message}")
+            false
+        }
+    }
+
+    // Inscription complète - Étape 3
+    suspend fun completeRegistration(email: String, profileType: String): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val request = ProfileRequest(email, profileType)
+            val response = userApi.completeRegistration(request)
+            response.isSuccessful && response.body()?.success == true
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Erreur lors de la finalisation de l'inscription: ${e.message}")
+            false
         }
     }
 
     // Renvoi du code de vérification
-    suspend fun resendVerificationCode(email: String) = withContext(Dispatchers.IO){
-        return@withContext userService.resendVerificationCode(email)
+    suspend fun resendVerificationCode(email: String): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val request = EmailRequest(email)
+            val response = userApi.resendVerificationCode(request)
+            response.isSuccessful && response.body()?.success == true
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Erreur lors de l'envoi du code: ${e.message}")
+            false
+        }
     }
 }

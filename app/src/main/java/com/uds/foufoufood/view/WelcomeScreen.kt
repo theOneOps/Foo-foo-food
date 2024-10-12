@@ -1,4 +1,4 @@
-package com.uds.foufoufood.ui.page
+package com.uds.foufoufood.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,11 +36,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.ui.theme.NetworksButtons
 
 @Composable
-fun WelcomeScreen(onNavigateToLogin: () -> Unit, onNavigateToRegister: () -> Unit) {
+fun WelcomeScreen(
+    navController: NavController
+) {
     LocalContext.current
     Box(
         modifier = Modifier
@@ -66,9 +69,13 @@ fun WelcomeScreen(onNavigateToLogin: () -> Unit, onNavigateToRegister: () -> Uni
             Spacer(modifier = Modifier.height(70.dp))
             NetworksButtons(stringResource(id = R.string.sign_in_with), Color.White)
             Spacer(modifier = Modifier.height(30.dp))
-            EmailSignUpButton(onNavigateToRegister)
+            EmailSignUpButton{
+                navController.navigate("register")
+            }
             Spacer(modifier = Modifier.height(16.dp))
-            SignInLink(onNavigateToLogin)
+            SignInLink {
+                navController.navigate("login")
+            }
         }
     }
 }

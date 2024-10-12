@@ -1,30 +1,33 @@
 package com.uds.foufoufood.activities.main
 
-import android.content.Intent
+import UserRepository
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import com.uds.foufoufood.activities.auth.LoginActivity
-import com.uds.foufoufood.activities.auth.RegisterFirstPartActivity
-import com.uds.foufoufood.ui.page.WelcomeScreen
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.compose.rememberNavController
+import com.uds.foufoufood.factory.UserViewModelFactory
+import com.uds.foufoufood.navigation.AppNavHost
+import com.uds.foufoufood.network.RetrofitHelper
+import com.uds.foufoufood.network.UserApi
+import com.uds.foufoufood.viewmodel.UserViewModel
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val retrofit = RetrofitHelper.getRetrofitInstance()
+        val userApi = retrofit.create(UserApi::class.java)
+        val userRepository = UserRepository(userApi)
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(userRepository)).get(
+            UserViewModel::class.java)
+
         setContent {
-            WelcomeScreen(
-                onNavigateToLogin = {
-                    // Navigate to Login screen
-                    startActivity(Intent(this, LoginActivity::class.java))
-                },
-                onNavigateToRegister = {
-                    // Navigate to Register screen
-                    startActivity(Intent(this, RegisterFirstPartActivity::class.java))
-                }
-            )
+            val navController = rememberNavController()
+            AppNavHost(navController = navController, userViewModel = userViewModel)
         }
-        // todo -> gestion connexion fcb et google
     }
 }

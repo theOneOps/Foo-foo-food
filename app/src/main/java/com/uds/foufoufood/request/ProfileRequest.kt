@@ -2,5 +2,5 @@ package com.uds.foufoufood.request
 
 data class ProfileRequest(
     val email: String,
-    val profileType: String
+    val role: String
 )

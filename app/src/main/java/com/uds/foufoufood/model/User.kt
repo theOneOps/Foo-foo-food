@@ -8,7 +8,6 @@ data class User(
     val email: String,
     val password: String,
     var code: String,
-    val isAdmin: Boolean,
     var role: String? = null,
     var address: Address? = null
 ) : Parcelable {
@@ -17,7 +16,6 @@ data class User(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readByte() != 0.toByte(),
         parcel.readString()
     )
 
@@ -26,7 +24,6 @@ data class User(
         parcel.writeString(email)
         parcel.writeString(password)
         parcel.writeString(code)
-        parcel.writeByte(if (isAdmin) 1 else 0)
         parcel.writeString(role)
     }
 
