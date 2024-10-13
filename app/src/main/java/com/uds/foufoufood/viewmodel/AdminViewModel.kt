@@ -1,27 +1,87 @@
 package com.uds.foufoufood.viewmodel
 
+import UserRepository
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uds.foufoufood.model.User
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import com.uds.foufoufood.repository.AdminRepository
 
-class AdminViewModel : ViewModel() {
-    private val _users = MutableStateFlow<List<User>>(emptyList())
-    val users: StateFlow<List<User>> = _users
+class AdminViewModel(private val repository: AdminRepository) : ViewModel() {
 
-    init {
-        fetchUsers()  // Utilise des données factices pour l'aperçu
-    }
+    private val _users = MutableLiveData<List<User>?>()
+    val users: MutableLiveData<List<User>?> get() = _users
 
-    private fun fetchUsers() {
+    private val _apiError = MutableLiveData<String>()
+    val apiError: LiveData<String> get() = _apiError
+
+    fun fetchUsers() {
         viewModelScope.launch {
-            // Simule des données d'utilisateur
-            _users.value = listOf(
-                User("1","Alyce Lambo", "alyce.lambo@gmail.com", "https://i.pravatar.cc/150?img=1","Client"),
-                User("2","John Doe", "john.doe@example.com", "https://i.pravatar.cc/150?img=2","Restaurateur")
-            )
+            try {
+                val response = repository.getAllUsers()
+                if (response != null && response.isSuccessful) {
+                    val usersList = response.body()
+                    Log.d("AdminViewModel", "Réponse API: $usersList")
+                    if (usersList != null && usersList.isNotEmpty()) {
+                        _users.value = usersList
+                        Log.d("AdminViewModel", "Nombre d'utilisateurs récupérés: ${usersList.size}")
+                    } else {
+                        Log.e("AdminViewModel", "Aucun utilisateur trouvé dans la réponse.")
+                    }
+                } else {
+                    _apiError.value = "Erreur lors de la récupération des utilisateurs: ${response?.message() ?: "Réponse nulle"}"
+                    Log.e("AdminViewModel", "Erreur lors de la récupération des utilisateurs: ${response?.message()}")
+                }
+            } catch (e: Exception) {
+                _apiError.value = "Erreur: ${e.message}"
+                Log.e("AdminViewModel", "Exception lors de la récupération des utilisateurs: ${e.message}")
+            }
         }
     }
+
+
+    fun updateUserRole(user: User, newRole: String) {
+        _users.value = _users.value?.map {
+            if (it.email == user.email) it.copy(role = newRole) else it
+        } ?: emptyList()
+
+        // Synchronisation avec le serveur
+        viewModelScope.launch {
+            try {
+                repository.updateUserRole(user.email, newRole)
+            } catch (e: Exception) {
+                // Gérer l'erreur de mise à jour
+            }
+        }
+    }
+
+    // Filtrer les utilisateurs par rôle
+    fun getClients(): List<User> {
+        val usersList = _users.value
+        if (usersList.isNullOrEmpty()) {
+            Log.e("AdminViewModel", "Aucun utilisateur chargé")
+            return emptyList()  // Retourne une liste vide si aucun utilisateur n'est chargé
+        }
+        // Log pour vérifier le filtre
+        val clients = usersList.filter { it.role == "client" }
+        Log.d("AdminViewModel", "Nombre de clients: ${clients.size}")
+        return clients
+    }
+
+
+    fun getLivreurs(): List<User> {
+        return _users.value?.filter { it.role == "livreur" } ?: emptyList()
+    }
+
+    fun getGerants(): List<User> {
+        return _users.value?.filter { it.role == "restaurateur" } ?: emptyList()
+    }
+
+    fun getAll(): List<User> {
+        return _users.value ?: emptyList()
+    }
 }
+

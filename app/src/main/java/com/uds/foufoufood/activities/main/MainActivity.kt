@@ -1,36 +1,41 @@
 package com.uds.foufoufood.activities.main
 
+import UserRepository
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
-import com.uds.foufoufood.ui.theme.FouFouFoodTheme
-import com.uds.foufoufood.model.User
-import com.uds.foufoufood.ui.page.AdminNavHost
+import com.uds.foufoufood.factory.AdminViewModelFactory
+import com.uds.foufoufood.factory.UserViewModelFactory
+import com.uds.foufoufood.navigation.UserNavHost
+import com.uds.foufoufood.network.RetrofitHelper
+import com.uds.foufoufood.network.UserApi
+import com.uds.foufoufood.repository.AdminRepository
+import com.uds.foufoufood.view.MainScreen
+import com.uds.foufoufood.viewmodel.AdminViewModel
+import com.uds.foufoufood.viewmodel.UserViewModel
 
-class MainActivity : ComponentActivity() {
+
+class MainActivity : AppCompatActivity() {
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var adminViewModel: AdminViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val retrofit = RetrofitHelper.getRetrofitInstance(this)
+        val userApi = retrofit.create(UserApi::class.java)
+        val userRepository = UserRepository(userApi)
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(userRepository, this)).get(
+            UserViewModel::class.java)
+
+        val adminRepository = AdminRepository(userApi, this)
+        adminViewModel = ViewModelProvider(this, AdminViewModelFactory(adminRepository)).get(
+            AdminViewModel::class.java)
         setContent {
-            FouFouFoodTheme {
-                // Utilisation du Scaffold pour structurer l'application
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    // Appelle le composable MainScreen qui contient la navigation
-                    MainScreen()
-                }
-            }
+            val navController = rememberNavController()
+            MainScreen(navController = navController, userViewModel = userViewModel, adminViewModel = adminViewModel)
         }
     }
-}
-@Composable
-fun MainScreen() {
-    // Crée le NavController ici
-    val navController = rememberNavController()
-
-    // Passe le NavController à AppNavHost ou AdminPage
-    AdminNavHost(navController = navController)
 }

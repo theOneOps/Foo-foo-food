@@ -1,4 +1,4 @@
-package com.uds.foufoufood.ui.page
+package com.uds.foufoufood.view.admin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -1,4 +1,4 @@
-package com.uds.foufoufood.ui.theme
+package com.uds.foufoufood.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -76,13 +76,6 @@ fun BottomNavBarAdmin(selectedItem: Int, onItemSelected: (Int) -> Unit) {
             onClick = { onItemSelected(3) },
             label = { Text("Restaus", fontSize = 12.sp) }
         )
-        //Icon material Search icon.default.search
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-            selected = selectedItem == 4,
-            onClick = { onItemSelected(4) },
-            label = { Text("Recherche") }
-        )
     }
 }
 
@@ -105,7 +98,7 @@ fun TopNavBarAdmin() {
         actions = {
             // Image de profil à droite
             AsyncImage(
-                model = R.drawable.hamburger_icon, // URL de l'image de profil
+                model = R.drawable.full_logo, // URL de l'image de profil
                 contentDescription = "Profile Image",
                 modifier = Modifier
                     .size(40.dp)

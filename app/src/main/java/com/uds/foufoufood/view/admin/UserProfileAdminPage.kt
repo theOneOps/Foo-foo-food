@@ -1,4 +1,4 @@
-package com.uds.foufoufood.ui.page
+package com.uds.foufoufood.view.admin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
@@ -7,11 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.uds.foufoufood.model.User
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,8 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -29,10 +25,10 @@ import coil.compose.rememberAsyncImagePainter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileAdminPage(navController: NavController, userId: String?,users :List<User>, onRoleChanged: (String) -> Unit) {
-    if (userId != null) {
+fun UserProfileAdminPage(navController: NavController, userEmail: String?,users :List<User>, onRoleChanged: (User, String) -> Unit) {
+    if (userEmail != null) {
         // Récupérer les détails de l'utilisateur
-        val user = users.find { it.id == userId }
+        val user = users.find { it.email == userEmail }
         var selectedRole by remember { mutableStateOf(user?.role ?: "Client") }
         var showDropdown by remember { mutableStateOf(false) }
 
@@ -94,7 +90,7 @@ fun UserProfileAdminPage(navController: NavController, userId: String?,users :Li
                                 text = { Text("Client") },
                                 onClick = {
                                     selectedRole = "Client"
-                                    onRoleChanged("Client")
+                                    onRoleChanged(user,"Client")
                                     showDropdown = false
                                 }
                             )
@@ -102,7 +98,7 @@ fun UserProfileAdminPage(navController: NavController, userId: String?,users :Li
                                 text = { Text("Livreur") },
                                 onClick = {
                                     selectedRole = "Livreur"
-                                    onRoleChanged("Livreur")
+                                    onRoleChanged(user,"Livreur")
                                     showDropdown = false
                                 }
                             )
@@ -110,7 +106,7 @@ fun UserProfileAdminPage(navController: NavController, userId: String?,users :Li
                                 text = { Text("Restaurateur") },
                                 onClick = {
                                     selectedRole = "Restaurateur"
-                                    onRoleChanged("Restaurateur")
+                                    onRoleChanged(user,"Restaurateur")
                                     showDropdown = false
                                 }
                             )
