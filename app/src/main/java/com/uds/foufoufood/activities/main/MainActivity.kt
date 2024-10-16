@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         val adminRepository = AdminRepository(userApi, this)
         adminViewModel = ViewModelProvider(this, AdminViewModelFactory(adminRepository)).get(
             AdminViewModel::class.java)
+
         setContent {
             val navController = rememberNavController()
             MainScreen(navController = navController, userViewModel = userViewModel, adminViewModel = adminViewModel)

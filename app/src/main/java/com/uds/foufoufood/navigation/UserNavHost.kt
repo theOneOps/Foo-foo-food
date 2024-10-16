@@ -12,6 +12,7 @@ import com.uds.foufoufood.view.auth.LoginScreen
 import com.uds.foufoufood.view.auth.RegisterFirstPartScreen
 import com.uds.foufoufood.view.auth.VerifyCodeScreen
 import com.uds.foufoufood.view.auth.WelcomeScreen
+import com.uds.foufoufood.viewmodel.HomeViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 
@@ -47,7 +48,7 @@ fun UserNavHost(navController: NavHostController, userViewModel: UserViewModel) 
         }
 
         composable(Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(HomeViewModel())
         }
 
 
