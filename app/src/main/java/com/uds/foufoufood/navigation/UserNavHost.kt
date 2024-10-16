@@ -48,7 +48,7 @@ fun UserNavHost(navController: NavHostController, userViewModel: UserViewModel) 
         }
 
         composable(Screen.Home.route) {
-            HomeScreen(HomeViewModel())
+            HomeScreen(navController)
         }
 
 

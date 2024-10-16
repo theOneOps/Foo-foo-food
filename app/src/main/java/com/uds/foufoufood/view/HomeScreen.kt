@@ -17,6 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.model.Category
 import com.uds.foufoufood.model.Restaurant
@@ -26,15 +28,15 @@ import com.uds.foufoufood.ui.component.SearchBar
 import com.uds.foufoufood.viewmodel.HomeViewModel
 
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel) {
+fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel = viewModel()) {
 
     // Initialize the categories and restaurants here with drawables
     LaunchedEffect(Unit) {
         homeViewModel.initialize(
             categoriesList = listOf(
-                Category(1, "Pizza", R.drawable.restaurant),
-                Category(2, "Burger", R.drawable.restaurant),
-                Category(3, "Mexican", R.drawable.restaurant)
+                Category(1, "Pizza", R.drawable.ic_category_pizza),
+                Category(2, "Burger", R.drawable.ic_category_burger),
+                Category(3, "Mexican", R.drawable.ic_category_mexican)
             ),
             restaurantsList = listOf(
                 Restaurant(1, "Le Gourmet", "Burger", R.drawable.ph_restaurant),

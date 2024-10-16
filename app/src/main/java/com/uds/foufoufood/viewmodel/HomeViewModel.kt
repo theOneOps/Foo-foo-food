@@ -1,5 +1,6 @@
 package com.uds.foufoufood.viewmodel
 
+import android.widget.Toast
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import com.uds.foufoufood.model.Category
@@ -26,6 +27,7 @@ class HomeViewModel : ViewModel() {
 
     // Initialize categories and restaurants (you can load from a repository or hardcode)
     fun initialize(categoriesList: List<Category>, restaurantsList: List<Restaurant>) {
+
         categories = categoriesList
         restaurants = restaurantsList
         filteredRestaurants = restaurants // Initially, all restaurants are displayed
