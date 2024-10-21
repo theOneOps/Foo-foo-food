@@ -1,4 +1,4 @@
-package com.uds.foufoufood.request
+package com.uds.foufoufood.data_class.request
 
 data class RegistrationRequest(
     val name: String,

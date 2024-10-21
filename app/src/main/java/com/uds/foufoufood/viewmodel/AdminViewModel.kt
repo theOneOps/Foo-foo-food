@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uds.foufoufood.model.User
+import com.uds.foufoufood.data_class.model.User
 import kotlinx.coroutines.launch
 import com.uds.foufoufood.repository.AdminRepository
 

@@ -15,6 +15,7 @@ import androidx.navigation.navArgument
 import com.uds.foufoufood.navigation.AdminNavHost
 import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.navigation.UserNavHost
+import com.uds.foufoufood.view.client.ClientHomeScreen
 import com.uds.foufoufood.viewmodel.AdminViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
@@ -22,28 +23,29 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 fun MainScreen(userViewModel: UserViewModel, navController: NavHostController, adminViewModel: AdminViewModel) {
     // Observer les données utilisateur
     val user by userViewModel.user.observeAsState()
-    var isAdmin by remember { mutableStateOf<Boolean?>(null) }
+    var connectUser by remember { mutableStateOf<String?>("") }
 
     // Gérer la mise à jour du rôle utilisateur
     LaunchedEffect(user) {
         user?.let {
-            isAdmin = it.role == "admin"
+            connectUser = it.role
         }
     }
 
     // Basculer entre AdminNavHost et UserNavHost en fonction du rôle
-    when (isAdmin) {
-        true -> {
+    when (connectUser) {
+        "admin" -> {
             // Si l'utilisateur est admin, afficher AdminNavHost
             AdminNavHost(navController, adminViewModel)
         }
-        false -> {
+        "client" -> {
             // Si l'utilisateur est un utilisateur classique, afficher UserNavHost
             UserNavHost(navController, userViewModel)
         }
-        null -> {
+        else -> {
             // Tant que l'utilisateur n'est pas encore connecté ou que le rôle n'est pas défini
-            UserNavHost(navController, userViewModel)
+            //UserNavHost(navController, userViewModel)
+            ClientHomeScreen(navController)
         }
     }
 }

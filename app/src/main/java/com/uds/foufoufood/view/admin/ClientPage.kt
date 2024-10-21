@@ -21,7 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.uds.foufoufood.model.User
+import com.uds.foufoufood.data_class.model.User
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.viewmodel.AdminViewModel
 
@@ -47,7 +47,7 @@ fun ClientPage(
 
     val clientUsers = users?.filter { it.role == "client" }
     Scaffold()
-     { paddingValues ->
+    { paddingValues ->
         // Contenu principal de la page (la liste des utilisateurs)
 
         Column(
@@ -82,14 +82,18 @@ fun ClientPage(
                         items(clientUsers.size) { index ->
                             val user = clientUsers[index]
                             UserItem(user = user, onClick = {
-                                if (user.email != null && user.email.isNotEmpty()) {
+                                if (user.email.isNotEmpty()) {
                                     navController.navigate("userProfile/${user.email}")
                                 } else {
                                     Log.e("ClientPage", "L'utilisateur n'a pas d'email valide")
                                 }
                             },
                                 onRoleChanged = { newRole ->
-                                    onRoleChanged(user, newRole) // Appelle la fonction onRoleChanged avec l'utilisateur et le nouveau rôle
+                                    onRoleChanged(
+                                        user,
+                                        newRole
+                                    ) // Appelle la fonction onRoleChanged avec l'utilisateur
+                                // et le nouveau rôle
                                 })
                         }
                     }

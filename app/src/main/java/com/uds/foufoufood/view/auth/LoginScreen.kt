@@ -102,7 +102,11 @@ fun LoginScreen(
             if (isEmailValid(email) && isValidPassword(password)) {
                 userViewModel.login(email, password)
             } else {
-                Toast.makeText(context, "Veuillez entrer des informations valides", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Veuillez entrer des informations valides",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
 
@@ -158,6 +162,9 @@ fun SignUpText(onNavigateToRegister: () -> Unit) {
         )
         Spacer(modifier = Modifier.width(10.dp))
 
-        TextLink(label = stringResource(id = R.string.sign_up_underlined), onClick = onNavigateToRegister)
+        TextLink(
+            label = stringResource(id = R.string.sign_up_underlined),
+            onClick = onNavigateToRegister
+        )
     }
 }

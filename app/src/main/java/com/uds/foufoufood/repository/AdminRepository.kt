@@ -3,10 +3,10 @@ package com.uds.foufoufood.repository
 import android.content.Context
 import android.util.Log
 import com.uds.foufoufood.activities.main.TokenManager.getToken
-import com.uds.foufoufood.model.User
+import com.uds.foufoufood.data_class.model.User
 import com.uds.foufoufood.network.RoleUpdateRequest
 import com.uds.foufoufood.network.UserApi
-import com.uds.foufoufood.response.ApiResponse
+import com.uds.foufoufood.data_class.response.ApiResponse
 import retrofit2.Call
 import retrofit2.Response
 

@@ -21,7 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.uds.foufoufood.model.User
+import com.uds.foufoufood.data_class.model.User
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.viewmodel.AdminViewModel
 

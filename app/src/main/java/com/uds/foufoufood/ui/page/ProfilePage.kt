@@ -35,7 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uds.foufoufood.R
-import com.uds.foufoufood.model.User
+import com.uds.foufoufood.data_class.model.User
 
 @Composable
 fun ProfileScreen(user: User) {

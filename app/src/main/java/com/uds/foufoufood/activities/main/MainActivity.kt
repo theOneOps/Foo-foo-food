@@ -4,11 +4,7 @@ import UserRepository
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
-import com.uds.foufoufood.factory.AdminViewModelFactory
-import com.uds.foufoufood.factory.UserViewModelFactory
-import com.uds.foufoufood.navigation.UserNavHost
 import com.uds.foufoufood.network.RetrofitHelper
 import com.uds.foufoufood.network.UserApi
 import com.uds.foufoufood.repository.AdminRepository
@@ -27,15 +23,20 @@ class MainActivity : AppCompatActivity() {
         val retrofit = RetrofitHelper.getRetrofitInstance(this)
         val userApi = retrofit.create(UserApi::class.java)
         val userRepository = UserRepository(userApi)
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(userRepository, this)).get(
-            UserViewModel::class.java)
+
+        userViewModel = UserViewModel(userRepository, this)
 
         val adminRepository = AdminRepository(userApi, this)
-        adminViewModel = ViewModelProvider(this, AdminViewModelFactory(adminRepository)).get(
-            AdminViewModel::class.java)
+
+        adminViewModel = AdminViewModel(adminRepository)
+
         setContent {
             val navController = rememberNavController()
-            MainScreen(navController = navController, userViewModel = userViewModel, adminViewModel = adminViewModel)
+            MainScreen(
+                navController = navController,
+                userViewModel = userViewModel,
+                adminViewModel = adminViewModel
+            )
         }
     }
 }

@@ -6,6 +6,7 @@ sealed class Screen(val route: String) {
     object Login : Screen("login")
     object Register : Screen("register")
     object Home : Screen("home")
+
     //Admin
     object AdminClient : Screen("admin_client")
     object AdminLivreur : Screen("admin_livreur")
@@ -16,4 +17,9 @@ sealed class Screen(val route: String) {
             return "userProfile/$userEmail"
         }
     }
+
+    // Client
+    object ClientHomePage : Screen("client_home_page")
+    object ClientAllRestaurantsPage : Screen("client_restaurants_page")
+    object ClientRestaurantAllMenusPage : Screen("client_restaurant_all_menu_page")
 }

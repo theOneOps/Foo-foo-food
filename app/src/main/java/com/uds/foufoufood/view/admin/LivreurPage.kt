@@ -21,7 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.uds.foufoufood.model.User
+import com.uds.foufoufood.data_class.model.User
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.viewmodel.AdminViewModel
 
@@ -76,7 +76,7 @@ fun LivreurPage(
                     items(livreurUsers.size) { index ->
                         val user = livreurUsers[index]
                         UserItem(user = user, onClick = {
-                            if (user.email != null && user.email.isNotEmpty()) {
+                            if (user.email.isNotEmpty()) {
                                 navController.navigate("userProfile/${user.email}")
                             } else {
                                 // Gérer le cas où l'ID est null ou vide (afficher un message ou ignorer l'action)

@@ -22,17 +22,25 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.uds.foufoufood.model.User
+import com.uds.foufoufood.data_class.model.User
 
 
 @Composable
-fun UserItem(user: User, modifier: Modifier = Modifier, onClick: () -> Unit, onRoleChanged: (String) -> Unit) {
+fun UserItem(
+    user: User,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    onRoleChanged: (String) -> Unit
+) {
     Row(
         modifier = modifier
             .fillMaxWidth() // Prendre toute la largeur disponible
             .padding(6.dp) // Ajouter un padding autour de chaque utilisateur
             .shadow(4.dp, RoundedCornerShape(15.dp)) // Ombre avec coins arrondis
-            .background(Color.White, shape = RoundedCornerShape(15.dp)) // Fond blanc avec coins arrondis
+            .background(
+                Color.White,
+                shape = RoundedCornerShape(15.dp)
+            ) // Fond blanc avec coins arrondis
             .clickable { onClick() }
             .padding(16.dp), // Padding interne au composant
 
@@ -55,6 +63,9 @@ fun UserItem(user: User, modifier: Modifier = Modifier, onClick: () -> Unit, onR
             Text(text = user.email, color = Color.Gray)
         }
         Spacer(modifier = Modifier.weight(1f))
-        Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next")
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = "Next"
+        )
     }
 }

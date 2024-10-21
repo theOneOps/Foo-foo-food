@@ -1,19 +1,13 @@
 import android.util.Log
-import com.uds.foufoufood.model.User
-import com.uds.foufoufood.network.RoleUpdateRequest
 import com.uds.foufoufood.network.UserApi
-import com.uds.foufoufood.request.EmailRequest
-import com.uds.foufoufood.request.LoginRequest
-import com.uds.foufoufood.request.ProfileRequest
-import com.uds.foufoufood.request.RegistrationRequest
-import com.uds.foufoufood.request.VerificationRequest
-import com.uds.foufoufood.response.ApiResponse
-import com.uds.foufoufood.response.AuthResponse
+import com.uds.foufoufood.data_class.request.EmailRequest
+import com.uds.foufoufood.data_class.request.LoginRequest
+import com.uds.foufoufood.data_class.request.ProfileRequest
+import com.uds.foufoufood.data_class.request.RegistrationRequest
+import com.uds.foufoufood.data_class.request.VerificationRequest
+import com.uds.foufoufood.data_class.response.AuthResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class UserRepository(private val userApi: UserApi) {
 
