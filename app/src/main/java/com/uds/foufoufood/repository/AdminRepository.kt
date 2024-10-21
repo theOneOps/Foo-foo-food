@@ -3,11 +3,10 @@ package com.uds.foufoufood.repository
 import android.content.Context
 import android.util.Log
 import com.uds.foufoufood.activities.main.TokenManager.getToken
-import com.uds.foufoufood.model.User
+import com.uds.foufoufood.data_class.model.User
+import com.uds.foufoufood.data_class.response.ApiResponse
 import com.uds.foufoufood.network.RoleUpdateRequest
 import com.uds.foufoufood.network.UserApi
-import com.uds.foufoufood.response.ApiResponse
-import retrofit2.Call
 import retrofit2.Response
 
 class AdminRepository(private val api: UserApi, private val context: Context) {
@@ -17,10 +16,16 @@ class AdminRepository(private val api: UserApi, private val context: Context) {
             val token = "Bearer ${getToken(context)}"
             val response = api.getAllUsers(token)
             if (response.isSuccessful) {
-                Log.d("AdminRepository", "Réponse API réussie, utilisateurs récupérés: ${response.body()?.size}")
+                Log.d(
+                    "AdminRepository",
+                    "Réponse API réussie, utilisateurs récupérés: ${response.body()?.size}"
+                )
                 response
             } else {
-                Log.e("AdminRepository", "Erreur lors de l'appel API: ${response.errorBody()?.string()}")
+                Log.e(
+                    "AdminRepository",
+                    "Erreur lors de l'appel API: ${response.errorBody()?.string()}"
+                )
                 null
             }
         } catch (e: Exception) {

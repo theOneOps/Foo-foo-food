@@ -35,7 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uds.foufoufood.R
-import com.uds.foufoufood.model.User
+import com.uds.foufoufood.data_class.model.User
 
 @Composable
 fun ProfileScreen(user: User) {
@@ -80,7 +80,7 @@ fun ProfileScreen(user: User) {
         Spacer(modifier = Modifier.height(24.dp))
 
         if (hasAddress) {
-            ProfileExistingAddress( /* TODO : Afficher l'adresse existante */ )
+            ProfileExistingAddress( /* TODO : Afficher l'adresse existante */)
         } else {
             NoAddressSection(onAddAddressClick = { /* TODO: Ajouter une adresse */ })
         }

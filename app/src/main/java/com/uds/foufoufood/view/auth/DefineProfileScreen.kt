@@ -78,7 +78,8 @@ fun DefineProfileScreen(
 
         ValidateButton(label = stringResource(id = R.string.validate), onClick = {
             if (selectedProfile.isEmpty()) {
-                Toast.makeText(context, "Veuillez choisir un type de profil", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Veuillez choisir un type de profil", Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 Log.d("DefineProfileScreen", "Email: $email, Profile: $selectedProfile")
                 userViewModel.completeRegistration(email, selectedProfile)

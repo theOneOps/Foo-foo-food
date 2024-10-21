@@ -1,10 +1,11 @@
 package com.uds.foufoufood.viewmodel
 
-import android.widget.Toast
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.uds.foufoufood.model.Category
-import com.uds.foufoufood.model.Restaurant
+import com.uds.foufoufood.data_class.model.Category
+import com.uds.foufoufood.data_class.model.Restaurant
 
 class HomeViewModel : ViewModel() {
 

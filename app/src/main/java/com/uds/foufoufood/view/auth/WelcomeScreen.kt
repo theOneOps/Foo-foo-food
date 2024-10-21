@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -52,6 +53,12 @@ fun WelcomeScreen(
                 painter = painterResource(id = R.drawable.pizza),
                 contentScale = ContentScale.Crop
             )
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color.Transparent, Color.Black)
+                )
+            )
+
     ) {
         Column(
             modifier = Modifier
@@ -69,13 +76,13 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(70.dp))
             NetworksButtons(stringResource(id = R.string.sign_in_with), Color.White)
             Spacer(modifier = Modifier.height(30.dp))
-            EmailSignUpButton{
+            EmailSignUpButton {
                 navController.navigate("register")
             }
             Spacer(modifier = Modifier.height(16.dp))
             SignInLink {
-               // navController.navigate("login")
-                navController.navigate("home")
+                navController.navigate("login")
+                //navController.navigate("home")
             }
         }
     }

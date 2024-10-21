@@ -5,7 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.uds.foufoufood.model.User
+import com.uds.foufoufood.data_class.model.User
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -25,7 +25,12 @@ import coil.compose.rememberAsyncImagePainter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileAdminPage(navController: NavController, userEmail: String?,users :List<User>, onRoleChanged: (User, String) -> Unit) {
+fun UserProfileAdminPage(
+    navController: NavController,
+    userEmail: String?,
+    users: List<User>,
+    onRoleChanged: (User, String) -> Unit
+) {
     if (userEmail != null) {
         // Récupérer les détails de l'utilisateur
         val user = users.find { it.email == userEmail }
@@ -39,7 +44,10 @@ fun UserProfileAdminPage(navController: NavController, userEmail: String?,users 
                         title = { Text(text = "Profil Utilisateur") },
                         navigationIcon = {
                             IconButton(onClick = { navController.popBackStack() }) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour")
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = "Retour"
+                                )
                             }
                         }
                     )
@@ -72,7 +80,11 @@ fun UserProfileAdminPage(navController: NavController, userEmail: String?,users 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     // Sélecteur de rôle
-                    Text(text = "Changer le rôle", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        text = "Changer le rôle",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Button(
                             onClick = { showDropdown = true },
@@ -90,7 +102,7 @@ fun UserProfileAdminPage(navController: NavController, userEmail: String?,users 
                                 text = { Text("Client") },
                                 onClick = {
                                     selectedRole = "Client"
-                                    onRoleChanged(user,"Client")
+                                    onRoleChanged(user, "Client")
                                     showDropdown = false
                                 }
                             )
@@ -98,7 +110,7 @@ fun UserProfileAdminPage(navController: NavController, userEmail: String?,users 
                                 text = { Text("Livreur") },
                                 onClick = {
                                     selectedRole = "Livreur"
-                                    onRoleChanged(user,"Livreur")
+                                    onRoleChanged(user, "Livreur")
                                     showDropdown = false
                                 }
                             )
@@ -106,7 +118,7 @@ fun UserProfileAdminPage(navController: NavController, userEmail: String?,users 
                                 text = { Text("Restaurateur") },
                                 onClick = {
                                     selectedRole = "Restaurateur"
-                                    onRoleChanged(user,"Restaurateur")
+                                    onRoleChanged(user, "Restaurateur")
                                     showDropdown = false
                                 }
                             )

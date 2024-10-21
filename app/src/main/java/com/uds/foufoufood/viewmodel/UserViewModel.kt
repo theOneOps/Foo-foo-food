@@ -8,12 +8,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uds.foufoufood.activities.main.TokenManager.saveToken
-import com.uds.foufoufood.model.User
+import com.uds.foufoufood.data_class.model.User
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-class UserViewModel(private val userRepository: UserRepository,
-                    private val context: Context
+class UserViewModel(
+    private val userRepository: UserRepository,
+    private val context: Context
 ) : ViewModel() {
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> get() = _user

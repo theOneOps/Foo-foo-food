@@ -57,7 +57,11 @@ fun RegisterFirstPartScreen(
     // Réagir au changement d'état de registrationSuccess
     LaunchedEffect(registrationSuccess) {
         if (registrationSuccess == true) {
-            Toast.makeText(context, "Veuillez vérifier votre boîte de réception, un code de vérification vous a été envoyé", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                "Veuillez vérifier votre boîte de réception, un code de vérification vous a été envoyé",
+                Toast.LENGTH_SHORT
+            ).show()
             navController.navigate("verify_code/${email}")
         }
     }
@@ -110,13 +114,17 @@ fun RegisterFirstPartScreen(
             if (isValidName(name) && isValidEmail(email) && isValidPassword(password)) {
                 userViewModel.initiateRegistration(name, email, password)
             } else {
-                Toast.makeText(context, "Veuillez entrer des informations valides", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Veuillez entrer des informations valides",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        SignInText{
+        SignInText {
             navController.navigate(Screen.Register.route)
         }
 
@@ -148,6 +156,9 @@ fun SignInText(onNavigateToLogin: () -> Unit) {
         )
         Spacer(modifier = Modifier.width(10.dp))
 
-        TextLink(label = stringResource(id = R.string.sign_in_underlined), onClick = onNavigateToLogin)
+        TextLink(
+            label = stringResource(id = R.string.sign_in_underlined),
+            onClick = onNavigateToLogin
+        )
     }
 }

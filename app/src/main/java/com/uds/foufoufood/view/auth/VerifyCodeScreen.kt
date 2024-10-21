@@ -97,7 +97,8 @@ fun VerifyCodeScreen(
                 if (enteredCode.length == 6) {
                     userViewModel.verifyCode(email, enteredCode)
                 } else {
-                    Toast.makeText(context, "Veuillez entrer le code complet", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Veuillez entrer le code complet", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         )

@@ -1,4 +1,4 @@
-package com.uds.foufoufood.model
+package com.uds.foufoufood.data_class.model
 
 data class Category(
     val id: Int,

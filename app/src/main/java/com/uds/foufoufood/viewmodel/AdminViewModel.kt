@@ -1,14 +1,13 @@
 package com.uds.foufoufood.viewmodel
 
-import UserRepository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uds.foufoufood.model.User
-import kotlinx.coroutines.launch
+import com.uds.foufoufood.data_class.model.User
 import com.uds.foufoufood.repository.AdminRepository
+import kotlinx.coroutines.launch
 
 class AdminViewModel(private val repository: AdminRepository) : ViewModel() {
 
@@ -27,17 +26,27 @@ class AdminViewModel(private val repository: AdminRepository) : ViewModel() {
                     Log.d("AdminViewModel", "Réponse API: $usersList")
                     if (usersList != null && usersList.isNotEmpty()) {
                         _users.value = usersList
-                        Log.d("AdminViewModel", "Nombre d'utilisateurs récupérés: ${usersList.size}")
+                        Log.d(
+                            "AdminViewModel",
+                            "Nombre d'utilisateurs récupérés: ${usersList.size}"
+                        )
                     } else {
                         Log.e("AdminViewModel", "Aucun utilisateur trouvé dans la réponse.")
                     }
                 } else {
-                    _apiError.value = "Erreur lors de la récupération des utilisateurs: ${response?.message() ?: "Réponse nulle"}"
-                    Log.e("AdminViewModel", "Erreur lors de la récupération des utilisateurs: ${response?.message()}")
+                    _apiError.value =
+                        "Erreur lors de la récupération des utilisateurs: ${response?.message() ?: "Réponse nulle"}"
+                    Log.e(
+                        "AdminViewModel",
+                        "Erreur lors de la récupération des utilisateurs: ${response?.message()}"
+                    )
                 }
             } catch (e: Exception) {
                 _apiError.value = "Erreur: ${e.message}"
-                Log.e("AdminViewModel", "Exception lors de la récupération des utilisateurs: ${e.message}")
+                Log.e(
+                    "AdminViewModel",
+                    "Exception lors de la récupération des utilisateurs: ${e.message}"
+                )
             }
         }
     }

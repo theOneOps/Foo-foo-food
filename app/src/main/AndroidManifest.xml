@@ -27,7 +27,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
+        <!--<activity
             android:name=".activities.auth.DefineProfileActivity"
             android:exported="false" />
         <activity
@@ -41,7 +41,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.auth.VerifyCodeActivity"
-            android:exported="false" />
+            android:exported="false" />-->
 
     </application>
 

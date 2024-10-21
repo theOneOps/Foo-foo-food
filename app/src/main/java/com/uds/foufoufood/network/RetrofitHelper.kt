@@ -12,11 +12,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitHelper {
     companion object {
         private fun getBaseUrl(): String {
-            return if (isEmulator()) {
-                "http://10.0.2.2:3000"
-            } else {
-                "http://192.168.21.13:3000" // /!\ MODIFIER SELON SON ADRESSE IP
-            }
+            //return if (isEmulator()) {
+            //    "http://10.0.2.2:3000"
+            //} else {
+            //    "http://192.168.32.20:3000" // /!\ MODIFIER SELON SON ADRESSE IP
+            //}
+            return "http://10.0.2.2:3000"
         }
 
         private fun isEmulator(): Boolean {
@@ -37,7 +38,8 @@ class RetrofitHelper {
 
             // Crée un intercepteur de logging
             val loggingInterceptor = HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY  // Affiche les détails complets des requêtes/réponses
+                level =
+                    HttpLoggingInterceptor.Level.BODY  // Affiche les détails complets des requêtes/réponses
             }
 
             // Intercepteur pour injecter le token JWT dans l'en-tête Authorization
@@ -46,7 +48,10 @@ class RetrofitHelper {
                 val requestBuilder = chain.request().newBuilder()
 
                 if (token != null) {
-                    requestBuilder.addHeader("Authorization", "Bearer $token")  // Ajoute le token JWT dans l'en-tête
+                    requestBuilder.addHeader(
+                        "Authorization",
+                        "Bearer $token"
+                    )  // Ajoute le token JWT dans l'en-tête
                 }
 
                 chain.proceed(requestBuilder.build())

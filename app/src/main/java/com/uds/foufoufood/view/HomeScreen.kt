@@ -1,5 +1,6 @@
 package com.uds.foufoufood.view
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,11 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerValue
@@ -52,27 +49,57 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
-import com.uds.foufoufood.model.Category
-import com.uds.foufoufood.model.Restaurant
+import com.uds.foufoufood.data_class.model.Address
+import com.uds.foufoufood.data_class.model.Category
+import com.uds.foufoufood.data_class.model.Menu
+import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.ui.component.CategoryPills
 import com.uds.foufoufood.ui.component.RestaurantCard
 import com.uds.foufoufood.ui.component.SearchBar
 import com.uds.foufoufood.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
-@Composable
-fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = viewModel()) {
+val restaurantTest = Restaurant(
+    name = "Le Gourmet",
+    address = Address("123 Rue de Paris", "75000", "Paris", "France"),
+    speciality = "French cuisine",
+    phone = "0123456789",
+    openingHours = "09:00 - 22:00",
+    items = listOf(
+        Menu(
+            name = "Coq au Vin",
+            descriptor = "Classic French chicken dish cooked with wine",
+            price = 25.0,
+            category = "Main course",
+            image = "https://images.unsplash.com/photo-1468070975228-085c1fdd2d3e?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            restaurantId = "1"
+        ), Menu(
+            name = "Crème Brûlée",
+            descriptor = "Rich custard base topped with a layer of caramelized sugar",
+            price = 10.0,
+            category = "Dessert",
+            image = "https://images.unsplash.com/photo-1487004121828-9fa15a215a7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            restaurantId = "1"
+        )
+    ),
+    rating = 4.7,
+    reviews = listOf("Delicious food!", "Amazing ambiance."),
+    imageUrl = "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    category = "French"
+)
 
+@Composable
+fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel) {
+    Log.d("HomeScreen", "HomeScreen")
     // State for controlling drawer
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
     // Initialize the categories and restaurants here with drawables
     LaunchedEffect(Unit) {
-        viewModel.initialize(
+        homeViewModel.initialize(
             categoriesList = listOf(
                 Category(1, "Pizza", R.drawable.ic_category_pizza),
                 Category(2, "Burger", R.drawable.ic_category_burger),
@@ -82,12 +109,8 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
                 Category(6, "Pizza", R.drawable.ic_category_pizza),
                 Category(7, "Burger", R.drawable.ic_category_burger),
 
-            ),
-            restaurantsList = listOf(
-                Restaurant(1, "Le Gourmet", "Burger", R.drawable.ph_restaurant),
-                Restaurant(2, "Sushi World", "Mexican", R.drawable.ph_restaurant),
-                Restaurant(3, "Pizza Palace", "Pizza", R.drawable.ph_restaurant)
-            )
+                ),
+            restaurantsList = listOf(restaurantTest)
         )
     }
 
@@ -103,7 +126,11 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
             })
         },
         content = {
-            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
                 // Row at the top with title and menu button
                 Row(
                     modifier = Modifier
@@ -136,8 +163,8 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
 
                 // Search Bar
                 SearchBar(
-                    searchText = viewModel.searchText,
-                    onSearchTextChanged = viewModel::onSearchQueryChanged
+                    searchText = homeViewModel.searchText,
+                    onSearchTextChanged = homeViewModel::onSearchQueryChanged
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -147,14 +174,14 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = view
                     // Category Pills
                     item {
                         CategoryPills(
-                            categories = viewModel.categories,
-                            selectedCategory = viewModel.selectedCategory,
-                            onCategorySelected = viewModel::onCategorySelected
+                            categories = homeViewModel.categories,
+                            selectedCategory = homeViewModel.selectedCategory,
+                            onCategorySelected = homeViewModel::onCategorySelected
                         )
                     }
 
                     // Restaurant List
-                    items(viewModel.filteredRestaurants) { restaurant ->
+                    items(homeViewModel.filteredRestaurants) { restaurant ->
                         RestaurantCard(restaurant = restaurant)
                     }
                 }
@@ -241,10 +268,17 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 //.height(50.dp)
-                .padding(16.dp).align(Alignment.Start)
+                .padding(16.dp)
+                .align(Alignment.Start)
         ) {
-            Icon(ImageVector.vectorResource(R.drawable.ic_drawer_logout), contentDescription = stringResource(R.string.logout),
-                tint = colorResource(R.color.white), modifier = Modifier.size(48.dp).padding(end = 12.dp))
+            Icon(
+                ImageVector.vectorResource(R.drawable.ic_drawer_logout),
+                contentDescription = stringResource(R.string.logout),
+                tint = colorResource(R.color.white),
+                modifier = Modifier
+                    .size(48.dp)
+                    .padding(end = 12.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Text(stringResource(R.string.logout), color = colorResource(R.color.white))
         }
@@ -264,7 +298,9 @@ fun DrawerMenuItem(icon: ImageVector, label: String, onClick: () -> Unit) {
         Icon(
             imageVector = icon,
             contentDescription = label,
-            modifier = Modifier.size(36.dp).padding(4.dp),
+            modifier = Modifier
+                .size(36.dp)
+                .padding(4.dp),
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -280,12 +316,12 @@ fun DrawerMenuItem(icon: ImageVector, label: String, onClick: () -> Unit) {
 
 //        // Category Pills
 //        CategoryPills(
-//            categories = viewModel.categories,
-//            selectedCategory = viewModel.selectedCategory,
-//            onCategorySelected = viewModel::onCategorySelected
+//            categories = homeViewModel.categories,
+//            selectedCategory = homeViewModel.selectedCategory,
+//            onCategorySelected = homeViewModel::onCategorySelected
 //        )
 //
 //        Spacer(modifier = Modifier.height(16.dp))
 //
 //        // Restaurant List
-//        RestaurantList(restaurants = viewModel.filteredRestaurants)
+//        RestaurantList(restaurants = homeViewModel.filteredRestaurants)

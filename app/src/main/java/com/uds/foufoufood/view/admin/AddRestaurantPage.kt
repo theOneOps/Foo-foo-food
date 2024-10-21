@@ -44,7 +44,8 @@ fun AddRestaurantPage(navController: NavController, onRestaurantAdded: (Restaura
                 onClick = {
                     if (restaurantName.isNotEmpty()) {
                         // Créer un nouvel objet restaurant et le passer à la fonction de callback
-                        val newRestaurant = Restaurant(id = (0..1000).random().toString(), name = restaurantName)
+                        val newRestaurant =
+                            Restaurant(id = (0..1000).random().toString(), name = restaurantName)
                         onRestaurantAdded(newRestaurant)
                         navController.popBackStack() // Retour à la liste des restaurants après l'ajout
                     }

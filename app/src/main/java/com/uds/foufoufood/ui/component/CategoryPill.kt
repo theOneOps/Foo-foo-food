@@ -23,10 +23,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.FontScaling
 import androidx.compose.ui.unit.dp
 import com.uds.foufoufood.R
-import com.uds.foufoufood.model.Category
+import com.uds.foufoufood.data_class.model.Category
 
 @Composable
 fun CategoryPills(
@@ -89,7 +88,7 @@ fun CategoryPill(category: Category, isSelected: Boolean, onClick: () -> Unit) {
                 else colorResource(id = R.color.black), // Text color based on selection
                 style = MaterialTheme.typography.bodySmall,
 
-            )
+                )
         }
     }
 }
