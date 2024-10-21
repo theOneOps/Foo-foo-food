@@ -38,6 +38,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -66,6 +67,20 @@ dependencies {
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.androidx.compose.runtime.livedata)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.compose.ui.ui)                        // Bibliothèque de base Compose UI
+    implementation(libs.androidx.compose.ui.ui.tooling.preview)         // Pour l'aperçu des UI dans Android Studio
+    implementation(libs.material3)
+    implementation (libs.google.accompanist.coil)
+    implementation (libs.coil.kt.coil.svg)
+    implementation (libs.androidx.navigation.compose)
+
+
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
