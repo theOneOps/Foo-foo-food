@@ -69,6 +69,10 @@
     <string name="featured_restaurant" translatable="true">Restaurant à la une</string>
     <string name="view_all" translatable="true">Voir Tous</string>
     <string name="popular_items" translatable="true">Les plats préférés</string>
+    <string name="my_orders">Mes commandes</string>
+    <string name="my_profile">Mon profil</string>
+    <string name="delivery_address">Adresse de livraison</string>
+    <string name="logout">Déconnexion</string>
     <!--
     <string name="" translatable="true"></string>
     <string name="" translatable="true"></string>

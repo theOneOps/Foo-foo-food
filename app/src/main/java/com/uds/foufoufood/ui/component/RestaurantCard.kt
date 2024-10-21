@@ -42,15 +42,11 @@ fun RestaurantCard(restaurant: Restaurant) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Clip the image to match the top corners of the card
             Image(
                 painter = painterResource(id = restaurant.imageResId),
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)) // Ensure image is clipped at top
-                    .fillMaxWidth(), // Ensures no white space
+                    .fillMaxWidth(),
                 contentScale = ContentScale.Crop // Make sure image fills the entire area
             )
 

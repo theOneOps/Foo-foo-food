@@ -27,7 +27,6 @@ class HomeViewModel : ViewModel() {
 
     // Initialize categories and restaurants (you can load from a repository or hardcode)
     fun initialize(categoriesList: List<Category>, restaurantsList: List<Restaurant>) {
-
         categories = categoriesList
         restaurants = restaurantsList
         filteredRestaurants = restaurants // Initially, all restaurants are displayed
