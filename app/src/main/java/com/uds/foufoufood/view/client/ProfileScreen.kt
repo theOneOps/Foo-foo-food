@@ -26,6 +26,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -61,6 +62,8 @@ fun ProfileScreen(navController: NavController, userViewModel: UserViewModel) {
     val role = userViewModel.user.value?.role
     val address = userViewModel.user.value?.address
     val hasAddress = address != null
+
+    val errorMessage by userViewModel.errorMessage.observeAsState()
 
     Column(
         modifier = Modifier
@@ -132,6 +135,10 @@ fun ProfileScreen(navController: NavController, userViewModel: UserViewModel) {
         } else {
             NoAddressSection(onAddAddressClick = { /* TODO: Ajouter une adresse */ })
         }
+    }
+
+    errorMessage?.let {
+        Text(text = "$it", color = Color.Red, modifier = Modifier.padding(16.dp))
     }
 }
 

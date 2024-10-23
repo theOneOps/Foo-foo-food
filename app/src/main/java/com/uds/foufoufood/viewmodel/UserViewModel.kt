@@ -49,7 +49,6 @@ class UserViewModel(
             _loading.value = true
             try {
                 val response = userRepository.login(email, password)
-                Log.d("UserViewModel", response.toString())
                 if (response != null) {
                     _user.value = response.user
                     _token.value = response.token
@@ -58,7 +57,7 @@ class UserViewModel(
                     Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
                     _errorMessage.value = null
                 } else {
-                    _errorMessage.value = "Connexion échouée"
+                    _errorMessage.value = "Erreur, connexion échouée"
                 }
             } catch (e: IOException) {
                 _errorMessage.value = "Erreur réseau, veuillez vérifier votre connexion"
@@ -182,6 +181,7 @@ class UserViewModel(
                 val success = userRepository.updatePassword(token, password)
                 if (success) {
                     _errorMessage.value = null
+                    Toast.makeText(context, "Mot de passe modifié avec succès", Toast.LENGTH_SHORT).show()
                 } else {
                     _errorMessage.value = "Erreur lors de la modification du mot de passe, veuillez réessayer"
                 }

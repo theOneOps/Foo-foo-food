@@ -124,7 +124,7 @@ fun LoginScreen(
 
     // Afficher les erreurs de connexion si elles existent
     errorMessage?.let {
-        Text(text = "Erreur: $it", color = Color.Red, modifier = Modifier.padding(16.dp))
+        Text(text = "$it", color = Color.Red, modifier = Modifier.padding(16.dp))
     }
 }
 
