@@ -52,10 +52,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Address
-import com.uds.foufoufood.data_class.model.Category
+import com.uds.foufoufood.data_class.model.Speciality
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Restaurant
-import com.uds.foufoufood.ui.component.CategoryPills
+import com.uds.foufoufood.ui.component.SpecialityPills
 import com.uds.foufoufood.ui.component.RestaurantCard
 import com.uds.foufoufood.ui.component.SearchBar
 import com.uds.foufoufood.viewmodel.HomeViewModel
@@ -86,8 +86,7 @@ val restaurantTest = Restaurant(
     ),
     rating = 4.7,
     reviews = listOf("Delicious food!", "Amazing ambiance."),
-    imageUrl = "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    category = "French"
+    imageUrl = "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 )
 
 @Composable
@@ -100,17 +99,16 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel) {
     // Initialize the categories and restaurants here with drawables
     LaunchedEffect(Unit) {
         homeViewModel.initialize(
-            categoriesList = listOf(
-                Category(1, "Pizza", R.drawable.ic_category_pizza),
-                Category(2, "Burger", R.drawable.ic_category_burger),
-                Category(3, "Mexican", R.drawable.ic_category_mexican),
-                Category(4, "Pizza", R.drawable.ic_category_pizza),
-                Category(5, "Burger", R.drawable.ic_category_burger),
-                Category(6, "Pizza", R.drawable.ic_category_pizza),
-                Category(7, "Burger", R.drawable.ic_category_burger),
+            specialityList = listOf(
+                Speciality(1, "Pizza", R.drawable.ic_category_pizza),
+                Speciality(2, "Burger", R.drawable.ic_category_burger),
+                Speciality(3, "Mexican", R.drawable.ic_category_mexican),
+                Speciality(4, "Pizza", R.drawable.ic_category_pizza),
+                Speciality(5, "Burger", R.drawable.ic_category_burger),
+                Speciality(6, "Pizza", R.drawable.ic_category_pizza),
+                Speciality(7, "Burger", R.drawable.ic_category_burger),
 
-                ),
-            restaurantsList = listOf(restaurantTest)
+                )
         )
     }
 
@@ -173,10 +171,10 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel) {
                 LazyColumn {
                     // Category Pills
                     item {
-                        CategoryPills(
-                            categories = homeViewModel.categories,
-                            selectedCategory = homeViewModel.selectedCategory,
-                            onCategorySelected = homeViewModel::onCategorySelected
+                        SpecialityPills(
+                            specialities = homeViewModel.specialities,
+                            selectedSpeciality = homeViewModel.selectedSpeciality,
+                            onSpecialitySelected = homeViewModel::onSpecialitySelected
                         )
                     }
 
@@ -313,15 +311,3 @@ fun DrawerMenuItem(icon: ImageVector, label: String, onClick: () -> Unit) {
         )
     }
 }
-
-//        // Category Pills
-//        CategoryPills(
-//            categories = homeViewModel.categories,
-//            selectedCategory = homeViewModel.selectedCategory,
-//            onCategorySelected = homeViewModel::onCategorySelected
-//        )
-//
-//        Spacer(modifier = Modifier.height(16.dp))
-//
-//        // Restaurant List
-//        RestaurantList(restaurants = homeViewModel.filteredRestaurants)

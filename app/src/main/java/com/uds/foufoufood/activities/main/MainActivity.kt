@@ -5,9 +5,11 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.compose.rememberNavController
+import com.uds.foufoufood.network.RestaurantApi
 import com.uds.foufoufood.network.RetrofitHelper
 import com.uds.foufoufood.network.UserApi
 import com.uds.foufoufood.repository.AdminRepository
+import com.uds.foufoufood.repository.RestaurantRepository
 import com.uds.foufoufood.view.MainScreen
 import com.uds.foufoufood.viewmodel.AdminViewModel
 import com.uds.foufoufood.viewmodel.HomeViewModel
@@ -26,13 +28,16 @@ class MainActivity : AppCompatActivity() {
         val userApi = retrofit.create(UserApi::class.java)
         val userRepository = UserRepository(userApi)
 
+        val restaurantApi = retrofit.create(RestaurantApi::class.java)
+        val restaurantRepository = RestaurantRepository(restaurantApi)
+
         userViewModel = UserViewModel(userRepository, this)
 
         val adminRepository = AdminRepository(userApi, this)
 
         adminViewModel = AdminViewModel(adminRepository)
 
-        homeViewModel = HomeViewModel()
+        homeViewModel = HomeViewModel(restaurantRepository)
 
         setContent {
             val navController = rememberNavController()
