@@ -54,7 +54,7 @@
     <string name="enter_valid_email" translatable="true">Veuillez entrer une adresse mail valide</string>
 
     <string name="change_email" translatable="true">Changer de mail</string>
-    <string name="password_constraint" translatable="true">Votre mot de passe doit être long d\'au moins 8 caractères</string>
+    <string name="password_constraint" translatable="true">Votre mot de passe doit être long d\'au moins 6 caractères</string>
     <string name="new_password" translatable="true">Entrez votre nouveau mot de passe</string>
     <string name="confirm_new_password" translatable="true">Confirmez le nouveau mot de passe</string>
 

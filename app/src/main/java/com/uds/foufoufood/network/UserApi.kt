@@ -52,7 +52,9 @@ interface UserApi {
     ): Response<ApiResponse>
 
     @PUT("api/users/auth/update-password")
-    suspend fun updatePassword(@Body passwordRequest: PasswordRequest): Response<ApiResponse>
+    suspend fun updatePassword(@Header("Authorization") token: String,
+                               @Body passwordRequest: PasswordRequest
+    ): Response<ApiResponse>
 
     @PUT("api/users/auth/update-address")
     suspend fun updateAddress(@Body addressRequest: AddressRequest): Response<ApiResponse>

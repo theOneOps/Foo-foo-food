@@ -132,7 +132,7 @@ fun RegisterFirstPartScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         SignInText {
-            navController.navigate(Screen.Register.route)
+            navController.navigate(Screen.Login.route)
         }
 
         Spacer(modifier = Modifier.height(20.dp))

@@ -9,6 +9,7 @@ import com.uds.foufoufood.data_class.request.ProfileRequest
 import com.uds.foufoufood.data_class.request.RegistrationRequest
 import com.uds.foufoufood.data_class.request.UpdateEmailRequest
 import com.uds.foufoufood.data_class.request.VerificationRequest
+import com.uds.foufoufood.data_class.response.ApiResponse
 import com.uds.foufoufood.data_class.response.AuthResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -114,9 +115,9 @@ class UserRepository(private val userApi: UserApi) {
         }
     }
 
-    suspend fun updatePassword(password: String): Boolean = withContext(Dispatchers.IO) {
+    suspend fun updatePassword(token: String, password: String): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
-            val response = userApi.updatePassword(PasswordRequest(password))
+            val response = userApi.updatePassword("Bearer $token", PasswordRequest(password))
             response.isSuccessful
         } catch (e: Exception) {
             Log.e("UserRepository", "Erreur lors de l'édition du mot de passe: ${e.message}")

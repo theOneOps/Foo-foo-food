@@ -3,6 +3,7 @@ package com.uds.foufoufood.viewmodel
 import UserRepository
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -173,9 +174,16 @@ class UserViewModel(
     fun updatePassword(password: String) {
         viewModelScope.launch {
             try {
-                val success = userRepository.updatePassword(password)
+                val token = getToken(context)
+                if (token == null) {
+                    _errorMessage.value = "Vous n'êtes pas connecté"
+                    return@launch
+                }
+                val success = userRepository.updatePassword(token, password)
                 if (success) {
-                    _user.value?.password = password
+                    _errorMessage.value = null
+                } else {
+                    _errorMessage.value = "Erreur lors de la modification du mot de passe, veuillez réessayer"
                 }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Erreur lors de l'édition du mot de passe: ${e.message}")
