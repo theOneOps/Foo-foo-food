@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -36,22 +37,28 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.uds.foufoufood.R
+import com.uds.foufoufood.activities.main.TokenManager.getToken
+import com.uds.foufoufood.activities.main.TokenManager.getUserId
 import com.uds.foufoufood.data_class.model.Menu
+import com.uds.foufoufood.viewmodel.MenuViewModel
 
 
-val menuTest = Menu(
-    name = "Crème Brûlée",
-    description = "Rich custard base topped with a layer of caramelized sugar",
-    price = 10.0,
-    category = "Dessert",
-    image = "https://images.unsplash.com/photo-1487004121828-9fa15a215a7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    restaurantId = "1",
-    _id = "ABC",
-)
+//val menuTest = Menu(
+//    name = "Crème Brûlée",
+//    description = "Rich custard base topped with a layer of caramelized sugar",
+//    price = 10.0,
+//    category = "Dessert",
+//    image = "https://images.unsplash.com/photo-1487004121828-9fa15a215a7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//    restaurantId = "1",
+//    _id = "ABC",
+//)
 
-@Preview
 @Composable
-fun MenuRestaurant(menu: Menu = menuTest) {
+fun MenuRestaurant(menu: Menu, menuViewModel: MenuViewModel , isConnectedRestaurateur:Boolean) {
+    val context = LocalContext.current
+    val token = getToken(context) ?: ""
+    val userId = getUserId(context) ?: ""
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Card(
             modifier = Modifier
@@ -129,7 +136,8 @@ fun MenuRestaurant(menu: Menu = menuTest) {
                         }
                         // todo : tester si l'user connecté est bien celui qui possède
                         //  le restaurant, voire dans ClientRestaurantScreen
-                        ModifyMenu(menu)
+                        if (isConnectedRestaurateur)
+                            ModifyMenu(token, menuViewModel, menu)
                     }
                     Spacer(Modifier.height(10.dp))
                     Row(
@@ -204,7 +212,7 @@ fun AddToCartButton() {
 }
 
 @Composable
-fun ModifyMenu(menu: Menu) {
+fun ModifyMenu(token:String, menuViewModel: MenuViewModel, menu: Menu) {
     val openDialog = remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
@@ -224,8 +232,14 @@ fun ModifyMenu(menu: Menu) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        FormModifyMenu(menu, onUpdate = {
-                            TODO("appel api pour modifier le menu")
+                        FormModifyMenu(menu, onUpdate = {menuRes->
+                            menuViewModel.updateMenu(token,
+                                menuRes._id,
+                                menuRes.name,
+                                menuRes.description,
+                                menuRes.price,
+                                menuRes.category,
+                                menuRes.restaurantId)
                         })
                     }
                 }

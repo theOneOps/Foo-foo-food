@@ -36,5 +36,4 @@ interface MenuApi{
         @Header("Authorization") token:String,
         @Path("menuId") menuId:String
     ):Response<MenuResponse>
-
 }

@@ -1,5 +1,6 @@
 package com.uds.foufoufood.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -86,11 +88,13 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit) {
         Button(
             onClick = {
                 // Créer un nouvel objet Menu avec les valeurs mises à jour
-                val updatedMenu = menu.copy(
+                val updatedMenu = Menu(
+                    menu._id,
                     name = nameState.value,
                     description = descriptorState.value,
                     price = priceState.value.toDoubleOrNull() ?: menu.price,
                     category = categoryState.value,
+                    menu.restaurantId,
                     image = imageState.value
                 )
                 onUpdate(updatedMenu) // Appeler la fonction de mise à jour

@@ -268,7 +268,7 @@ fun RestaurantComponent(restaurant: Restaurant) {
 }
 
 @Composable
-fun MenuComponent(menu:Menu, isRestauarateur: Boolean = true, menuViewModel: MenuViewModel) {
+fun MenuComponent(menu:Menu, isConnectedRestaurateur: Boolean, menuViewModel: MenuViewModel) {
     // State pour contrôler l'affichage du dialog
     val openDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -306,7 +306,7 @@ fun MenuComponent(menu:Menu, isRestauarateur: Boolean = true, menuViewModel: Men
                 Column(Modifier.padding(top = 2.dp, bottom = 2.dp)) {
                     Text(menu.name, style = TextStyle(Color.Black, fontSize = 30.sp))
                     Text(menu.description, style = TextStyle(Color.Gray, fontSize = 20.sp))
-                    if (isRestauarateur) {
+                    if (isConnectedRestaurateur) {
                         Box(
                             Modifier
                                 .fillMaxWidth()
@@ -332,16 +332,16 @@ fun MenuComponent(menu:Menu, isRestauarateur: Boolean = true, menuViewModel: Men
             Surface(
                 shape = RoundedCornerShape(16.dp),
             ) {
-                MenuRestaurant(menu = menu) // Le component à afficher dans le dialog
+                MenuRestaurant(menu,menuViewModel, isConnectedRestaurateur) // Le component à afficher dans le dialog
             }
         }
     }
 }
 
 @Composable
-fun PrintAllMenus(menus:List<Menu>,menuViewModel: MenuViewModel, isRestaurateur: Boolean) {
+fun PrintAllMenus(menus:List<Menu>,menuViewModel: MenuViewModel, isConnectedRestaurateur: Boolean) {
     menus.forEach { e ->
-        MenuComponent(e, isRestaurateur, menuViewModel)
+        MenuComponent(e, isConnectedRestaurateur, menuViewModel)
     }
 }
 
