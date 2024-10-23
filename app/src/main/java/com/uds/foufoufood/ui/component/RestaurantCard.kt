@@ -1,6 +1,6 @@
 package com.uds.foufoufood.ui.component
-
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,24 +21,43 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Restaurant
+import com.uds.foufoufood.navigation.Screen
+import com.uds.foufoufood.viewmodel.MenuViewModel
 
-@Composable
-fun RestaurantList(restaurants: List<Restaurant>) {
-    LazyColumn {
-        items(restaurants) { restaurant ->
-            RestaurantCard(restaurant = restaurant)
-        }
-    }
-}
 
+
+//@Composable
+//fun RestaurantList(
+//    navHostController: NavHostController,
+//    menuViewModel: MenuViewModel,
+//    restaurants: List<Restaurant>
+//) {
+//    LazyColumn {
+//        items(restaurants) { restaurant ->
+//            RestaurantCard(navHostController, menuViewModel, restaurant)
+//        }
+//    }
+//}
+
+// todo: ajouter le modifier.clickable sur cette card pour diriger l'utilisateur
+//  sur le screen du restaurant correspondant avec ses menus
 @Composable
-fun RestaurantCard(restaurant: Restaurant) {
+fun RestaurantCard(
+    navHostController: NavHostController,
+    menuViewModel: MenuViewModel,
+    restaurant: Restaurant
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable {
+                menuViewModel.setSharedRestaurant(restaurant)
+                navHostController.navigate(Screen.ClientRestaurantAllMenusPage.route)
+            }
             .padding(8.dp), // Optional padding to space between cards
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(8.dp),
@@ -81,7 +100,7 @@ fun RestaurantCard(restaurant: Restaurant) {
                         .padding(horizontal = 12.dp, vertical = 8.dp)
                 ) {
                     Text(
-                        text = restaurant.category,
+                        text = restaurant.speciality,
                         style = MaterialTheme.typography.bodySmall,
                         color = colorResource(R.color.grey),
                         fontSize = 12.sp,

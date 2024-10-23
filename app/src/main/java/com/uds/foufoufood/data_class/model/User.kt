@@ -8,5 +8,6 @@ data class User(
     val avatarUrl: String,
     var role: String? = null,
     var address: Address? = null,
-    var emailValidated:Boolean?= false
+    var emailValidated:Boolean?= false,
+    val _id:String,
 )

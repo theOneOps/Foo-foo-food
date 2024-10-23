@@ -9,8 +9,8 @@ import com.uds.foufoufood.data_class.response.AuthResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class UserRepository(private val userApi: UserApi) {
-
+class UserRepository(private val userApi: UserApi)
+{
     suspend fun login(email: String, password: String): AuthResponse? =
         withContext(Dispatchers.IO) {
             try {
@@ -23,7 +23,7 @@ class UserRepository(private val userApi: UserApi) {
                     null
                 }
             } catch (e: Exception) {
-                Log.e("UserRepository", "Erreur réseau: ${e.message}")
+                Log.e("UserRepository", "Erreur reseau: ${e.message}")
                 null
             }
         }
@@ -37,12 +37,12 @@ class UserRepository(private val userApi: UserApi) {
             } else {
                 Log.e(
                     "UserRepository",
-                    "Erreur lors de la récupération du profil: ${response.code()}"
+                    "Erreur lors de la recuperation du profil: ${response.code()}"
                 )
                 null
             }
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur réseau: ${e.message}")
+            Log.e("UserRepository", "Erreur reseau: ${e.message}")
             null
         }
     }
@@ -67,7 +67,7 @@ class UserRepository(private val userApi: UserApi) {
             val response = userApi.verifyCode(request)
             response.isSuccessful && response.body()?.success == true
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur de vérification: ${e.message}")
+            Log.e("UserRepository", "Erreur de verification: ${e.message}")
             false
         }
     }

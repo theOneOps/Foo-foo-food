@@ -264,17 +264,6 @@ fun NetworksButtons(type: String, color: Color) {
     }
 }
 
-@Composable
-fun TextLink(label: String, onClick: () -> Unit) {
-    Text(
-        text = label,
-        fontSize = 14.sp,
-        fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
-        textDecoration = TextDecoration.Underline,
-        color = colorResource(id = R.color.orange),
-        modifier = Modifier.clickable { onClick() }
-    )
-}
 
 @Composable
 fun RadioButtonWithLabel(label: String, selected: Boolean, onSelect: () -> Unit) {
@@ -299,4 +288,16 @@ fun RadioButtonWithLabel(label: String, selected: Boolean, onSelect: () -> Unit)
             fontFamily = FontFamily(Font(R.font.sofiapro_regular))
         )
     }
+}
+
+@Composable
+fun TextLink(label: String, onClick: () -> Unit) {
+    Text(
+        text = label,
+        fontSize = 14.sp,
+        fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
+        textDecoration = TextDecoration.Underline,
+        color = colorResource(id = R.color.orange),
+        modifier = Modifier.clickable { onClick() }
+    )
 }

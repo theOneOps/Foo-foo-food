@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uds.foufoufood.activities.main.TokenManager.saveToken
+import com.uds.foufoufood.activities.main.TokenManager.saveUserId
 import com.uds.foufoufood.data_class.model.User
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -68,6 +69,7 @@ class UserViewModel(
                     _token.value = response.token
                     // Stocke le token dans SharedPreferences
                     saveToken(context, response.token)
+                    saveUserId(context,response.user._id)
                     Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
                     _errorMessage.value = null
                 } else {

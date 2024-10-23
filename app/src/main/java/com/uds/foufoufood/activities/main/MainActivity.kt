@@ -5,12 +5,15 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.compose.rememberNavController
+import com.uds.foufoufood.network.MenuApi
 import com.uds.foufoufood.network.RetrofitHelper
 import com.uds.foufoufood.network.UserApi
 import com.uds.foufoufood.repository.AdminRepository
+import com.uds.foufoufood.repository.MenuRepository
 import com.uds.foufoufood.view.MainScreen
 import com.uds.foufoufood.viewmodel.AdminViewModel
 import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 
@@ -18,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var adminViewModel: AdminViewModel
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var menuViewModel: MenuViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +38,12 @@ class MainActivity : AppCompatActivity() {
 
         homeViewModel = HomeViewModel()
 
+        val menuApi = retrofit.create(MenuApi::class.java)
+
+        val menuRepository = MenuRepository(menuApi)
+
+        menuViewModel = MenuViewModel(menuRepository)
+
         setContent {
             val navController = rememberNavController()
             MainScreen(
@@ -41,6 +51,7 @@ class MainActivity : AppCompatActivity() {
                 userViewModel = userViewModel,
                 adminViewModel = adminViewModel,
                 homeViewModel = homeViewModel,
+                menuViewModel = menuViewModel,
             )
         }
     }

@@ -10,5 +10,6 @@ data class Restaurant(
     val rating: Double,
     val reviews:List<String>,
     val imageUrl: String,
-    val category: String
+    val userId:String,
+    val restaurantId:String
 )
