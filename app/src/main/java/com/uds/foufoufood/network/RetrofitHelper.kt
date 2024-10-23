@@ -12,11 +12,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitHelper {
     companion object {
         private fun getBaseUrl(): String {
-            //return if (isEmulator()) {
-            //    "http://10.0.2.2:3000"
-            //} else {
-            //    "http://192.168.32.20:3000" // /!\ MODIFIER SELON SON ADRESSE IP
-            //}
             return "http://10.0.2.2:3000"
         }
 

@@ -27,11 +27,15 @@ fun MainScreen(
     val user by userViewModel.user.observeAsState()
     var connectUser by remember { mutableStateOf<String?>("") }
     Log.d("MainScreen", "User: $user")
+    Log.d("MainScreen", "ConnectUser: $connectUser")
 
     // Gérer la mise à jour du rôle utilisateur
     LaunchedEffect(user) {
         user?.let {
             connectUser = it.role
+        }
+        if (user == null) {
+            connectUser = ""
         }
     }
 
@@ -43,7 +47,6 @@ fun MainScreen(
         AdminNavHost(navController, adminViewModel)
     } else if (connectUser == "client") {
         Log.d("MainScreen", "Client")
-
         // Si l'utilisateur est un utilisateur classique, afficher UserNavHost
         ConnectedNavHost(navController, userViewModel, homeViewModel)
     } else {

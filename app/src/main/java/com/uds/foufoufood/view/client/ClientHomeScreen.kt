@@ -51,7 +51,7 @@ import com.uds.foufoufood.data_class.model.Restaurant
 
 val restaurantTest = Restaurant(
     name = "Le Gourmet",
-    address = Address("123 Rue de Paris", "75000", "Paris", "France"),
+    address = Address(123, "Rue de Paris", "75000", "Paris", "France"),
     speciality = "French cuisine",
     phone = "0123456789",
     openingHours = "09:00 - 22:00",

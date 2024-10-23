@@ -1,6 +1,7 @@
 package com.uds.foufoufood.view
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,13 +33,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,15 +62,17 @@ import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.data_class.model.Category
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Restaurant
+import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.ui.component.CategoryPills
 import com.uds.foufoufood.ui.component.RestaurantCard
 import com.uds.foufoufood.ui.component.SearchBar
 import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 val restaurantTest = Restaurant(
     name = "Le Gourmet",
-    address = Address("123 Rue de Paris", "75000", "Paris", "France"),
+    address = Address(123, "Rue de Paris", "75000", "Paris", "France"),
     speciality = "French cuisine",
     phone = "0123456789",
     openingHours = "09:00 - 22:00",
@@ -91,8 +100,7 @@ val restaurantTest = Restaurant(
 )
 
 @Composable
-fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel) {
-    Log.d("HomeScreen", "HomeScreen")
+fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel, userViewModel: UserViewModel) {
     // State for controlling drawer
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -123,7 +131,8 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel) {
         drawerContent = {
             DrawerContent(navController = navController, closeDrawer = {
                 scope.launch { drawerState.close() }
-            })
+            },
+            logout = userViewModel::logout, userViewModel = userViewModel)
         },
         content = {
             Column(
@@ -191,7 +200,12 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel) {
 }
 
 @Composable
-fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
+fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit, logout: () -> Unit, userViewModel: UserViewModel) {
+    val context = LocalContext.current
+
+    val name = userViewModel.user.value?.name ?: ""
+    val email = userViewModel.user.value?.email ?: ""
+
     // Get screen width for 80% drawer width
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val drawerWidth = screenWidth * 0.8f
@@ -222,8 +236,8 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
 
             // User information
             Column {
-                Text(text = "Farion Wick", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                Text(text = "farionwick@gmail.com", fontSize = 14.sp, color = Color.Gray)
+                Text(text = name, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Text(text = email, fontSize = 14.sp, color = Color.Gray)
             }
         }
 
@@ -243,6 +257,7 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
             onClick = {
                 closeDrawer()
                 // Handle navigation to profile
+                navController.navigate(Screen.Profile.route)
             }
         )
 
@@ -261,7 +276,9 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
         Button(
             onClick = {
                 closeDrawer()
-                // Handle log out action
+                logout()
+                Toast.makeText(context, R.string.logout_success, Toast.LENGTH_SHORT).show()
+                navController.navigate(Screen.Welcome.route)
             },
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.orange)), // Orange color
             shape = RoundedCornerShape(36.dp),

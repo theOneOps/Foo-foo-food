@@ -1,6 +1,6 @@
-package com.uds.foufoufood.ui.page
+package com.uds.foufoufood.view.client
 
-import androidx.compose.foundation.Image
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,21 +12,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,16 +38,20 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.uds.foufoufood.R
-import com.uds.foufoufood.data_class.model.User
+import com.uds.foufoufood.navigation.Screen
+import com.uds.foufoufood.view.auth.isValidEmail
+import com.uds.foufoufood.viewmodel.UserViewModel
+
 
 @Composable
-fun ProfileScreen(user: User) {
+fun ProfileScreen(navController: NavController, userViewModel: UserViewModel) {
     // Extraire les données de l'utilisateur connecté
-    val name = user.name
-    val email = user.email
-    val role = user.role
-    val address = user.address
+    val name = userViewModel.user.value?.name ?: ""
+    val email = userViewModel.user.value?.email ?: ""
+    val role = userViewModel.user.value?.role
+    val address = userViewModel.user.value?.address
     val hasAddress = address != null
 
     Column(
@@ -53,9 +61,6 @@ fun ProfileScreen(user: User) {
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(50.dp))
-
-        // Afficher le profil (nom, type)
-        ProfileImage()
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -71,10 +76,29 @@ fun ProfileScreen(user: User) {
 
         // Gestion de l'email
         ProfileEmailSection(
-            email = email,
-            isEditable = false,
-            onEditClick = { /* TODO: Activer la modification de l'email */ },
-            onSaveClick = { /* TODO: Sauvegarder l'email modifié */ }
+            initialEmail = email,
+            onSaveClick = { newEmail ->
+                if (newEmail != email) {
+                    if (isValidEmail(newEmail)) {
+                        // Mettre à jour l'email de l'utilisateur
+                        userViewModel.updateEmail(email, newEmail)
+                        navController.navigate("verify_code/${newEmail}")
+                    } else {
+                        Toast.makeText(
+                            navController.context,
+                            "Veuillez saisir un email valide",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                else {
+                    Toast.makeText(
+                        navController.context,
+                        "Aucune modification apportée",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -85,20 +109,6 @@ fun ProfileScreen(user: User) {
             NoAddressSection(onAddAddressClick = { /* TODO: Ajouter une adresse */ })
         }
     }
-}
-
-@Composable
-fun ProfileImage() {
-    Image(
-        painter = painterResource(id = R.drawable.circle_background), // Remplacer avec votre image réelle
-        contentDescription = null,
-        modifier = Modifier
-            .size(120.dp)
-            .clip(CircleShape)
-            .background(Color.Gray) // Exemple de couleur de fond
-            .padding(16.dp),
-        contentScale = ContentScale.Crop
-    )
 }
 
 @Composable
@@ -121,13 +131,16 @@ fun ProfileType(role: String) {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileEmailSection(
-    email: String,
-    isEditable: Boolean,
-    onEditClick: () -> Unit,
-    onSaveClick: () -> Unit
+    initialEmail: String,
+    onSaveClick: (String) -> Unit
 ) {
+    var isEditable by remember { mutableStateOf(false) }
+    var email by remember { mutableStateOf(initialEmail) }
+    var isError by remember { mutableStateOf(false) }
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -141,7 +154,9 @@ fun ProfileEmailSection(
 
             if (!isEditable) {
                 // Bouton pour activer l'édition de l'email
-                IconButton(onClick = onEditClick) {
+                IconButton(onClick = {
+                    isEditable = true // Passer en mode édition
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.pen_square_icon), // Icône pour modifier
                         contentDescription = "Edit Email",
@@ -150,7 +165,10 @@ fun ProfileEmailSection(
                 }
             } else {
                 // Bouton pour sauvegarder l'email modifié
-                IconButton(onClick = onSaveClick) {
+                IconButton(onClick = {
+                    isEditable = false // Désactiver le mode édition
+                    onSaveClick(email) // Appeler la fonction de sauvegarde
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.save),
                         contentDescription = "Save Email",
@@ -165,19 +183,39 @@ fun ProfileEmailSection(
         // Champ de texte pour afficher/modifier l'email
         TextField(
             value = email, // Email actuel de l'utilisateur
-            onValueChange = { /* Logique pour modifier l'email */ },
+            onValueChange = {
+                email = it
+                isError = !isValidEmail(it)
+            },
             modifier = Modifier
-                .fillMaxWidth()
-                .height(65.dp)
-                .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
-                .padding(start = 25.dp),
+                .fillMaxWidth(),
             enabled = isEditable, // Activer/désactiver l'édition
             placeholder = {
                 Text(text = stringResource(id = R.string.email_example), color = Color.Gray)
             },
-            textStyle = TextStyle(fontSize = 16.sp)
+            isError = isError,
+            supportingText = {
+                if (isError) {
+                    Text(stringResource(id = R.string.enter_valid_email), color = Color.Red)
+                }
+            },
+            textStyle = TextStyle(fontSize = 16.sp),
+            colors = TextFieldDefaults.textFieldColors(
+                focusedTextColor = colorResource(id = R.color.black),
+                unfocusedTextColor = Color.Gray,
+                focusedIndicatorColor = colorResource(id = R.color.orange),
+                unfocusedIndicatorColor = Color.Gray,
+                errorIndicatorColor = Color.Red,
+                cursorColor = colorResource(id = R.color.orange),
+                containerColor = colorResource(id = R.color.white),
+                errorContainerColor = colorResource(id = R.color.white_grey),
+            ),
         )
     }
+}
+
+fun isValidEmail(email: String): Boolean {
+    return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
 }
 
 @Composable
