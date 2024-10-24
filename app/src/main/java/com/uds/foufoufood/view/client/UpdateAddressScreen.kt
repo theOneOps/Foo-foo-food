@@ -51,7 +51,7 @@ fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewMod
     val context = LocalContext.current
     val address = userViewModel.user.value?.address
     val hasAddress = address != null
-    var number by remember { mutableStateOf(address?.number)}
+    var number by remember { mutableStateOf(address?.number) }
     var street by remember { mutableStateOf(address?.street ?: "") }
     var zipCode by remember { mutableStateOf(address?.zipCode ?: "") }
     var city by remember { mutableStateOf(address?.city ?: "") }
@@ -158,14 +158,23 @@ fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewMod
         ValidateButton(
             label = stringResource(id = R.string.validate),
             onClick = {
-                if (!validateAddress(number!!, street, city, state, zipCode, country)) {
+                if (number == null) {
+                    Toast.makeText(
+                        context,
+                        "Veuillez entrer un numéro valide",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                if (street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty()) {
                     Toast.makeText(
                         context,
                         "Veuillez remplir tous les champs",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                else {
+
+                if (number != null && number.toString().isNotEmpty() && street.isNotEmpty() && city.isNotEmpty() && state.isNotEmpty() && zipCode.isNotEmpty() && country.isNotEmpty()) {
                     userViewModel.updateAddress(
                         number = number!!,
                         street = street,

@@ -26,6 +26,7 @@ fun ConnectedNavHost(
     homeViewModel: HomeViewModel,
     menuViewModel: MenuViewModel
 ) {
+//    Log.d("UserNavHost", "UserNavHost")
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
             if (userViewModel.user.value?.role == "client" ||
@@ -34,7 +35,6 @@ fun ConnectedNavHost(
                 HomeScreen(navController, homeViewModel, userViewModel, menuViewModel)
             }
         }
-
         composable(Screen.Welcome.route) {
             WelcomeScreen(navController)
         }
@@ -86,4 +86,3 @@ fun ConnectedNavHost(
         }
     }
 }
-
