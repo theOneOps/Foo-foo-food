@@ -11,8 +11,8 @@ import androidx.lifecycle.viewModelScope
 import com.uds.foufoufood.activities.main.TokenManager.deleteToken
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.activities.main.TokenManager.saveToken
-import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.activities.main.TokenManager.saveUserId
+import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.data_class.model.User
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -21,6 +21,7 @@ class UserViewModel(
     private val userRepository: UserRepository,
     private val context: Context
 ) : ViewModel() {
+
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> get() = _user
 
@@ -48,7 +49,6 @@ class UserViewModel(
     private val _updateAddressSuccess = MutableLiveData<Boolean>()
     val updateAddressSuccess: LiveData<Boolean> get() = _updateAddressSuccess
 
-
     // Fonctions
     fun login(email: String, password: String) {
         viewModelScope.launch {
@@ -58,9 +58,8 @@ class UserViewModel(
                 if (response != null) {
                     _user.value = response.user
                     _token.value = response.token
-                    // Stocke le token dans SharedPreferences
                     saveToken(context, response.token)
-                    saveUserId(context,response.user._id)
+                    saveUserId(context, response.user._id)
                     userRepository.setUserEmail(email)
                     Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
                     _errorMessage.value = null
@@ -110,16 +109,16 @@ class UserViewModel(
             _loading.value = true
             try {
                 val response = userRepository.completeRegistration(email, profileType)
-                _user.value = response?.user
-                _token.value = response?.token
-
-                // Stocke le token dans SharedPreferences
-                response?.token?.let { saveToken(context, it) }
-                response?.user?.email?.let { userRepository.setUserEmail(it) }
-                _registrationCompleteSuccess.value = true
-                saveToken(context, response?.token!!)
-                saveUserId(context,response.user._id)
-                userRepository.setUserEmail(email)
+                if (response != null) {
+                    _user.value = response.user
+                    _token.value = response.token
+                    saveToken(context, response.token)
+                    saveUserId(context, response.user._id)
+                    userRepository.setUserEmail(response.user.email)
+                    _registrationCompleteSuccess.value = true
+                } else {
+                    _registrationCompleteSuccess.value = false
+                }
             } catch (e: Exception) {
                 _registrationCompleteSuccess.value = false
             } finally {
@@ -128,7 +127,6 @@ class UserViewModel(
         }
     }
 
-    // Fonction pour charger l'utilisateur connecté (par exemple depuis une API ou base de données)
     fun resendVerificationCode(email: String) {
         viewModelScope.launch {
             _loading.value = true
@@ -179,14 +177,15 @@ class UserViewModel(
                 _user.value = null
                 _token.value = null
                 _errorMessage.value = null
-
                 deleteToken(context)
             } catch (e: IOException) {
                 _errorMessage.value = "Erreur réseau, veuillez vérifier votre connexion"
             } catch (e: Exception) {
                 _errorMessage.value = "Erreur lors de la déconnexion"
             } finally {
+                // Réinitialisez les valeurs qui pourraient provoquer des écrans de chargement infinis
                 _loading.value = false
+                resetStatus() // Réinitialiser tous les états après la déconnexion
             }
         }
     }
@@ -198,11 +197,13 @@ class UserViewModel(
                 val token = getToken(context)
                 if (token == null) {
                     _errorMessage.value = "Vous n'êtes pas connecté"
+                    _loading.value = false
                     return@launch
                 }
                 val success = userRepository.updateEmail(token, previous, email)
                 if (success) {
                     _user.value?.email = email
+                    _errorMessage.value = null
                 }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Erreur lors de l'édition de l'email: ${e.message}")
@@ -219,6 +220,7 @@ class UserViewModel(
                 val token = getToken(context)
                 if (token == null) {
                     _errorMessage.value = "Vous n'êtes pas connecté"
+                    _loading.value = false
                     return@launch
                 }
                 val success = userRepository.updatePassword(token, previousPassword, newPassword)
@@ -237,7 +239,6 @@ class UserViewModel(
     }
 
     fun updateAddress(number: Number, street: String, city: String, zipCode: String, state: String, country: String) {
-        Log.d("UserViewModel", "Mise à jour de l'adresse")
         viewModelScope.launch {
             _loading.value = true
             try {

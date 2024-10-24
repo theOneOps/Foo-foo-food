@@ -67,21 +67,15 @@ fun getStartDestination(connectUser: String): String {
 
 fun NavGraphBuilder.addAuthGraph(navController: NavHostController, userViewModel: UserViewModel) {
     composable(Screen.Welcome.route) {
-        if (userViewModel.user.value?.role.isNullOrEmpty()) {
-            WelcomeScreen(navController)
-        }
+        WelcomeScreen(navController)
     }
 
     composable(Screen.Login.route) {
-        if (userViewModel.user.value?.role.isNullOrEmpty()) {
-            LoginScreen(navController, userViewModel)
-        }
+        LoginScreen(navController, userViewModel)
     }
 
     composable(Screen.Register.route) {
-        if (userViewModel.user.value?.role.isNullOrEmpty()) {
-            RegisterFirstPartScreen(navController, userViewModel)
-        }
+        RegisterFirstPartScreen(navController, userViewModel)
     }
 
     composable(
@@ -89,13 +83,11 @@ fun NavGraphBuilder.addAuthGraph(navController: NavHostController, userViewModel
         arguments = listOf(navArgument("email") { type = NavType.StringType })
     ) { backStackEntry ->
         val email = backStackEntry.arguments?.getString("email")
-        if (userViewModel.user.value?.role.isNullOrEmpty()) {
-            VerifyCodeScreen(
-                navController = navController,
-                userViewModel = userViewModel,
-                email = email ?: ""
-            )
-        }
+        VerifyCodeScreen(
+            navController = navController,
+            userViewModel = userViewModel,
+            email = email ?: ""
+        )
     }
 
     composable(
@@ -103,15 +95,14 @@ fun NavGraphBuilder.addAuthGraph(navController: NavHostController, userViewModel
         arguments = listOf(navArgument("email") { type = NavType.StringType })
     ) { backStackEntry ->
         val email = backStackEntry.arguments?.getString("email")
-        if (userViewModel.user.value?.role.isNullOrEmpty()) {
-            DefineProfileScreen(
-                navController = navController,
-                userViewModel = userViewModel,
-                email = email ?: ""
-            )
-        }
+        DefineProfileScreen(
+            navController = navController,
+            userViewModel = userViewModel,
+            email = email ?: ""
+        )
     }
 }
+
 
 /////////////////////////////ADMIN
 
@@ -229,11 +220,7 @@ fun NavGraphBuilder.addConnectedGraph(
 ) {
     // Home Screen (accessible pour 'client' et 'restaurateur')
     composable(Screen.Home.route) {
-        if (userViewModel.user.value?.role == "client" ||
-            userViewModel.user.value?.role == "restaurateur"
-        ) {
-            HomeScreen(navController, homeViewModel, userViewModel, menuViewModel)
-        }
+        HomeScreen(navController, homeViewModel, userViewModel, menuViewModel)
     }
 
     // Welcome Screen
@@ -274,17 +261,13 @@ fun NavGraphBuilder.addConnectedGraph(
 
     // Client Restaurant All Menus Page (accessible pour 'client' et 'restaurateur')
     composable(Screen.ClientRestaurantAllMenusPage.route) {
-        if (userViewModel.user.value?.role == "client" ||
-            userViewModel.user.value?.role == "restaurateur"
-        ) {
-            menuViewModel.shared_restaurant.value?.let { theRestaurant ->
-                ClientRestaurantScreen(
-                    navController,
-                    userViewModel,
-                    menuViewModel,
-                    theRestaurant
-                )
-            }
+        menuViewModel.shared_restaurant.value?.let { theRestaurant ->
+            ClientRestaurantScreen(
+                navController,
+                userViewModel,
+                menuViewModel,
+                theRestaurant
+            )
         }
     }
 }

@@ -11,16 +11,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.activities.main.TokenManager.getToken
-import com.uds.foufoufood.navigation.AdminNavHost
-import com.uds.foufoufood.navigation.AuthNavHost
-import com.uds.foufoufood.navigation.ConnectedNavHost
-import com.uds.foufoufood.navigation.DeliveryNavHost
 import com.uds.foufoufood.navigation.UnifiedNavHost
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
-import com.uds.foufoufood.view.client.ClientRestaurantScreen
-
 import com.uds.foufoufood.viewmodel.HomeViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
@@ -40,26 +34,30 @@ fun MainScreen(
     val context = LocalContext.current
     val user by userViewModel.user.observeAsState()
     val isLoading by userViewModel.loading.observeAsState()
-    var connectUser by remember { mutableStateOf<String?>("") }
+    var connectUser by remember { mutableStateOf("") }
 
-    LaunchedEffect(user) {
+    LaunchedEffect(Unit) {
+        // Au démarrage de l'application, vérifiez si un token est disponible
         val token = getToken(context)
         if (token != null) {
             userViewModel.getUserFromToken(token)
         }
-
-        user?.let {
-            connectUser = it.role
-        }
-
-        Log.d("MainScreen", "user: $user")
-        Log.d("MainScreen", "connectUser: $connectUser")
     }
 
-    connectUser?.let {
-        UnifiedNavHost(
+    // Met à jour connectUser dès que l'utilisateur est disponible
+    user?.let {
+        connectUser = it.role ?: ""
+    }
+
+    Log.d("MainScreen", "connectUser: $connectUser, isLoading: $isLoading, user: $user")
+
+
+    if (user == null) {
+        connectUser = ""
+    }
+    UnifiedNavHost(
         navController = navController,
-        connectUser = it,
+        connectUser = connectUser,
         userViewModel = userViewModel,
         adminUsersViewModel = adminUsersViewModel,
         adminRestaurantsViewModel = adminRestaurantsViewModel,
@@ -68,5 +66,4 @@ fun MainScreen(
         homeViewModel = homeViewModel,
         menuViewModel = menuViewModel
     )
-    }
 }
