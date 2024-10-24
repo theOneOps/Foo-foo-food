@@ -67,55 +67,12 @@ import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 
-val restaurantTest = Restaurant(
-    name = "le bingo",
-    address = Address("123 Rue de Paris", "75000", "Paris", "France"),
-    speciality = "French cuisine",
-    phone = "0123456789",
-    openingHours = "09:00 - 22:00",
-    restaurantId = "671822044c663b311d27408c",
-    items = listOf(
-        Menu(
-            name = "Coq au Vin",
-            description = "Classic French chicken dish cooked with wine",
-            price = 25.0,
-            category = "Main course",
-            image = "https://images.unsplash.com/photo-1468070975228-085c1fdd2d3e?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            restaurantId = "671822044c663b311d27408c",
-            _id = "ABC",
-        ), Menu(
-            name = "Crème Brûlée",
-            description = "Rich custard base topped with a layer of caramelized sugar",
-            price = 10.0,
-            category = "Dessert",
-            image = "https://images.unsplash.com/photo-1487004121828-9fa15a215a7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            restaurantId = "671822044c663b311d27408c",
-            _id = "ABC",
-        )
-    ),
-    rating = 4.7,
-    reviews = listOf("Delicious food!", "Amazing ambiance."),
-    imageUrl = "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    userId = "671826a90bc17cdea61e307b",
-)
-
-
-val menuTest = Menu(
-    name = "Crème Brûlée",
-    description = "Rich custard base topped with a layer of caramelized sugar",
-    price = 10.0,
-    category = "Dessert",
-    image = "https://images.unsplash.com/photo-1487004121828-9fa15a215a7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    restaurantId = "1",
-    _id = "ze"
-)
-
 @Composable
 fun ClientRestaurantScreen(
     navHostController: NavHostController,
     userViewModel: UserViewModel,
     menuViewModel: MenuViewModel,
-    restaurant: Restaurant = restaurantTest
+    restaurant: Restaurant
 ) {
     // Obtenir le contexte
     val context = LocalContext.current

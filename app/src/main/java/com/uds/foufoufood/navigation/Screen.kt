@@ -20,10 +20,10 @@ sealed class Screen(val route: String) {
             return "userProfile/$userEmail"
         }
     }
-
     // Delivery
     object DeliveryAvailablePage : Screen("delivery_available_page")
     object DeliveryOrderPage : Screen("delivery_order_page")
+
     // Client
     object ClientRestaurantAllMenusPage : Screen("client_restaurant_all_menu_page")
 }

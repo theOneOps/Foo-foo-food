@@ -62,7 +62,7 @@ fun MainScreen(
         || connectUser == "restaurateur")
     {
         // Si l'utilisateur est un utilisateur classique, afficher UserNavHost
-        ConnectedNavHost(navController, userViewModel, homeViewModel)
+        ConnectedNavHost(navController, userViewModel, homeViewModel, menuViewModel)
 
     } else if (connectUser == "livreur") {
         Log.d("MainScreen", "Livreur")

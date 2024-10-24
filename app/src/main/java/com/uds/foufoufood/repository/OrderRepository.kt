@@ -21,8 +21,8 @@ class OrderRepository(private val api: UserApi, private val context: Context) {
                 restaurantName = "Le Gourmet",
                 restaurantAddress = Address(11, "Rue de la Paix", "Paris"),
                 items = listOf(
-                    Pair(Menu("Pizza Margherita", "Tomate, Mozzarella",13.0,"Pizza", "", "test"), 2),
-                    Pair(Menu("Pizza Regina", "Tomate, Mozzarella, Jambon, Champignons", 15.0, "Pizza", "", "test"),1)
+                    Pair(Menu("1","Pizza Margherita", "Tomate, Mozzarella",13.0,"Pizza", "", "test"), 2),
+                    Pair(Menu("2","Pizza Regina", "Tomate, Mozzarella, Jambon, Champignons", 15.0, "Pizza", "", "test"),1)
                 ),
                 clientEmail = "roussel.aymeric@gmail.com",
                 clientName = "Aymeric Roussel",

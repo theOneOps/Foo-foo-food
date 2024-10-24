@@ -23,55 +23,8 @@ class AdminRestaurantsViewModel : ViewModel() {
             rating = 4.5,
             reviews = listOf(),
             imageUrl = "https://source.unsplash.com/random/200x200",
-            category = "Category 1"
+            restaurantId = "1",
+            userId = "1",
         ),
-        Restaurant(
-            name = "Restaurant 2",
-            address = Address(3),
-            speciality = "Speciality 2",
-            phone = "Phone 2",
-            openingHours = "Opening Hours 2",
-            items = listOf(),
-            rating = 4.0,
-            reviews = listOf(),
-            imageUrl = "https://source.unsplash.com/random/200x200",
-            category = "Category 2"
-        ),
-        Restaurant(
-            name = "Restaurant 3",
-            address = Address(4),
-            speciality = "Speciality 3",
-            phone = "Phone 3",
-            openingHours = "Opening Hours 3",
-            items = listOf(),
-            rating = 3.5,
-            reviews = listOf(),
-            imageUrl = "https://source.unsplash.com/random/200x200",
-            category = "Category 3"
-        ),
-        Restaurant(
-            name = "Restaurant 4",
-            address = Address(5),
-            speciality = "Speciality 4",
-            phone = "Phone 4",
-            openingHours = "Opening Hours 4",
-            items = listOf(),
-            rating = 3.0,
-            reviews = listOf(),
-            imageUrl = "https://source.unsplash.com/random/200x200",
-            category = "Category 4"
-        ),
-        Restaurant(
-            name = "Restaurant 5",
-            address = Address(6),
-            speciality = "Speciality 5",
-            phone = "Phone 5",
-            openingHours = "Opening Hours 5",
-            items = listOf(),
-            rating = 2.5,
-            reviews = listOf(),
-            imageUrl = "https://source.unsplash.com/random/200x200",
-            category = "Category 5"
-        )
     )
 }

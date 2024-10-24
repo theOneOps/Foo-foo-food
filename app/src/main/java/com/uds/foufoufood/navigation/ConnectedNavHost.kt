@@ -32,7 +32,7 @@ fun ConnectedNavHost(
             if (userViewModel.user.value?.role == "client" ||
                 userViewModel.user.value?.role == "restaurateur"
             ) {
-                HomeScreen(navController, homeViewModel, menuViewModel)
+                HomeScreen(navController, homeViewModel, userViewModel, menuViewModel)
             }
 
         composable(Screen.Welcome.route) {

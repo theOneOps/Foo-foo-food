@@ -158,7 +158,7 @@ fun MenuItemRow(menu: Menu, quantity: Int) {
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = menu.descriptor,
+                text = menu.description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray
             )
