@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.activities.main.TokenManager.saveToken
 import com.uds.foufoufood.data_class.model.Address
+import com.uds.foufoufood.activities.main.TokenManager.saveUserId
 import com.uds.foufoufood.data_class.model.User
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -46,6 +47,7 @@ class UserViewModel(
     private val _updateAddressSuccess = MutableLiveData<Boolean>()
     val updateAddressSuccess: LiveData<Boolean> get() = _updateAddressSuccess
 
+
     // Fonctions
     fun login(email: String, password: String) {
         viewModelScope.launch {
@@ -57,6 +59,7 @@ class UserViewModel(
                     _token.value = response.token
                     // Stocke le token dans SharedPreferences
                     saveToken(context, response.token)
+                    saveUserId(context,response.user._id)
                     userRepository.setUserEmail(email)
                     Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
                     _errorMessage.value = null

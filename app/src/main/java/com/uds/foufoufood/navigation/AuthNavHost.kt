@@ -15,6 +15,7 @@ import com.uds.foufoufood.view.auth.VerifyCodeScreen
 import com.uds.foufoufood.view.auth.WelcomeScreen
 import com.uds.foufoufood.view.client.ProfileScreen
 import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 
@@ -22,20 +23,29 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 fun AuthNavHost(
     navController: NavHostController,
     userViewModel: UserViewModel,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    menuViewModel: MenuViewModel
 ) {
     Log.d("UserNavHost", "UserNavHost")
     NavHost(navController = navController, startDestination = Screen.Welcome.route) {
         composable(Screen.Welcome.route) {
-            WelcomeScreen(navController)
+            if (userViewModel.user.value?.role == "" ||
+                userViewModel.user.value?.role == null
+            )
+                WelcomeScreen(navController)
         }
-
         composable(Screen.Login.route) {
-            LoginScreen(navController, userViewModel)
+            if (userViewModel.user.value?.role == "" ||
+                userViewModel.user.value?.role == null
+            )
+                LoginScreen(navController, userViewModel)
         }
 
         composable(Screen.Register.route) {
-            RegisterFirstPartScreen(navController, userViewModel)
+            if (userViewModel.user.value?.role == "" ||
+                userViewModel.user.value?.role == null
+            )
+                RegisterFirstPartScreen(navController, userViewModel)
         }
 
         composable(
@@ -43,11 +53,14 @@ fun AuthNavHost(
             arguments = listOf(navArgument("email") { type = NavType.StringType })
         ) { backStackEntry ->
             val email = backStackEntry.arguments?.getString("email")
-            VerifyCodeScreen(
-                navController = navController,
-                userViewModel = userViewModel,
-                email = email ?: ""
+            if (userViewModel.user.value?.role == "" ||
+                userViewModel.user.value?.role == null
             )
+                VerifyCodeScreen(
+                    navController = navController,
+                    userViewModel = userViewModel,
+                    email = email ?: ""
+                )
         }
 
         composable(
@@ -55,15 +68,24 @@ fun AuthNavHost(
             arguments = listOf(navArgument("email") { type = NavType.StringType })
         ) { backStackEntry ->
             val email = backStackEntry.arguments?.getString("email")
-            DefineProfileScreen(
-                navController = navController,
-                userViewModel = userViewModel,
-                email = email ?: ""
+            if (userViewModel.user.value?.role == "" ||
+                userViewModel.user.value?.role == null
             )
+                DefineProfileScreen(
+                    navController = navController,
+                    userViewModel = userViewModel,
+                    email = email ?: ""
+                )
         }
 
-        composable(Screen.Home.route) {
-            HomeScreen(navController, homeViewModel, userViewModel)
-        }
+//        composable(Screen.Home.route) {
+//            if (userViewModel.user.value?.role == "client" ||
+//                userViewModel.user.value?.role == "restaurateur" ||
+//                userViewModel.user.value?.role == "livreur"
+//            )
+//            HomeScreen(navController, homeViewModel, menuViewModel)
+//        }
+
+
     }
 }

@@ -16,7 +16,10 @@ import com.uds.foufoufood.navigation.DeliveryNavHost
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
+import com.uds.foufoufood.view.client.ClientRestaurantScreen
+
 import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
@@ -28,7 +31,8 @@ fun MainScreen(
     adminRestaurantsViewModel: AdminRestaurantsViewModel,
     deliveryViewModel: DeliveryViewModel,
     orderViewModel: OrderViewModel,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    menuViewModel: MenuViewModel
 ) {
     // Observer les données utilisateur
     val user by userViewModel.user.observeAsState()
@@ -49,12 +53,14 @@ fun MainScreen(
     Log.d("MainScreen", "ConnectUser: $connectUser")
 
     // Basculer entre AdminNavHost et UserNavHost en fonction du rôle
-    if (connectUser == "admin") {
+    if (connectUser == "admin")
+    {
         // Si l'utilisateur est admin, afficher AdminNavHost
         AdminNavHost(navController, adminUsersViewModel, adminRestaurantsViewModel)
 
-    } else if (connectUser == "client") {
-        Log.d("MainScreen", "Client")
+    } else if (connectUser == "client"
+        || connectUser == "restaurateur")
+    {
         // Si l'utilisateur est un utilisateur classique, afficher UserNavHost
         ConnectedNavHost(navController, userViewModel, homeViewModel)
 
@@ -64,7 +70,7 @@ fun MainScreen(
     }
     else {
         // Tant que l'utilisateur n'est pas encore connecté ou que le rôle n'est pas défini
-        AuthNavHost(navController, userViewModel, homeViewModel)
-        //ClientHomeScreen(navController)
+        AuthNavHost(navController, userViewModel, homeViewModel, menuViewModel)
+        //ClientRestaurantScreen(navController, userViewModel, menuViewModel)
     }
 }

@@ -36,7 +36,7 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
                     null
                 }
             } catch (e: Exception) {
-                Log.e("UserRepository", "Erreur réseau: ${e.message}")
+                Log.e("UserRepository", "Erreur reseau: ${e.message}")
                 null
             }
         }
@@ -61,7 +61,7 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
             val response = userApi.verifyCode(request)
             response.isSuccessful && response.body()?.success == true
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur de vérification: ${e.message}")
+            Log.e("UserRepository", "Erreur de verification: ${e.message}")
             false
         }
     }

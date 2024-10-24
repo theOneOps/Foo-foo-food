@@ -53,10 +53,12 @@ class HomeViewModel : ViewModel() {
 
             // Match by category (if a category is selected)
             val matchesCategory = selectedCategory?.let {
-                restaurant.category == it.name
+                restaurant.speciality == it.name
             } ?: true // If no category is selected, show all
 
             matchesQuery && matchesCategory
         }
     }
+
+
 }

@@ -25,7 +25,5 @@ sealed class Screen(val route: String) {
     object DeliveryAvailablePage : Screen("delivery_available_page")
     object DeliveryOrderPage : Screen("delivery_order_page")
     // Client
-    object ClientHomePage : Screen("client_home_page")
-    object ClientAllRestaurantsPage : Screen("client_restaurants_page")
     object ClientRestaurantAllMenusPage : Screen("client_restaurant_all_menu_page")
 }

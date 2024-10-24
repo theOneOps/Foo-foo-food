@@ -82,14 +82,14 @@ val restaurantTest = Restaurant(
     items = listOf(
         Menu(
             name = "Coq au Vin",
-            descriptor = "Classic French chicken dish cooked with wine",
+            description = "Classic French chicken dish cooked with wine",
             price = 25.0,
             category = "Main course",
             image = "https://images.unsplash.com/photo-1468070975228-085c1fdd2d3e?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             restaurantId = "1"
         ), Menu(
             name = "Crème Brûlée",
-            descriptor = "Rich custard base topped with a layer of caramelized sugar",
+            description = "Rich custard base topped with a layer of caramelized sugar",
             price = 10.0,
             category = "Dessert",
             image = "https://images.unsplash.com/photo-1487004121828-9fa15a215a7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -103,7 +103,12 @@ val restaurantTest = Restaurant(
 )
 
 @Composable
-fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel, userViewModel: UserViewModel) {
+fun HomeScreen(
+    navController: NavHostController,
+    homeViewModel: HomeViewModel,
+    menuViewModel: MenuViewModel
+) {
+    Log.d("HomeScreen", "HomeScreen")
     // State for controlling drawer
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -195,7 +200,7 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel, u
 
                     // Restaurant List
                     items(homeViewModel.filteredRestaurants) { restaurant ->
-                        RestaurantCard(restaurant = restaurant)
+                        RestaurantCard(navController, menuViewModel, restaurant)
                     }
                 }
             }

@@ -5,16 +5,19 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.compose.rememberNavController
+import com.uds.foufoufood.network.MenuApi
 import com.uds.foufoufood.network.RetrofitHelper
 import com.uds.foufoufood.network.UserApi
 import com.uds.foufoufood.repository.AdminRepository
 import com.uds.foufoufood.repository.DeliveryRepository
 import com.uds.foufoufood.repository.OrderRepository
+import com.uds.foufoufood.repository.MenuRepository
 import com.uds.foufoufood.view.MainScreen
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var deliveryViewModel: DeliveryViewModel
     private lateinit var orderViewModel: OrderViewModel
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var menuViewModel: MenuViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +54,12 @@ class MainActivity : AppCompatActivity() {
         //CLIENT
         homeViewModel = HomeViewModel()
 
+        val menuApi = retrofit.create(MenuApi::class.java)
+
+        val menuRepository = MenuRepository(menuApi)
+
+        menuViewModel = MenuViewModel(menuRepository)
+
         setContent {
             val navController = rememberNavController()
             MainScreen(
@@ -60,6 +70,7 @@ class MainActivity : AppCompatActivity() {
                 deliveryViewModel = deliveryViewModel,
                 orderViewModel = orderViewModel,
                 homeViewModel = homeViewModel,
+                menuViewModel = menuViewModel,
             )
         }
     }
