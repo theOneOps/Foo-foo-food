@@ -21,6 +21,21 @@ class UserRepository(private val userApi: UserApi) {
         return@withContext userApi.getUser(email)
     }
 
+    suspend fun getUserFromToken(token: String): User? = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val response = userApi.getUserFromToken("Bearer $token")
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                Log.e("UserRepository", "Erreur lors de la récupération de l'utilisateur: ${response.code()}")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Erreur réseau: ${e.message}")
+            null
+        }
+    }
+
     suspend fun login(email: String, password: String): AuthResponse? =
         withContext(Dispatchers.IO) {
             try {

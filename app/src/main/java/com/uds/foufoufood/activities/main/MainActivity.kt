@@ -2,13 +2,26 @@ package com.uds.foufoufood.activities.main
 
 import UserRepository
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
+import com.uds.foufoufood.activities.main.TokenManager.getToken
+import com.uds.foufoufood.navigation.AdminNavHost
+import com.uds.foufoufood.navigation.AuthNavHost
+import com.uds.foufoufood.navigation.ConnectedNavHost
+import com.uds.foufoufood.navigation.DeliveryNavHost
 import com.uds.foufoufood.network.RetrofitHelper
 import com.uds.foufoufood.network.UserApi
 import com.uds.foufoufood.repository.AdminRepository
 import com.uds.foufoufood.repository.DeliveryRepository
+import com.uds.foufoufood.view.LoadingScreen
 import com.uds.foufoufood.view.MainScreen
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
@@ -46,15 +59,46 @@ class MainActivity : AppCompatActivity() {
         homeViewModel = HomeViewModel()
 
         setContent {
+            val context = this
             val navController = rememberNavController()
-            MainScreen(
-                navController = navController,
-                userViewModel = userViewModel,
-                adminUsersViewModel = adminUsersViewModel,
-                adminRestaurantsViewModel = adminRestaurantsViewModel,
-                deliveryViewModel = deliveryViewModel,
-                homeViewModel = homeViewModel,
-            )
+
+            val user by userViewModel.user.observeAsState()
+            val isLoading by userViewModel.loading.observeAsState()
+            var connectUser by remember { mutableStateOf<String?>("") }
+
+            LaunchedEffect(user) {
+                val token = getToken(context)
+                if (token != null) {
+                    userViewModel.getUserFromToken(token)
+                }
+
+                user?.let {
+                    connectUser = it.role
+                }
+            }
+
+            if (isLoading == true) {
+                LoadingScreen()
+            } else {
+                if (user == null) {
+                    AuthNavHost(
+                        navController = navController,
+                        userViewModel = userViewModel,
+                        homeViewModel = homeViewModel
+                    )
+                } else {
+                    MainScreen(
+                        navController = navController,
+                        userViewModel = userViewModel,
+                        adminUsersViewModel = adminUsersViewModel,
+                        adminRestaurantsViewModel = adminRestaurantsViewModel,
+                        deliveryViewModel = deliveryViewModel,
+                        homeViewModel = homeViewModel,
+                        connectUser = connectUser
+                    )
+                }
+            }
+
         }
     }
 }

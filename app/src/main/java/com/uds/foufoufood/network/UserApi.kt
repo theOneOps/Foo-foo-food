@@ -28,6 +28,9 @@ interface UserApi {
     @GET("api/users/user/{email}")
     suspend fun getUser(@Path("email") userEmail: String): Response<User>
 
+    @GET("api/users/user")
+    suspend fun getUserFromToken(@Header("Authorization") token: String): Response<User>
+
     @POST("api/users/auth/login")
     suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 

@@ -20,4 +20,12 @@ object TokenManager {
             context.getSharedPreferences("myAppPrefs", Context.MODE_PRIVATE)
         return sharedPreferences.getString("token", null)
     }
+
+    fun deleteToken(context: Context) {
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences("myAppPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove("token")
+        editor.apply()
+    }
 }
