@@ -25,24 +25,24 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.uds.foufoufood.R
-import com.uds.foufoufood.data_class.model.Category
+import com.uds.foufoufood.data_class.model.Speciality
 
 @Composable
-fun CategoryPills(
-    categories: List<Category>,
-    selectedCategory: Category?,
-    onCategorySelected: (Category?) -> Unit
+fun SpecialityPills(
+    specialities: List<Speciality>,
+    selectedSpeciality: Speciality?,
+    onSpecialitySelected: (Speciality?) -> Unit
 ) {
     LazyRow {
-        items(categories) { category ->
-            CategoryPill(
-                category = category,
-                isSelected = selectedCategory == category,
+        items(specialities) { category ->
+            SpecialityPill(
+                speciality = category,
+                isSelected = selectedSpeciality == category,
                 onClick = {
-                    if (selectedCategory == category) {
-                        onCategorySelected(null)
+                    if (selectedSpeciality == category) {
+                        onSpecialitySelected(null)
                     } else {
-                        onCategorySelected(category)
+                        onSpecialitySelected(category)
                     }
                 }
             )
@@ -51,7 +51,7 @@ fun CategoryPills(
 }
 
 @Composable
-fun CategoryPill(category: Category, isSelected: Boolean, onClick: () -> Unit) {
+fun SpecialityPill(speciality: Speciality, isSelected: Boolean, onClick: () -> Unit) {
     Surface(
         color = if (isSelected) colorResource(id = R.color.orange)
         else colorResource(id = R.color.white), // Use colors from resources
@@ -71,7 +71,7 @@ fun CategoryPill(category: Category, isSelected: Boolean, onClick: () -> Unit) {
         ) {
             // Round Icon
             Image(
-                painter = painterResource(id = category.iconResId),
+                painter = painterResource(id = speciality.iconResId),
                 contentDescription = null,
                 modifier = Modifier
                     .size(52.dp) // Icon size
@@ -83,7 +83,7 @@ fun CategoryPill(category: Category, isSelected: Boolean, onClick: () -> Unit) {
 
             // Category name
             Text(
-                text = category.name,
+                text = speciality.name,
                 color = if (isSelected) colorResource(id = R.color.white)
                 else colorResource(id = R.color.black), // Text color based on selection
                 style = MaterialTheme.typography.bodySmall,

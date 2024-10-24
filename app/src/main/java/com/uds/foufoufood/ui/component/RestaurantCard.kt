@@ -81,7 +81,7 @@ fun RestaurantCard(restaurant: Restaurant) {
                         .padding(horizontal = 12.dp, vertical = 8.dp)
                 ) {
                     Text(
-                        text = restaurant.category,
+                        text = restaurant.speciality,
                         style = MaterialTheme.typography.bodySmall,
                         color = colorResource(R.color.grey),
                         fontSize = 12.sp,
