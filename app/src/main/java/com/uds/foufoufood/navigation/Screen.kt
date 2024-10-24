@@ -18,6 +18,9 @@ sealed class Screen(val route: String) {
         }
     }
 
+    // Delivery
+    object DeliveryAvailablePage : Screen("delivery_available_page")
+
     // Client
     object ClientHomePage : Screen("client_home_page")
     object ClientAllRestaurantsPage : Screen("client_restaurants_page")

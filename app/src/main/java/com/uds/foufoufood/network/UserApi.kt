@@ -45,7 +45,15 @@ interface UserApi {
         @Path("email") userEmail: String,       // ID de l'utilisateur
         @Body roleUpdateRequest: RoleUpdateRequest // Corps de la requête avec le nouveau rôle
     ): Response<ApiResponse>
+
+    @PUT("api/users/delivery/deliveryAvailability")
+    suspend fun updateUserAvailability(
+        @Header("Authorization") token: String,
+        @Body deliveryAvailability : AvailabilityRequest
+    ): Response<ApiResponse>
 }
+
+data class AvailabilityRequest(val available: Boolean)
 
 data class RoleUpdateRequest(
     val newRole: String  // Nouveau rôle que tu veux attribuer à l'utilisateur

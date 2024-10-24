@@ -1,6 +1,9 @@
 package com.uds.foufoufood.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,15 +12,24 @@ import com.uds.foufoufood.data_class.model.User
 import com.uds.foufoufood.repository.AdminRepository
 import kotlinx.coroutines.launch
 
-class AdminViewModel(private val repository: AdminRepository) : ViewModel() {
+class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel() {
 
     private val _users = MutableLiveData<List<User>?>()
     val users: MutableLiveData<List<User>?> get() = _users
 
+    var selectedRole by mutableStateOf("")
+        private set
+
     private val _apiError = MutableLiveData<String>()
     val apiError: LiveData<String> get() = _apiError
 
-    fun fetchUsers() {
+    var searchText by mutableStateOf("")
+
+    // Filtered list of restaurants based on the selected category and search query
+    var filteredUsers by mutableStateOf(listOf<User>())
+        private set
+
+    fun fetchUsers(role: String) {
         viewModelScope.launch {
             try {
                 val response = repository.getAllUsers()
@@ -26,6 +38,8 @@ class AdminViewModel(private val repository: AdminRepository) : ViewModel() {
                     Log.d("AdminViewModel", "Réponse API: $usersList")
                     if (usersList != null && usersList.isNotEmpty()) {
                         _users.value = usersList
+                        selectedRole = role
+                        filterUsers(selectedRole)
                         Log.d(
                             "AdminViewModel",
                             "Nombre d'utilisateurs récupérés: ${usersList.size}"
@@ -51,6 +65,10 @@ class AdminViewModel(private val repository: AdminRepository) : ViewModel() {
         }
     }
 
+    fun onSearchQueryChanged(query: String) {
+        searchText = query
+        filterUsers(selectedRole)
+    }
 
     fun updateUserRole(user: User, newRole: String) {
         _users.value = _users.value?.map {
@@ -67,30 +85,17 @@ class AdminViewModel(private val repository: AdminRepository) : ViewModel() {
         }
     }
 
-    // Filtrer les utilisateurs par rôle
-    fun getClients(): List<User> {
-        val usersList = _users.value
-        if (usersList.isNullOrEmpty()) {
-            Log.e("AdminViewModel", "Aucun utilisateur chargé")
-            return emptyList()  // Retourne une liste vide si aucun utilisateur n'est chargé
-        }
-        // Log pour vérifier le filtre
-        val clients = usersList.filter { it.role == "client" }
-        Log.d("AdminViewModel", "Nombre de clients: ${clients.size}")
-        return clients
-    }
-
-
-    fun getLivreurs(): List<User> {
-        return _users.value?.filter { it.role == "livreur" } ?: emptyList()
-    }
-
-    fun getGerants(): List<User> {
-        return _users.value?.filter { it.role == "restaurateur" } ?: emptyList()
-    }
-
     fun getAll(): List<User> {
         return _users.value ?: emptyList()
     }
+
+    private fun filterUsers(role: String){
+        filteredUsers = _users.value?.filter { user ->
+            user.role == role && user.email.contains(searchText, ignoreCase = true)
+        } ?: emptyList()
+    }
+
+
+
 }
 

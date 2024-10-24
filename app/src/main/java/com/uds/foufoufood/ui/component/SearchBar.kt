@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.uds.foufoufood.R
+import kotlin.reflect.KFunction2
 
 @Composable
 fun SearchBar(searchText: String, onSearchTextChanged: (String) -> Unit) {

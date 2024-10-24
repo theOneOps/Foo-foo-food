@@ -1,14 +1,12 @@
 package com.uds.foufoufood.navigation
 
 import AddRestaurantPage
-import Restaurant
 import RestaurantPage
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -18,22 +16,20 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.uds.foufoufood.view.admin.ClientPage
-import com.uds.foufoufood.view.admin.GerantPage
-import com.uds.foufoufood.view.admin.LivreurPage
 import com.uds.foufoufood.view.admin.UserProfileAdminPage
 import com.uds.foufoufood.ui.component.BottomNavBarAdmin
 import com.uds.foufoufood.ui.component.TopNavBarAdmin
-import com.uds.foufoufood.viewmodel.AdminViewModel
+import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
+import com.uds.foufoufood.viewmodel.AdminUsersViewModel
+import com.uds.foufoufood.data_class.model.Restaurant
 
 
 @Composable
 fun AdminNavHost(
     navController: NavHostController,
-    adminViewModel: AdminViewModel
+    adminUsersViewModel: AdminUsersViewModel,
+    adminRestaurantsViewModel: AdminRestaurantsViewModel
 ) {
-
-    val restaurants = remember { mutableStateListOf(*getRestaurants().toTypedArray()) }
     var selectedItem by remember { mutableIntStateOf(0) }
 
 
@@ -58,41 +54,12 @@ fun AdminNavHost(
             modifier = Modifier.padding(paddingValues)
         ) {
 
-            // Page principale (ClientPage)
-            composable(Screen.AdminClient.route) {
-                ClientPage(navController = navController,
-                    adminViewModel = adminViewModel,
-                    // Passe l'état sélectionné
-                    onRoleChanged = { user, newRole ->
-                        adminViewModel.updateUserRole(
-                            user,
-                            newRole
-                        )  // Mise à jour du rôle dans le ViewModel
-                    }) // Passe le NavController à ClientPage
-            }
-            composable(Screen.AdminLivreur.route) {
-                LivreurPage(navController = navController,
-                    adminViewModel = adminViewModel,
-                    onRoleChanged = { user, newRole ->
-                        adminViewModel.updateUserRole(
-                            user,
-                            newRole
-                        )  // Mise à jour du rôle dans le ViewModel
-                    }) // Passe le NavController à ClientPage
-            }
-            composable(Screen.AdminGerant.route) {
-                GerantPage(navController = navController,
-                    adminViewModel = adminViewModel,
-                    onRoleChanged = { user, newRole ->
-                        adminViewModel.updateUserRole(
-                            user,
-                            newRole
-                        )  // Mise à jour du rôle dans le ViewModel
-                    }) // Passe le NavController à ClientPage
-            }
+            // Ajouter les routes utilisateur
+            addAdminUserRoutes(navController, adminUsersViewModel)
+
             // Nouvelle route pour la page des restaurants
             composable(Screen.AdminRestaurant.route) {
-                RestaurantPage(navController = navController, restaurants = restaurants)
+                RestaurantPage(navController = navController, restaurants = adminRestaurantsViewModel.restaurants)
             }
             // Page de profil utilisateur
             composable(
@@ -102,9 +69,9 @@ fun AdminNavHost(
                 val userEmail = backStackEntry.arguments?.getString("userEmail")
                 UserProfileAdminPage(navController = navController,
                     userEmail = userEmail,
-                    users = adminViewModel.getAll(),
+                    users = adminUsersViewModel.getAll(),
                     onRoleChanged = { user, newRole ->
-                        adminViewModel.updateUserRole(
+                        adminUsersViewModel.updateUserRole(
                             user,
                             newRole
                         )  // Mise à jour du rôle dans le ViewModel
@@ -113,9 +80,8 @@ fun AdminNavHost(
             composable("addRestaurant") {
                 AddRestaurantPage(
                     navController = navController,
-                    onRestaurantAdded = { newRestaurant ->
-                        // Ajouter le nouveau restaurant à la liste
-                        restaurants.add(newRestaurant)
+                    onRestaurantAdded = { newRestaurant : Restaurant->
+                        adminRestaurantsViewModel.addRestaurant(newRestaurant)
                     }
                 )
             }
@@ -125,10 +91,3 @@ fun AdminNavHost(
 
 }
 
-fun getRestaurants() = listOf(
-    Restaurant("1", "Restaurant A"),
-    Restaurant("2", "Restaurant B"),
-    Restaurant("3", "Restaurant C"),
-    Restaurant("4", "Restaurant D"),
-    Restaurant("5", "Restaurant E")
-)
