@@ -47,9 +47,9 @@ fun RegisterFirstPartScreen(
     val context = LocalContext.current
 
     // Champs d'entrée utilisateur (nom, email, mot de passe)
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("lili") }
+    var email by remember { mutableStateOf("lili.schmidlin04@gmail.com") }
+    var password by remember { mutableStateOf("testtest") }
 
     // Observer LiveData registrationInitSuccess avec observeAsState
     val registrationSuccess by userViewModel.registrationInitSuccess.observeAsState()
@@ -63,6 +63,13 @@ fun RegisterFirstPartScreen(
                 Toast.LENGTH_SHORT
             ).show()
             navController.navigate("verify_code/${email}")
+        }
+        else if (registrationSuccess == false) {
+            Toast.makeText(
+                context,
+                "Erreur lors de l'inscription, il se peut que l'adresse email soit déjà utilisée",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -94,7 +101,7 @@ fun RegisterFirstPartScreen(
             value = email,
             onValueChange = { email = it },
             label = stringResource(id = R.string.email),
-            errorMessage = "Veuillez entrer une adresse email valide",
+            errorMessage = stringResource(id = R.string.enter_valid_email),
             isValid = { isValidEmail(it) }
         )
 
@@ -125,7 +132,7 @@ fun RegisterFirstPartScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         SignInText {
-            navController.navigate(Screen.Register.route)
+            navController.navigate(Screen.Login.route)
         }
 
         Spacer(modifier = Modifier.height(20.dp))

@@ -82,7 +82,6 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(16.dp))
             SignInLink {
                 navController.navigate("login")
-                //navController.navigate("home")
             }
         }
     }

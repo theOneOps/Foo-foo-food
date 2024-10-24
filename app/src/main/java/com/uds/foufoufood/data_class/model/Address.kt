@@ -1,8 +1,8 @@
 package com.uds.foufoufood.data_class.model
 
 data class Address(
+    var number: Number? = null,
     var street: String? = null,
-    var number: String = null.toString(),
     var city: String? = null,
     var state: String? = null,
     var zipCode: String? = null,
@@ -10,8 +10,8 @@ data class Address(
 ){
     override fun toString(): String {
         return buildString {
-            if (!number.isNullOrEmpty()) {
-                append(number).append(" ")
+            if (number != null) {
+                append(number).append(", ")
             }
             if (!street.isNullOrEmpty()) {
                 append(street).append(", ")
