@@ -9,11 +9,13 @@ import com.uds.foufoufood.network.RetrofitHelper
 import com.uds.foufoufood.network.UserApi
 import com.uds.foufoufood.repository.AdminRepository
 import com.uds.foufoufood.repository.DeliveryRepository
+import com.uds.foufoufood.repository.OrderRepository
 import com.uds.foufoufood.view.MainScreen
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adminUsersViewModel: AdminUsersViewModel
     private lateinit var adminRestaurantsViewModel: AdminRestaurantsViewModel
     private lateinit var deliveryViewModel: DeliveryViewModel
+    private lateinit var orderViewModel: OrderViewModel
     private lateinit var homeViewModel: HomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +44,8 @@ class MainActivity : AppCompatActivity() {
         //DELIVERY
         val deliveryRepository = DeliveryRepository(userApi, this)
         deliveryViewModel = DeliveryViewModel(deliveryRepository, this)
+        val orderRepository = OrderRepository(userApi, this)
+        orderViewModel = OrderViewModel(orderRepository, this)
 
         //CLIENT
         homeViewModel = HomeViewModel()
@@ -53,6 +58,7 @@ class MainActivity : AppCompatActivity() {
                 adminUsersViewModel = adminUsersViewModel,
                 adminRestaurantsViewModel = adminRestaurantsViewModel,
                 deliveryViewModel = deliveryViewModel,
+                orderViewModel = orderViewModel,
                 homeViewModel = homeViewModel,
             )
         }

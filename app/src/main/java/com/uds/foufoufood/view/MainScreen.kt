@@ -17,6 +17,7 @@ import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 @Composable
@@ -26,6 +27,7 @@ fun MainScreen(
     adminUsersViewModel: AdminUsersViewModel,
     adminRestaurantsViewModel: AdminRestaurantsViewModel,
     deliveryViewModel: DeliveryViewModel,
+    orderViewModel: OrderViewModel,
     homeViewModel: HomeViewModel
 ) {
     // Observer les données utilisateur
@@ -58,7 +60,7 @@ fun MainScreen(
 
     } else if (connectUser == "livreur") {
         Log.d("MainScreen", "Livreur")
-        DeliveryNavHost(navController, deliveryViewModel)
+        DeliveryNavHost(navController, deliveryViewModel, orderViewModel)
     }
     else {
         // Tant que l'utilisateur n'est pas encore connecté ou que le rôle n'est pas défini
