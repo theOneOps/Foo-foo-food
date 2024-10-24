@@ -7,5 +7,5 @@ data class Menu(
     val price: Double,
     val category: String,
     val restaurantId:String,
-    val image:String?="",
+    val image:String,
 )

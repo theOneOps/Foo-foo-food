@@ -239,7 +239,8 @@ fun ModifyMenu(token:String, menuViewModel: MenuViewModel, menu: Menu) {
                                 menuRes.description,
                                 menuRes.price,
                                 menuRes.category,
-                                menuRes.restaurantId)
+                                menuRes.restaurantId,
+                                menuRes.image)
                         })
                     }
                 }

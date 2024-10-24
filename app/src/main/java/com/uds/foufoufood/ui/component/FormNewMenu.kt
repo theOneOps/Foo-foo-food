@@ -1,6 +1,7 @@
 package com.uds.foufoufood.ui.component
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -31,11 +32,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.uds.foufoufood.Firebase_management.FirebaseInstance
+import com.uds.foufoufood.Firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
 import com.uds.foufoufood.activities.main.TokenManager.getToken
-import com.uds.foufoufood.data_class.model.Address
-import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.viewmodel.MenuViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
@@ -47,15 +51,6 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
 
     val context = LocalContext.current
     val token = getToken(context) ?: return
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri: Uri? ->
-            uri?.let {
-                imageState.value = it.toString() // Conservez l'URI de l'image
-            }
-        }
-    )
 
     Column(
         modifier = Modifier.padding(16.dp),
@@ -112,7 +107,52 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Champ pour l'image (URL ou chemin)
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let {
+                // Convertir le Uri en String (ici, en supposant qu'il s'agit d'une URL valide)
+                val imageUrl = it.toString() // Assurez-vous que c'est une URL valide
+
+                // Appeler la fonction pour télécharger et compresser l'image
+                CoroutineScope(Dispatchers.Main).launch {
+                    val compressedImage =
+                        downloadAndCompressImageFromUrl(imageUrl, context)
+
+                    if (compressedImage != null) {
+                        // Référence Firebase où l'image sera stockée
+                        val storageRef =
+                            FirebaseInstance.storageRef.child(
+                                "images/${restaurant.userId}/${restaurant.restaurantId}" +
+                                        "${System.currentTimeMillis()}.webp"
+                            )
+
+                        // Envoie l'image compressée sur Firebase
+                        val uploadTask = storageRef.putBytes(compressedImage)
+
+                        // Gérer le succès ou l'échec de l'envoi
+                        uploadTask.addOnSuccessListener {
+                            // Récupérer l'URL de téléchargement une fois l'image envoyée
+                            storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                                // Mets à jour imageState avec l'URL de l'image sur Firebase
+                                imageState.value = downloadUrl.toString()
+                                println("L'image a été téléchargée : ${imageState.value}")
+                                Log.d("FormNewMenu", imageState.value)
+                            }
+                        }.addOnFailureListener { e ->
+                            Log.e("Firebase", "Échec de l'upload de l'image : ${e.message}", e)
+                        }
+                    } else {
+                        Log.e(
+                            "Image",
+                            "Erreur lors du téléchargement ou de la compression de l'image."
+                        )
+                    }
+                }
+            }
+        }
+
+// OutlinedTextField pour l'image
         OutlinedTextField(
             value = imageState.value,
             onValueChange = { imageState.value = it },
@@ -132,22 +172,22 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
             onClick = {
                 // Conversion du prix en Double avant la soumission
                 val price = priceState.value.toDoubleOrNull() ?: 0.0
-                // Créer l'objet Menu et le passer à la fonction onSubmit
-                val newMenu = restaurant.restaurantId?.let {
-                    Menu(
-                        name = nameState.value,
-                        description = descriptorState.value,
-                        price = price,
-                        category = categoryState.value,
-                        image = if (imageState.value.isNotEmpty()) imageState.value else "",
-                        restaurantId = it,
-                        _id = "ABC",
+
+                // Vérifie si une image a été uploadée et l'URL est disponible
+                val imageUri = imageState.value
+                if (imageUri.isNotEmpty()) {
+                    // Appel au ViewModel pour créer le menu avec l'URL de l'image déjà uploadée
+                    menuViewModel.createMenu(
+                        token, nameState.value, descriptorState.value,
+                        price, restaurant.restaurantId, categoryState.value, imageUri
+                    )
+                } else {
+                    // Si aucune image n'a été uploadée, appeler directement createMenu sans l'URL
+                    menuViewModel.createMenu(
+                        token, nameState.value, descriptorState.value,
+                        price, restaurant.restaurantId, categoryState.value, ""
                     )
                 }
-
-                // appel au viewModel pour post le menu sur le serveur
-                menuViewModel.createMenu(token, nameState.value,descriptorState.value,
-                    price, restaurant.restaurantId, categoryState.value)
             },
             modifier = Modifier.fillMaxWidth()
         ) {

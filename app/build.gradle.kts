@@ -81,7 +81,7 @@ dependencies {
     implementation (libs.androidx.navigation.compose)
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)
-    implementation(libs.firebase.storage)
+    //implementation(libs.firebase.storage)
 
     // Import the BoM for the Firebase platform
     implementation(platform(libs.firebase.bom))
@@ -90,7 +90,9 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation(libs.google.firebase.storage)
 
-
+    // from glide
+    implementation(libs.github.glide)
+    annotationProcessor(libs.github.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

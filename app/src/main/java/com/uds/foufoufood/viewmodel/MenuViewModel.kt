@@ -43,12 +43,21 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
         description: String,
         price: Double,
         restaurantId: String,
-        category: String
+        category: String,
+        image: String
     ) {
         viewModelScope.launch {
             try {
                 val response =
-                    repository.createMenu(token, name, description, price, restaurantId, category)
+                    repository.createMenu(
+                        token,
+                        name,
+                        description,
+                        price,
+                        restaurantId,
+                        category,
+                        image
+                    )
                 if (response != null) {
                     if (response.success) {
                         val currentMenus = _menus.value?.toMutableList() ?: mutableListOf()
@@ -71,44 +80,6 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
             }
         }
     }
-
-//    fun createMenu(
-//        token: String,
-//        name: String,
-//        description: String,
-//        price: Double,
-//        restaurantId: String,
-//        category: String
-//    ) {
-//        viewModelScope.launch {
-//            try {
-//                val response =
-//                    repository.createMenu(token, name, description, price, restaurantId, category)
-//
-//                if (response != null) {
-//                    if (response.success) {
-//                        // Récupérer la liste actuelle des menus
-//                        val currentMenus = _menus.value?.toMutableList() ?: mutableListOf()
-//
-//                        // Ajouter le nouveau menu à la liste si la création est réussie
-//                        response.data?.let { newMenuList ->
-//                            newMenuList.forEach { newMenu -> currentMenus.add(newMenu) }
-//                        }
-//
-//                        // Mettre à jour le LiveData avec la nouvelle liste
-//                        _menus.postValue(currentMenus)
-//                    } else {
-//                        _errorMessage.value = response.message
-//                    }
-//                } else {
-//                    _errorMessage.value = "Erreur lors de la création du menu: ${response?.message}"
-//                }
-//            } catch (e: Exception) {
-//                _errorMessage.value = "Exception: ${e.message}"
-//                Log.e("MenuViewModel", "Exception lors de la création du menu : ${e.message}", e)
-//            }
-//        }
-//    }
 
 
     fun setSharedRestaurant(restaurant: Restaurant) {
@@ -152,7 +123,8 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
         description: String,
         price: Double,
         category: String,
-        restaurantId: String
+        restaurantId: String,
+        image: String
     ) {
         viewModelScope.launch {
             try {
@@ -163,7 +135,8 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                     description,
                     price,
                     category,
-                    restaurantId
+                    restaurantId,
+                    image
                 )
                 if (response != null) {
                     if (response.success) {
