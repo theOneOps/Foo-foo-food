@@ -1,6 +1,7 @@
 package com.uds.foufoufood.view
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,21 +30,30 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,28 +66,35 @@ import com.uds.foufoufood.data_class.model.Speciality
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.ui.component.SpecialityPills
+import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.ui.component.RestaurantCard
 import com.uds.foufoufood.ui.component.SearchBar
 import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.MenuViewModel
+import com.uds.foufoufood.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 val restaurantTest = Restaurant(
+    userId = "1",
+    restaurantId = "1",
     name = "Le Gourmet",
-    address = Address("123 Rue de Paris", "75000", "Paris", "France"),
+    address = Address(123, "Rue de Paris", "75000", "Paris", "France"),
     speciality = "French cuisine",
     phone = "0123456789",
     openingHours = "09:00 - 22:00",
     items = listOf(
         Menu(
+            _id = "1",
             name = "Coq au Vin",
-            descriptor = "Classic French chicken dish cooked with wine",
+            description = "Classic French chicken dish cooked with wine",
             price = 25.0,
             category = "Main course",
             image = "https://images.unsplash.com/photo-1468070975228-085c1fdd2d3e?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             restaurantId = "1"
         ), Menu(
+            _id = "2",
             name = "Crème Brûlée",
-            descriptor = "Rich custard base topped with a layer of caramelized sugar",
+            description = "Rich custard base topped with a layer of caramelized sugar",
             price = 10.0,
             category = "Dessert",
             image = "https://images.unsplash.com/photo-1487004121828-9fa15a215a7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -90,7 +107,12 @@ val restaurantTest = Restaurant(
 )
 
 @Composable
-fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel) {
+fun HomeScreen(
+    navController: NavHostController,
+    homeViewModel: HomeViewModel,
+    userViewModel: UserViewModel,
+    menuViewModel: MenuViewModel
+) {
     Log.d("HomeScreen", "HomeScreen")
     // State for controlling drawer
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -121,13 +143,15 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel) {
         drawerContent = {
             DrawerContent(navController = navController, closeDrawer = {
                 scope.launch { drawerState.close() }
-            })
+            },
+            logout = userViewModel::logout, userViewModel = userViewModel)
         },
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 // Row at the top with title and menu button
                 Row(
@@ -139,14 +163,14 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel) {
                     Text(
                         text = "Que souhaitez-vous commander ?",
                         style = TextStyle(
-                            fontFamily = FontFamily.SansSerif,
+                            fontFamily =  FontFamily(Font(R.font.sofiapro_regular)),
                             fontWeight = FontWeight.Bold, // 700 weight
                             fontSize = 30.sp,             // Font size 30px
                             lineHeight = 30.sp,           // Line height 30px
                             textAlign = TextAlign.Left    // Align text to the left
                         ),
                         color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f).padding(8.dp)
                     )
 
                     // Menu button
@@ -180,7 +204,7 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel) {
 
                     // Restaurant List
                     items(homeViewModel.filteredRestaurants) { restaurant ->
-                        RestaurantCard(restaurant = restaurant)
+                        RestaurantCard(navController, menuViewModel, restaurant)
                     }
                 }
             }
@@ -189,7 +213,12 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel) {
 }
 
 @Composable
-fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
+fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit, logout: () -> Unit, userViewModel: UserViewModel) {
+    val context = LocalContext.current
+
+    val name = userViewModel.user.value?.name ?: ""
+    val email = userViewModel.user.value?.email ?: ""
+
     // Get screen width for 80% drawer width
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val drawerWidth = screenWidth * 0.8f
@@ -199,12 +228,13 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
             .fillMaxHeight()
             .width(drawerWidth)
             .background(colorResource(R.color.white))
+            .padding(12.dp)
     ) {
         // Profile Section
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 24.dp),
+                .padding(bottom = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Avatar image
@@ -220,8 +250,8 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
 
             // User information
             Column {
-                Text(text = "Farion Wick", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                Text(text = "farionwick@gmail.com", fontSize = 14.sp, color = Color.Gray)
+                Text(text = name, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Text(text = email, fontSize = 14.sp, color = Color.Gray)
             }
         }
 
@@ -232,7 +262,7 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
             onClick = {
                 closeDrawer()
                 // Handle navigation to orders
-            }
+            },
         )
 
         DrawerMenuItem(
@@ -241,6 +271,7 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
             onClick = {
                 closeDrawer()
                 // Handle navigation to profile
+                navController.navigate(Screen.Profile.route)
             }
         )
 
@@ -250,6 +281,7 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
             onClick = {
                 closeDrawer()
                 // Handle navigation to address
+                navController.navigate(Screen.Address.route)
             },
         )
 
@@ -259,7 +291,9 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit) {
         Button(
             onClick = {
                 closeDrawer()
-                // Handle log out action
+                logout()
+                Toast.makeText(context, R.string.logout_success, Toast.LENGTH_SHORT).show()
+                navController.navigate(Screen.Welcome.route)
             },
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.orange)), // Orange color
             shape = RoundedCornerShape(36.dp),

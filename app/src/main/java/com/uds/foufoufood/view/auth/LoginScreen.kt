@@ -48,14 +48,15 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("roussel.aymeric@gmail.com") }
+    var password by remember { mutableStateOf("testtest") }
 
     val user by userViewModel.user.observeAsState()
     val errorMessage by userViewModel.errorMessage.observeAsState()
 
     LaunchedEffect(user) {
         user?.let {
+            userViewModel.resetStatus()
             // La navigation sera gérée par MainScreen après la mise à jour du rôle de l'utilisateur
             Toast.makeText(context, "Connexion réussie", Toast.LENGTH_SHORT).show()
         }
@@ -124,7 +125,7 @@ fun LoginScreen(
 
     // Afficher les erreurs de connexion si elles existent
     errorMessage?.let {
-        Text(text = "Erreur: $it", color = Color.Red, modifier = Modifier.padding(16.dp))
+        Text(text = "$it", color = Color.Red, modifier = Modifier.padding(16.dp))
     }
 }
 

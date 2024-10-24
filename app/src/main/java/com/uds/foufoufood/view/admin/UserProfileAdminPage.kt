@@ -101,24 +101,24 @@ fun UserProfileAdminPage(
                             DropdownMenuItem(
                                 text = { Text("Client") },
                                 onClick = {
-                                    selectedRole = "Client"
-                                    onRoleChanged(user, "Client")
+                                    selectedRole = "client"
+                                    onRoleChanged(user, "client")
                                     showDropdown = false
                                 }
                             )
                             DropdownMenuItem(
                                 text = { Text("Livreur") },
                                 onClick = {
-                                    selectedRole = "Livreur"
-                                    onRoleChanged(user, "Livreur")
+                                    selectedRole = "livreur"
+                                    onRoleChanged(user, "livreur")
                                     showDropdown = false
                                 }
                             )
                             DropdownMenuItem(
                                 text = { Text("Restaurateur") },
                                 onClick = {
-                                    selectedRole = "Restaurateur"
-                                    onRoleChanged(user, "Restaurateur")
+                                    selectedRole = "restaurateur"
+                                    onRoleChanged(user, "restaurateur")
                                     showDropdown = false
                                 }
                             )

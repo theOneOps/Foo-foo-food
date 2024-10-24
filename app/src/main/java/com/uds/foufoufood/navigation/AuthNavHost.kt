@@ -13,7 +13,9 @@ import com.uds.foufoufood.view.auth.LoginScreen
 import com.uds.foufoufood.view.auth.RegisterFirstPartScreen
 import com.uds.foufoufood.view.auth.VerifyCodeScreen
 import com.uds.foufoufood.view.auth.WelcomeScreen
+import com.uds.foufoufood.view.client.ProfileScreen
 import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 
@@ -21,7 +23,8 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 fun AuthNavHost(
     navController: NavHostController,
     userViewModel: UserViewModel,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    menuViewModel: MenuViewModel
 ) {
     Log.d("UserNavHost", "UserNavHost")
     NavHost(navController = navController, startDestination = Screen.Welcome.route) {
@@ -75,8 +78,14 @@ fun AuthNavHost(
                 )
         }
 
-        composable(Screen.Home.route) {
-            HomeScreen(navController, homeViewModel)
-        }
+//        composable(Screen.Home.route) {
+//            if (userViewModel.user.value?.role == "client" ||
+//                userViewModel.user.value?.role == "restaurateur" ||
+//                userViewModel.user.value?.role == "livreur"
+//            )
+//            HomeScreen(navController, homeViewModel, menuViewModel)
+//        }
+
+
     }
 }

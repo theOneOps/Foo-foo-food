@@ -9,7 +9,7 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddRestaurantPage(navController: NavController, onRestaurantAdded: (Restaurant) -> Unit) {
+fun AddRestaurantPage(navController: NavController, onRestaurantAdded: (com.uds.foufoufood.data_class.model.Restaurant) -> Unit) {
     var restaurantName by remember { mutableStateOf("") }
 
     Scaffold(
@@ -44,8 +44,19 @@ fun AddRestaurantPage(navController: NavController, onRestaurantAdded: (Restaura
                 onClick = {
                     if (restaurantName.isNotEmpty()) {
                         // Créer un nouvel objet restaurant et le passer à la fonction de callback
-                        val newRestaurant =
-                            Restaurant(id = (0..1000).random().toString(), name = restaurantName)
+                        val newRestaurant = com.uds.foufoufood.data_class.model.Restaurant(
+                            name = restaurantName,
+                            address = com.uds.foufoufood.data_class.model.Address(1),
+                            speciality = "",
+                            phone = "",
+                            openingHours = "",
+                            items = listOf(),
+                            rating = 0.0,
+                            reviews = listOf(),
+                            imageUrl = "",
+                            userId = "",
+                            restaurantId = ""
+                        )
                         onRestaurantAdded(newRestaurant)
                         navController.popBackStack() // Retour à la liste des restaurants après l'ajout
                     }

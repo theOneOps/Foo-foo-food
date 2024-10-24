@@ -2,6 +2,7 @@
 <resources>
     <color name="brown">#6F605B</color>
     <color name="orange">#F36527</color>
+    <color name="orange_pale">#FE724C</color>
     <color name="white">#FFFFFF</color>
     <color name="white_grey">#F1F1F1</color>
     <color name="orange_bg">#FFDCD8</color>
@@ -11,4 +12,6 @@
     <color name="black">#000000</color>
     <color name="grey_stroke">#EEEEEE</color>
     <color name="grey_location">#8C9099</color>
+    <color name="grey_border">#EFEFEF</color>
+    <color name="grey_bg">#FCFCFD</color>
 </resources>

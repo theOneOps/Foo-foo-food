@@ -35,6 +35,7 @@ class AdminRepository(private val api: UserApi, private val context: Context) {
     }
 
     suspend fun updateUserRole(userEmail: String, newRole: String): ApiResponse {
+        Log.d("AdminRepository", "Mise à jour du rôle de l'utilisateur: ${newRole}")
         // Crée la requête pour mettre à jour le rôle
         val roleUpdateRequest = RoleUpdateRequest(newRole)
 

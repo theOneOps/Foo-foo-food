@@ -6,15 +6,17 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.uds.foufoufood.data_class.model.Restaurant
 
 data class Restaurant(val id: String, val name: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RestaurantPage(navController: NavController, restaurants: List<Restaurant>) {
+fun RestaurantPage(navController: NavController, restaurants: SnapshotStateList<com.uds.foufoufood.data_class.model.Restaurant>) {
     Scaffold(
         topBar = {
             TopAppBar(

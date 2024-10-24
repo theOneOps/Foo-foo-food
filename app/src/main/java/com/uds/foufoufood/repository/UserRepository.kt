@@ -1,15 +1,28 @@
+import android.content.Context
 import android.util.Log
+import com.uds.foufoufood.data_class.model.User
+import com.uds.foufoufood.data_class.request.AddressRequest
 import com.uds.foufoufood.network.UserApi
 import com.uds.foufoufood.data_class.request.EmailRequest
 import com.uds.foufoufood.data_class.request.LoginRequest
+import com.uds.foufoufood.data_class.request.PasswordRequest
 import com.uds.foufoufood.data_class.request.ProfileRequest
 import com.uds.foufoufood.data_class.request.RegistrationRequest
+import com.uds.foufoufood.data_class.request.UpdateEmailRequest
 import com.uds.foufoufood.data_class.request.VerificationRequest
+import com.uds.foufoufood.data_class.response.ApiResponse
 import com.uds.foufoufood.data_class.response.AuthResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 
-class UserRepository(private val userApi: UserApi) {
+class UserRepository(private val userApi: UserApi, private val context: Context) {
+
+    private val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+
+    suspend fun getUser(email: String): Response<User> = withContext(Dispatchers.IO) {
+        return@withContext userApi.getUser(email)
+    }
 
     suspend fun login(email: String, password: String): AuthResponse? =
         withContext(Dispatchers.IO) {
@@ -23,29 +36,10 @@ class UserRepository(private val userApi: UserApi) {
                     null
                 }
             } catch (e: Exception) {
-                Log.e("UserRepository", "Erreur réseau: ${e.message}")
+                Log.e("UserRepository", "Erreur reseau: ${e.message}")
                 null
             }
         }
-
-    // Récupérer le profil utilisateur
-    suspend fun getUserProfile(token: String): AuthResponse? = withContext(Dispatchers.IO) {
-        try {
-            val response = userApi.getUserProfile(token)  // Appel API direct
-            if (response.isSuccessful) {
-                response.body()
-            } else {
-                Log.e(
-                    "UserRepository",
-                    "Erreur lors de la récupération du profil: ${response.code()}"
-                )
-                null
-            }
-        } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur réseau: ${e.message}")
-            null
-        }
-    }
 
     // Inscription - Étape 1
     suspend fun initiateRegistration(name: String, email: String, password: String): Boolean =
@@ -67,24 +61,26 @@ class UserRepository(private val userApi: UserApi) {
             val response = userApi.verifyCode(request)
             response.isSuccessful && response.body()?.success == true
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur de vérification: ${e.message}")
+            Log.e("UserRepository", "Erreur de verification: ${e.message}")
             false
         }
     }
 
     // Inscription complète - Étape 3
-    suspend fun completeRegistration(email: String, profileType: String): Boolean =
+    suspend fun completeRegistration(email: String, profileType: String): AuthResponse? =
         withContext(Dispatchers.IO) {
-            return@withContext try {
+            try {
                 val request = ProfileRequest(email, profileType)
                 val response = userApi.completeRegistration(request)
-                response.isSuccessful && response.body()?.success == true
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    Log.e("UserRepository", "Erreur d'inscription complète: ${response.code()}")
+                    null
+                }
             } catch (e: Exception) {
-                Log.e(
-                    "UserRepository",
-                    "Erreur lors de la finalisation de l'inscription: ${e.message}"
-                )
-                false
+                Log.e("UserRepository", "Erreur réseau: ${e.message}")
+                null
             }
         }
 
@@ -101,4 +97,52 @@ class UserRepository(private val userApi: UserApi) {
     }
 
 
+    suspend fun logout(): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val response = userApi.logout()
+            response.isSuccessful
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Erreur lors de la déconnexion: ${e.message}")
+            false
+        }
+    }
+
+    suspend fun updateEmail(token: String, previous: String, email: String): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            Log.d("UserRepository", "Token: $token")
+            val response = userApi.updateEmail("Bearer $token", UpdateEmailRequest(previous, email))
+            response.isSuccessful
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Erreur lors de l'édition de l'email: ${e.message}")
+            false
+        }
+    }
+
+    suspend fun updatePassword(token: String, previousPassword: String, newPassword: String): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val response = userApi.updatePassword("Bearer $token", PasswordRequest(previousPassword, newPassword))
+            response.isSuccessful
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Erreur lors de l'édition du mot de passe: ${e.message}")
+            false
+        }
+    }
+
+    suspend fun updateAddress(number: Number, street: String, city: String, state: String, zipCode: String, country: String): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val response = userApi.updateAddress(AddressRequest(number, street, city, state, zipCode, country))
+            response.isSuccessful
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Erreur lors de l'édition de l'adresse: ${e.message}")
+            false
+        }
+    }
+
+    fun getUserEmail(): String? {
+        return sharedPreferences.getString("user_email", null)
+    }
+
+    fun setUserEmail(email: String) {
+        sharedPreferences.edit().putString("user_email", email).apply()
+    }
 }

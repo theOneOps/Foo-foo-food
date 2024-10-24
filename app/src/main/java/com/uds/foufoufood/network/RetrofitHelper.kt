@@ -12,26 +12,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitHelper {
     companion object {
         private fun getBaseUrl(): String {
-            //return if (isEmulator()) {
-            //    "http://10.0.2.2:3000"
-            //} else {
-            //    "http://192.168.32.20:3000" // /!\ MODIFIER SELON SON ADRESSE IP
-            //}
-            return "http://10.0.2.2:3000"
-        }
-
-        private fun isEmulator(): Boolean {
-            return (Build.FINGERPRINT.startsWith("google/sdk_gphone_")
-                    || Build.FINGERPRINT.startsWith("generic")
-                    || Build.FINGERPRINT.startsWith("unknown")
-                    || Build.MODEL.contains("google_sdk")
-                    || Build.MODEL.contains("Emulator")
-                    || Build.MODEL.contains("Android SDK built for x86")
-                    || Build.BOARD == "QC_Reference_Phone"
-                    || Build.MANUFACTURER.contains("Genymotion")
-                    || Build.HOST.startsWith("Build") || Build.BRAND.startsWith("generic")
-                    || Build.DEVICE.startsWith("generic")
-                    || "google_sdk" == Build.PRODUCT)
+            return "http://10.0.2.2:3000" // Pour l'émulateur
+             //return "http://192.168.21.13:3000" // Pour son propre téléphone /!\ MODIFIER SELON SON ADRESSE IP
+            //return "http://10.235.176.84:3000"
         }
 
         fun getRetrofitInstance(context: Context): Retrofit {
