@@ -17,6 +17,7 @@ fun NavGraphBuilder.addDeliveryRoutes(
         AvailabilityScreen (
             navController = navController,
             deliveryViewModel = deliveryViewModel,
+            orderViewModel = orderViewModel
         )
     }
 

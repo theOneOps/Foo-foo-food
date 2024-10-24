@@ -34,9 +34,7 @@ fun DeliveryOrderScreen(
     navController: NavHostController,
     orderViewModel: OrderViewModel
 ) {
-    LaunchedEffect("orderId") {
-        orderViewModel.loadOrder("orderId")
-    }
+
 
     // Observer la commande actuelle depuis le ViewModel
     val order by orderViewModel.currentOrder.collectAsState()

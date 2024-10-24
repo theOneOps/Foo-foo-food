@@ -78,6 +78,7 @@ dependencies {
     implementation (libs.google.accompanist.coil)
     implementation (libs.coil.kt.coil.svg)
     implementation (libs.androidx.navigation.compose)
+    implementation (libs.socket.io.client)
 
 
 

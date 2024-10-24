@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         val retrofit = RetrofitHelper.getRetrofitInstance(this)
         val userApi = retrofit.create(UserApi::class.java)
-        val userRepository = UserRepository(userApi)
+        val userRepository = UserRepository(userApi, this)
 
         userViewModel = UserViewModel(userRepository, this)
 
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         //DELIVERY
         val deliveryRepository = DeliveryRepository(userApi, this)
-        deliveryViewModel = DeliveryViewModel(deliveryRepository, this)
+        deliveryViewModel = DeliveryViewModel(deliveryRepository, userRepository, this)
         val orderRepository = OrderRepository(userApi, this)
         orderViewModel = OrderViewModel(orderRepository, this)
 

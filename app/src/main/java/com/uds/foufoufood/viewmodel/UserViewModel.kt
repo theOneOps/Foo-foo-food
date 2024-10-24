@@ -57,6 +57,7 @@ class UserViewModel(
                     _token.value = response.token
                     // Stocke le token dans SharedPreferences
                     saveToken(context, response.token)
+                    userRepository.setUserEmail(email)
                     Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
                     _errorMessage.value = null
                 } else {
@@ -103,6 +104,7 @@ class UserViewModel(
 
                 // Stocke le token dans SharedPreferences
                 response?.token?.let { saveToken(context, it) }
+                response?.user?.email?.let { userRepository.setUserEmail(it) }
                 _registrationCompleteSuccess.value = true
             } catch (e: Exception) {
                 _registrationCompleteSuccess.value = false
