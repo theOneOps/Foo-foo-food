@@ -1,24 +1,37 @@
 package com.uds.foufoufood.ui.component
 
+import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.uds.foufoufood.Firebase_management.FirebaseInstance
+import com.uds.foufoufood.Firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
 import com.uds.foufoufood.data_class.model.Menu
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit) {
@@ -28,6 +41,8 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit) {
     val priceState = remember { mutableStateOf(menu.price.toString()) }
     val categoryState = remember { mutableStateOf(menu.category) }
     val imageState = remember { mutableStateOf(menu.image) }
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -76,12 +91,62 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit) {
             modifier = Modifier.fillMaxWidth()
         )
 
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let {
+                // Convertir le Uri en String (ici, en supposant qu'il s'agit d'une URL valide)
+                val imageUrl = it.toString() // Assurez-vous que c'est une URL valide
+
+                // Appeler la fonction pour télécharger et compresser l'image
+                CoroutineScope(Dispatchers.Main).launch {
+                    val compressedImage =
+                        downloadAndCompressImageFromUrl(imageUrl, context)
+
+                    if (compressedImage != null) {
+                        // Référence Firebase où l'image sera stockée
+                        val storageRef =
+                            FirebaseInstance.storageRef.child(
+                                "images/${menu._id}/${menu.restaurantId}" +
+                                        "${System.currentTimeMillis()}.webp"
+                            )
+
+                        // Envoie l'image compressée sur Firebase
+                        val uploadTask = storageRef.putBytes(compressedImage)
+
+                        // Gérer le succès ou l'échec de l'envoi
+                        uploadTask.addOnSuccessListener {
+                            // Récupérer l'URL de téléchargement une fois l'image envoyée
+                            storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                                // Mets à jour imageState avec l'URL de l'image sur Firebase
+                                imageState.value = downloadUrl.toString()
+                                println("L'image a été téléchargée : ${imageState.value}")
+                                Log.d("FormNewMenu", imageState.value)
+                            }
+                        }.addOnFailureListener { e ->
+                            Log.e("Firebase", "Échec de l'upload de l'image : ${e.message}", e)
+                        }
+                    } else {
+                        Log.e(
+                            "Image",
+                            "Erreur lors du téléchargement ou de la compression de l'image."
+                        )
+                    }
+                }
+            }
+        }
+
         // Champ pour l'image
         OutlinedTextField(
-            value = imageState.value ?: "",
-            onValueChange = { imageState.value = it },
-            label = { Text("URL de l'image") },
-            modifier = Modifier.fillMaxWidth()
+            value = imageState.value,
+            onValueChange = { },
+            label = { Text("Select an image") },
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                IconButton(onClick = { launcher.launch("image/*") }) {
+                    Icon(Icons.Filled.AddAPhoto, contentDescription = "Select Image")
+                }
+            }
         )
 
         // Bouton pour sauvegarder les modifications
@@ -98,6 +163,8 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit) {
                     image = imageState.value
                 )
                 onUpdate(updatedMenu) // Appeler la fonction de mise à jour
+                Toast.makeText(context, "menu bien modifié", Toast.LENGTH_SHORT)
+                    .show()
             },
             modifier = Modifier.align(Alignment.End)
         ) {

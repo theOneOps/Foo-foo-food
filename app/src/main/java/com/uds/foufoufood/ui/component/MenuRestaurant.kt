@@ -132,7 +132,7 @@ fun MenuRestaurant(menu: Menu, menuViewModel: MenuViewModel , isConnectedRestaur
                             Text("⭐", style = TextStyle(fontSize = 15.sp))
                             Text("${menu.price}", style = TextStyle(fontSize = 18.sp))
                             Spacer(Modifier.width(20.dp))
-                            TextLink(onClick = { /* Lien pour les avis */ }, label = "See Review")
+                            TextLink(onClick = { /* Lien pour les avis todo */ }, label = "See Review")
                         }
                         // todo : tester si l'user connecté est bien celui qui possède
                         //  le restaurant, voire dans ClientRestaurantScreen

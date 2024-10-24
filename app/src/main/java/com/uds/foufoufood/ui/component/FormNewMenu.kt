@@ -2,6 +2,7 @@ package com.uds.foufoufood.ui.component
 
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -155,8 +156,8 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
 // OutlinedTextField pour l'image
         OutlinedTextField(
             value = imageState.value,
-            onValueChange = { imageState.value = it },
-            label = { Text("Image URL or select an image") },
+            onValueChange = { },
+            label = { Text("Select an image") },
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
                 IconButton(onClick = { launcher.launch("image/*") }) {
@@ -181,6 +182,8 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
                         token, nameState.value, descriptorState.value,
                         price, restaurant.restaurantId, categoryState.value, imageUri
                     )
+                    Toast.makeText(context, "nouveau menu bien créé", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
                     // Si aucune image n'a été uploadée, appeler directement createMenu sans l'URL
                     menuViewModel.createMenu(

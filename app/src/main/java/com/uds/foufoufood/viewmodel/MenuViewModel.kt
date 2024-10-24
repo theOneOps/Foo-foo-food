@@ -150,7 +150,9 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                             val updatedMenu = currentMenus[menuIndex].copy(
                                 name = name,
                                 price = price,
-                                category = category
+                                category = category,
+                                image = image,
+                                description = description
                             )
                             // Remplacer l'ancien menu par le nouveau
                             currentMenus[menuIndex] = updatedMenu

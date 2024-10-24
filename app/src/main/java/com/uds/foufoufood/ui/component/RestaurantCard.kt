@@ -1,9 +1,11 @@
 package com.uds.foufoufood.ui.component
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,7 +31,6 @@ import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.viewmodel.MenuViewModel
 
 
-
 //@Composable
 //fun RestaurantList(
 //    navHostController: NavHostController,
@@ -47,22 +48,18 @@ import com.uds.foufoufood.viewmodel.MenuViewModel
 //  sur le screen du restaurant correspondant avec ses menus
 @Composable
 fun RestaurantCard(
-    navHostController: NavHostController,
-    menuViewModel: MenuViewModel,
-    restaurant: Restaurant
+    navHostController: NavHostController, menuViewModel: MenuViewModel, restaurant: Restaurant
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                menuViewModel.setSharedRestaurant(restaurant)
-                navHostController.navigate(Screen.ClientRestaurantAllMenusPage.route)
-            }
-            .padding(8.dp), // Optional padding to space between cards
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .clickable {
+            menuViewModel.setSharedRestaurant(restaurant)
+            navHostController.navigate(Screen.ClientRestaurantAllMenusPage.route)
+        }
+        .padding(8.dp), // Optional padding to space between cards
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
+        colors = CardDefaults.cardColors(containerColor = Color.White)) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -70,8 +67,7 @@ fun RestaurantCard(
                 // image from url
                 model = restaurant.imageUrl,
                 contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop // Make sure image fills the entire area
             )
 
@@ -91,20 +87,33 @@ fun RestaurantCard(
                 )
 
                 // Category as a tag with a grey background
-                Box(
-                    modifier = Modifier
-                        .background(
-                            colorResource(R.color.white_grey),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = restaurant.speciality,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = colorResource(R.color.grey),
-                        fontSize = 12.sp,
-                    )
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                colorResource(R.color.white_grey), shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = restaurant.speciality,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colorResource(R.color.grey),
+                            fontSize = 12.sp,
+                        )
+                    }
+
+                    Row(horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically) {
+                        // todo : add the textlink for the modify link
+                        //  (modify restaurant's intel), only the owner of
+                        //  the restaurant has the privilege
+
+                        TextLink(onClick = { /* Lien pour les avis Todo */ }, label = "See Review")
+                    }
                 }
             }
         }

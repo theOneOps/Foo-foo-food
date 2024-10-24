@@ -1,4 +1,6 @@
 package com.uds.foufoufood.view.client
+
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,6 +24,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +43,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,7 +65,6 @@ import com.uds.foufoufood.ui.component.MenuRestaurant
 import com.uds.foufoufood.ui.component.TextLink
 import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
-
 
 
 val restaurantTest = Restaurant(
@@ -106,12 +109,13 @@ val menuTest = Menu(
     restaurantId = "1",
     _id = "ze"
 )
+
 @Composable
 fun ClientRestaurantScreen(
     navHostController: NavHostController,
     userViewModel: UserViewModel,
     menuViewModel: MenuViewModel,
-    restaurant: Restaurant=restaurantTest
+    restaurant: Restaurant = restaurantTest
 ) {
     // Obtenir le contexte
     val context = LocalContext.current
@@ -133,7 +137,7 @@ fun ClientRestaurantScreen(
         item {
             //println("userId vaut : $userId")
             if (userId == restaurant.userId)
-                AddNewMenu(restaurant,menuViewModel)
+                AddNewMenu(restaurant, menuViewModel)
         }
         item {
             FilterMenus()
@@ -143,7 +147,7 @@ fun ClientRestaurantScreen(
 
         val isConnectedRestaurateur = userId == restaurant.userId
         item {
-            menus?.let { PrintAllMenus(it,menuViewModel, isConnectedRestaurateur) }
+            menus?.let { PrintAllMenus(it, menuViewModel, isConnectedRestaurateur) }
         }
     }
 }
@@ -270,7 +274,7 @@ fun RestaurantComponent(restaurant: Restaurant) {
 }
 
 @Composable
-fun MenuComponent(menu:Menu, isConnectedRestaurateur: Boolean, menuViewModel: MenuViewModel) {
+fun MenuComponent(menu: Menu, isConnectedRestaurateur: Boolean, menuViewModel: MenuViewModel) {
     // State pour contrôler l'affichage du dialog
     val openDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -308,17 +312,44 @@ fun MenuComponent(menu:Menu, isConnectedRestaurateur: Boolean, menuViewModel: Me
                 Column(Modifier.padding(top = 2.dp, bottom = 2.dp)) {
                     Text(menu.name, style = TextStyle(Color.Black, fontSize = 30.sp))
                     Text(menu.description, style = TextStyle(Color.Gray, fontSize = 20.sp))
-                    if (isConnectedRestaurateur) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Box(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(10.dp),
-                            contentAlignment = Alignment.CenterEnd
+                            modifier = Modifier
+                                .background(
+                                    colorResource(R.color.white_grey),
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .padding(horizontal = 12.dp, vertical = 8.dp)
                         ) {
-                            TextLink(label = "Delete Menu", onClick = {
-                                // suppression du menu
-                                menuViewModel.deleteMenu(token, menu._id)
-                            })
+                            Text(
+                                menu.price.toString(),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = colorResource(R.color.grey),
+                                fontSize = 12.sp,
+                            )
+                        }
+                        if (isConnectedRestaurateur) {
+                            Box(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
+                                TextLink(label = "Delete Menu", onClick = {
+                                    // suppression du menu
+                                    menuViewModel.deleteMenu(token, menu._id)
+                                    Toast.makeText(
+                                        context,
+                                        "menu bien supprimé",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                })
+                            }
                         }
                     }
                 }
@@ -334,14 +365,22 @@ fun MenuComponent(menu:Menu, isConnectedRestaurateur: Boolean, menuViewModel: Me
             Surface(
                 shape = RoundedCornerShape(16.dp),
             ) {
-                MenuRestaurant(menu,menuViewModel, isConnectedRestaurateur) // Le component à afficher dans le dialog
+                MenuRestaurant(
+                    menu,
+                    menuViewModel,
+                    isConnectedRestaurateur
+                ) // Le component à afficher dans le dialog
             }
         }
     }
 }
 
 @Composable
-fun PrintAllMenus(menus:List<Menu>,menuViewModel: MenuViewModel, isConnectedRestaurateur: Boolean) {
+fun PrintAllMenus(
+    menus: List<Menu>,
+    menuViewModel: MenuViewModel,
+    isConnectedRestaurateur: Boolean
+) {
     menus.forEach { e ->
         MenuComponent(e, isConnectedRestaurateur, menuViewModel)
     }
@@ -357,7 +396,7 @@ fun FilterMenus() {
         mutableIntStateOf(0)
     }
 
-    val usernames = listOf("Popular", "Most rated", "Cheap", "Expensive")
+    val usernames = listOf("Cheap", "Expensive")
 
     Row(Modifier.padding(start = 20.dp, top = 40.dp, bottom = 25.dp)) {
         Text("Short by: ")
