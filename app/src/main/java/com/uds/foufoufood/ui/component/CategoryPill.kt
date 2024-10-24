@@ -53,11 +53,11 @@ fun CategoryPills(
 @Composable
 fun CategoryPill(category: Category, isSelected: Boolean, onClick: () -> Unit) {
     Surface(
-        color = if (isSelected) colorResource(id = R.color.orange)
+        color = if (isSelected) colorResource(id = R.color.orange_pale)
         else colorResource(id = R.color.white), // Use colors from resources
         shape = RoundedCornerShape(24.dp), // Rounded pill shape
         modifier = Modifier
-            .padding(8.dp)
+            .padding(9.dp)
             .clickable(onClick = onClick)
             .shadow(4.dp, RoundedCornerShape(48.dp)), // Elevation with rounded shape
         tonalElevation = 8.dp
@@ -65,8 +65,8 @@ fun CategoryPill(category: Category, isSelected: Boolean, onClick: () -> Unit) {
         Column(
             modifier = Modifier
                 .padding(4.dp)
-                .width(54.dp)
-                .height(90.dp),
+                .width(55.dp)
+                .height(95.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Round Icon
@@ -79,16 +79,14 @@ fun CategoryPill(category: Category, isSelected: Boolean, onClick: () -> Unit) {
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Category name
             Text(
                 text = category.name,
                 color = if (isSelected) colorResource(id = R.color.white)
                 else colorResource(id = R.color.black), // Text color based on selection
-                style = MaterialTheme.typography.bodySmall,
-
-                )
+                style = MaterialTheme.typography.bodySmall)
         }
     }
 }

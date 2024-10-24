@@ -51,6 +51,7 @@ fun DefineProfileScreen(
     LaunchedEffect(registrationCompleteSuccess) {
         if (registrationCompleteSuccess == true) {
             Toast.makeText(context, "Inscription réussie", Toast.LENGTH_SHORT).show()
+            userViewModel.resetStatus()
             navController.navigate("home")
         } else if (registrationCompleteSuccess == false) {
             Toast.makeText(context, "Échec de l'inscription", Toast.LENGTH_SHORT).show()

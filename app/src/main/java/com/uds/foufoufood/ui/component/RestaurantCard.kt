@@ -41,7 +41,7 @@ fun RestaurantCard(restaurant: Restaurant) {
             .fillMaxWidth()
             .padding(8.dp), // Optional padding to space between cards
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(8.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(

@@ -30,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,10 +48,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -139,6 +142,7 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel, u
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 // Row at the top with title and menu button
                 Row(
@@ -150,14 +154,14 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel, u
                     Text(
                         text = "Que souhaitez-vous commander ?",
                         style = TextStyle(
-                            fontFamily = FontFamily.SansSerif,
+                            fontFamily =  FontFamily(Font(R.font.sofiapro_regular)),
                             fontWeight = FontWeight.Bold, // 700 weight
                             fontSize = 30.sp,             // Font size 30px
                             lineHeight = 30.sp,           // Line height 30px
                             textAlign = TextAlign.Left    // Align text to the left
                         ),
                         color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f).padding(8.dp)
                     )
 
                     // Menu button
@@ -215,12 +219,13 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit, log
             .fillMaxHeight()
             .width(drawerWidth)
             .background(colorResource(R.color.white))
+            .padding(12.dp)
     ) {
         // Profile Section
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 24.dp),
+                .padding(bottom = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Avatar image
@@ -248,7 +253,7 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit, log
             onClick = {
                 closeDrawer()
                 // Handle navigation to orders
-            }
+            },
         )
 
         DrawerMenuItem(
@@ -267,6 +272,7 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit, log
             onClick = {
                 closeDrawer()
                 // Handle navigation to address
+                navController.navigate(Screen.Address.route)
             },
         )
 

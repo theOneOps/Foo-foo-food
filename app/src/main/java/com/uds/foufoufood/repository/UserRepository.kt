@@ -115,9 +115,9 @@ class UserRepository(private val userApi: UserApi) {
         }
     }
 
-    suspend fun updatePassword(token: String, password: String): Boolean = withContext(Dispatchers.IO) {
+    suspend fun updatePassword(token: String, previousPassword: String, newPassword: String): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
-            val response = userApi.updatePassword("Bearer $token", PasswordRequest(password))
+            val response = userApi.updatePassword("Bearer $token", PasswordRequest(previousPassword, newPassword))
             response.isSuccessful
         } catch (e: Exception) {
             Log.e("UserRepository", "Erreur lors de l'édition du mot de passe: ${e.message}")

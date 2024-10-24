@@ -1,5 +1,6 @@
 package com.uds.foufoufood.data_class.request
 
 data class PasswordRequest(
-    val password: String
+    val previousPassword: String,
+    val newPassword: String
 )

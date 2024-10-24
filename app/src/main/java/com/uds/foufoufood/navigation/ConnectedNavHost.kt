@@ -10,7 +10,9 @@ import androidx.navigation.navArgument
 import com.uds.foufoufood.view.HomeScreen
 import com.uds.foufoufood.view.auth.VerifyCodeScreen
 import com.uds.foufoufood.view.auth.WelcomeScreen
+import com.uds.foufoufood.view.client.AddressScreen
 import com.uds.foufoufood.view.client.ProfileScreen
+import com.uds.foufoufood.view.client.UpdateAddressScreen
 import com.uds.foufoufood.viewmodel.HomeViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
@@ -49,6 +51,14 @@ fun ConnectedNavHost(
                 userViewModel = userViewModel,
                 email = email ?: ""
             )
+        }
+
+        composable(Screen.Address.route) {
+            AddressScreen(navController, userViewModel)
+        }
+
+        composable(Screen.UpdateAddress.route) {
+            UpdateAddressScreen(navController, userViewModel)
         }
     }
 }

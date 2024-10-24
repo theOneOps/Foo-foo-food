@@ -167,7 +167,7 @@ fun PasswordTextField(
 }
 
 @Composable
-fun ValidateButton(label: String, onClick: () -> Unit) {
+fun ValidateButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = { onClick() },
         modifier = Modifier

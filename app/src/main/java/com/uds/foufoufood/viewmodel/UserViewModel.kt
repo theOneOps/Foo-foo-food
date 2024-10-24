@@ -43,6 +43,9 @@ class UserViewModel(
     private val _resendCodeEvent = MutableLiveData<Boolean>()
     val resendCodeEvent: LiveData<Boolean> get() = _resendCodeEvent
 
+    private val _updateAddressSuccess = MutableLiveData<Boolean>()
+    val updateAddressSuccess: LiveData<Boolean> get() = _updateAddressSuccess
+
     // Fonctions
     fun login(email: String, password: String) {
         viewModelScope.launch {
@@ -90,9 +93,6 @@ class UserViewModel(
             }
         }
     }
-    fun resetCodeVerificationStatus() {
-        _codeVerificationSuccess.value = null
-    }
 
     fun completeRegistration(email: String, profileType: String) {
         viewModelScope.launch {
@@ -109,7 +109,6 @@ class UserViewModel(
             }
         }
     }
-
 
     // Fonction pour charger l'utilisateur connecté (par exemple depuis une API ou base de données)
     fun resendVerificationCode(email: String) {
@@ -170,7 +169,7 @@ class UserViewModel(
         }
     }
 
-    fun updatePassword(password: String) {
+    fun updatePassword(previousPassword: String, newPassword: String) {
         viewModelScope.launch {
             try {
                 val token = getToken(context)
@@ -178,7 +177,7 @@ class UserViewModel(
                     _errorMessage.value = "Vous n'êtes pas connecté"
                     return@launch
                 }
-                val success = userRepository.updatePassword(token, password)
+                val success = userRepository.updatePassword(token, previousPassword, newPassword)
                 if (success) {
                     _errorMessage.value = null
                     Toast.makeText(context, "Mot de passe modifié avec succès", Toast.LENGTH_SHORT).show()
@@ -191,16 +190,28 @@ class UserViewModel(
         }
     }
 
-    fun updateAddress(number: Number, street: String, city: String, state: String, zipCode: String, country: String) {
+    fun updateAddress(number: Number, street: String, city: String, zipCode: String, state: String, country: String) {
+        Log.d("UserViewModel", "Mise à jour de l'adresse")
         viewModelScope.launch {
             try {
-                val success = userRepository.updateAddress(number, street, city, state, zipCode, country)
+                val success = userRepository.updateAddress(number, street, city, zipCode, state, country)
                 if (success) {
-                    _user.value?.address = Address(number, street, city, state, zipCode, country)
+                    _updateAddressSuccess.value = true
+                    _user.value?.address = Address(number, street, city, zipCode, state, country)
                 }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Erreur lors de l'édition de l'adresse: ${e.message}")
             }
         }
+    }
+
+    fun resetStatus() {
+        _codeVerificationSuccess.value = null
+        _registrationInitSuccess.value = false
+        _registrationCompleteSuccess.value = false
+        _resendCodeEvent.value = false
+        _loading.value = false
+        _updateAddressSuccess.value = false
+        _errorMessage.value = null
     }
 }
