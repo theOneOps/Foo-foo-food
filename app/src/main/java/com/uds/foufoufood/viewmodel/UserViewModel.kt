@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.uds.foufoufood.activities.main.TokenManager.deleteToken
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.activities.main.TokenManager.saveToken
 import com.uds.foufoufood.data_class.model.Address
@@ -78,28 +79,35 @@ class UserViewModel(
 
     fun initiateRegistration(name: String, email: String, password: String) {
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val success = userRepository.initiateRegistration(name, email, password)
                 _registrationInitSuccess.value = success
             } catch (e: Exception) {
                 _registrationInitSuccess.value = false
+            } finally {
+                _loading.value = false
             }
         }
     }
 
     fun verifyCode(email: String, code: String) {
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val success = userRepository.verifyCode(email, code)
                 _codeVerificationSuccess.value = success
             } catch (e: Exception) {
                 _codeVerificationSuccess.value = false
+            } finally {
+                _loading.value = false
             }
         }
     }
 
     fun completeRegistration(email: String, profileType: String) {
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val response = userRepository.completeRegistration(email, profileType)
                 _user.value = response?.user
@@ -111,6 +119,8 @@ class UserViewModel(
                 _registrationCompleteSuccess.value = true
             } catch (e: Exception) {
                 _registrationCompleteSuccess.value = false
+            } finally {
+                _loading.value = false
             }
         }
     }
@@ -118,22 +128,42 @@ class UserViewModel(
     // Fonction pour charger l'utilisateur connecté (par exemple depuis une API ou base de données)
     fun resendVerificationCode(email: String) {
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val success = userRepository.resendVerificationCode(email)
                 _resendCodeEvent.value = success
             } catch (e: Exception) {
                 _resendCodeEvent.value = false
+            } finally {
+                _loading.value = false
             }
         }
     }
 
     fun getUser(email: String) {
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val user = userRepository.getUser(email)
                 _user.value = user.body()
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Erreur lors de la récupération de l'utilisateur: ${e.message}")
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    fun getUserFromToken(token: String) {
+        viewModelScope.launch {
+            _loading.value = true
+            try {
+                val user = userRepository.getUserFromToken(token)
+                _user.value = user
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Erreur lors de la récupération de l'utilisateur: ${e.message}")
+            } finally {
+                _loading.value = false
             }
         }
     }
@@ -146,6 +176,7 @@ class UserViewModel(
                 _user.value = null
                 _token.value = null
                 _errorMessage.value = null
+                deleteToken(context)
             } catch (e: IOException) {
                 _errorMessage.value = "Erreur réseau, veuillez vérifier votre connexion"
             } catch (e: Exception) {
@@ -158,6 +189,7 @@ class UserViewModel(
 
     fun updateEmail(previous: String, email: String) {
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val token = getToken(context)
                 if (token == null) {
@@ -170,12 +202,15 @@ class UserViewModel(
                 }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Erreur lors de l'édition de l'email: ${e.message}")
+            } finally {
+                _loading.value = false
             }
         }
     }
 
     fun updatePassword(previousPassword: String, newPassword: String) {
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val token = getToken(context)
                 if (token == null) {
@@ -191,6 +226,8 @@ class UserViewModel(
                 }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Erreur lors de l'édition du mot de passe: ${e.message}")
+            } finally {
+                _loading.value = false
             }
         }
     }
@@ -198,6 +235,7 @@ class UserViewModel(
     fun updateAddress(number: Number, street: String, city: String, zipCode: String, state: String, country: String) {
         Log.d("UserViewModel", "Mise à jour de l'adresse")
         viewModelScope.launch {
+            _loading.value = true
             try {
                 val success = userRepository.updateAddress(number, street, city, zipCode, state, country)
                 if (success) {
@@ -206,6 +244,8 @@ class UserViewModel(
                 }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Erreur lors de l'édition de l'adresse: ${e.message}")
+            } finally {
+                _loading.value = false
             }
         }
     }

@@ -204,7 +204,7 @@ fun HomeScreen(
 
                     // Restaurant List
                     items(homeViewModel.filteredRestaurants) { restaurant ->
-                        RestaurantCard(navController, menuViewModel, restaurant)
+                        RestaurantCard(navController, menuViewModel, restaurant, userViewModel)
                     }
                 }
             }
@@ -234,7 +234,7 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit, log
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 20.dp),
+                .padding(bottom = 20.dp, top = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Avatar image
@@ -254,6 +254,15 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit, log
                 Text(text = email, fontSize = 14.sp, color = Color.Gray)
             }
         }
+
+        DrawerMenuItem(
+            icon = ImageVector.vectorResource(R.drawable.home),
+            label = stringResource(R.string.home),
+            onClick = {
+                closeDrawer()
+                navController.navigate(Screen.Home.route)
+            },
+        )
 
         // Menu items with icons
         DrawerMenuItem(

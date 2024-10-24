@@ -22,9 +22,7 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 @Composable
 fun AuthNavHost(
     navController: NavHostController,
-    userViewModel: UserViewModel,
-    homeViewModel: HomeViewModel,
-    menuViewModel: MenuViewModel
+    userViewModel: UserViewModel
 ) {
     Log.d("UserNavHost", "UserNavHost")
     NavHost(navController = navController, startDestination = Screen.Welcome.route) {
@@ -77,15 +75,5 @@ fun AuthNavHost(
                     email = email ?: ""
                 )
         }
-
-//        composable(Screen.Home.route) {
-//            if (userViewModel.user.value?.role == "client" ||
-//                userViewModel.user.value?.role == "restaurateur" ||
-//                userViewModel.user.value?.role == "livreur"
-//            )
-//            HomeScreen(navController, homeViewModel, menuViewModel)
-//        }
-
-
     }
 }

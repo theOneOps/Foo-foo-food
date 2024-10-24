@@ -1,5 +1,6 @@
 package com.uds.foufoufood.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +30,7 @@ import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.viewmodel.MenuViewModel
+import com.uds.foufoufood.viewmodel.UserViewModel
 
 
 //@Composable
@@ -48,11 +50,13 @@ import com.uds.foufoufood.viewmodel.MenuViewModel
 //  sur le screen du restaurant correspondant avec ses menus
 @Composable
 fun RestaurantCard(
-    navHostController: NavHostController, menuViewModel: MenuViewModel, restaurant: Restaurant
+    navHostController: NavHostController, menuViewModel: MenuViewModel, restaurant: Restaurant, userViewModel: UserViewModel
 ) {
     Card(modifier = Modifier
         .fillMaxWidth()
         .clickable {
+            Log.d("RestaurantCard", restaurant.toString())
+            Log.d("RestaurantCard", userViewModel.user.value.toString())
             menuViewModel.setSharedRestaurant(restaurant)
             navHostController.navigate(Screen.ClientRestaurantAllMenusPage.route)
         }

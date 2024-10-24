@@ -68,9 +68,11 @@ fun ConnectedNavHost(
 
         composable(Screen.ClientRestaurantAllMenusPage.route)
         {
+            Log.d("ConnectedNavHost", "ClientRestaurantAllMenusPage")
             if (userViewModel.user.value?.role == "client" ||
                 userViewModel.user.value?.role == "restaurateur"
             )
+                //Log.d("ConnectedNavHost", "ClientRestaurantAllMenusPageIFFFF")
                 menuViewModel.shared_restaurant.value?.let { theRestaurant ->
                     ClientRestaurantScreen(
                         navController,
