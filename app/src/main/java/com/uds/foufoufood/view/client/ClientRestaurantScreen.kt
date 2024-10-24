@@ -26,6 +26,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -116,12 +118,12 @@ fun ClientRestaurantScreen(
     val token = getToken(context) ?: ""
     val userId = getUserId(context) ?: ""
 
-    // Obtenir tous les menus via un LiveData ou un State
-    val allMenus = remember { mutableStateOf<List<Menu>>(emptyList()) }
+    // Observer les menus à partir du ViewModel
+    val menus by menuViewModel.menus.observeAsState(initial = emptyList())
 
     // Lancer la récupération des menus dans un effet à composition stable
     LaunchedEffect(Unit) {
-        allMenus.value = menuViewModel.getAllMenus(token, restaurant.restaurantId)
+        menuViewModel.getAllMenus(token, restaurant.restaurantId)
     }
 
     LazyColumn {
@@ -137,11 +139,11 @@ fun ClientRestaurantScreen(
             FilterMenus()
         }
 
-        println(allMenus)
+        println(menus)
 
         val isConnectedRestaurateur = userId == restaurant.userId
         item {
-            allMenus?.let { PrintAllMenus(it.value,menuViewModel, isConnectedRestaurateur) }
+            menus?.let { PrintAllMenus(it,menuViewModel, isConnectedRestaurateur) }
         }
     }
 }

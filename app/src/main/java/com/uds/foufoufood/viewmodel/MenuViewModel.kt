@@ -20,21 +20,19 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
-    suspend fun getAllMenus(token: String, restaurantId: String): List<Menu> {
-        return try {
+    suspend fun getAllMenus(token: String, restaurantId: String) {
+        try {
             val response = repository.getAllMenus(token, restaurantId)
 
             // Vérifier si la réponse est réussie
             if (response != null && response.success) {
-                return response.data
-                    ?: emptyList() // Retourner la liste des menus ou une liste vide si elle est nulle
+                _menus.postValue(response.data ?: emptyList()) // Mettre à jour le LiveData
+                // Retourner la liste des menus ou une liste vide si elle est nulle
             } else {
                 Log.e("MenuViewModel", "Erreur d'accès aux menus : ${response?.message}")
-                emptyList() // Retourner une liste vide si la réponse n'est pas un succès
             }
         } catch (e: Exception) {
             Log.e("MenuViewModel", "Exception lors de la récupération des menus: ${e.message}", e)
-            emptyList() // Retourner une liste vide en cas d'exception
         }
     }
 
@@ -73,6 +71,45 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
             }
         }
     }
+
+//    fun createMenu(
+//        token: String,
+//        name: String,
+//        description: String,
+//        price: Double,
+//        restaurantId: String,
+//        category: String
+//    ) {
+//        viewModelScope.launch {
+//            try {
+//                val response =
+//                    repository.createMenu(token, name, description, price, restaurantId, category)
+//
+//                if (response != null) {
+//                    if (response.success) {
+//                        // Récupérer la liste actuelle des menus
+//                        val currentMenus = _menus.value?.toMutableList() ?: mutableListOf()
+//
+//                        // Ajouter le nouveau menu à la liste si la création est réussie
+//                        response.data?.let { newMenuList ->
+//                            newMenuList.forEach { newMenu -> currentMenus.add(newMenu) }
+//                        }
+//
+//                        // Mettre à jour le LiveData avec la nouvelle liste
+//                        _menus.postValue(currentMenus)
+//                    } else {
+//                        _errorMessage.value = response.message
+//                    }
+//                } else {
+//                    _errorMessage.value = "Erreur lors de la création du menu: ${response?.message}"
+//                }
+//            } catch (e: Exception) {
+//                _errorMessage.value = "Exception: ${e.message}"
+//                Log.e("MenuViewModel", "Exception lors de la création du menu : ${e.message}", e)
+//            }
+//        }
+//    }
+
 
     fun setSharedRestaurant(restaurant: Restaurant) {
         _shared_restaurant.value = restaurant
