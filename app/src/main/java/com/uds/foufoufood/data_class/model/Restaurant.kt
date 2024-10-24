@@ -11,5 +11,5 @@ data class Restaurant(
     val reviews:List<String>,
     val imageUrl: String,
     val userId:String,
-    val restaurantId:String
+    val _id:String
 )

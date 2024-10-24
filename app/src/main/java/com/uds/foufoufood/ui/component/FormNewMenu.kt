@@ -124,7 +124,7 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
                         // Référence Firebase où l'image sera stockée
                         val storageRef =
                             FirebaseInstance.storageRef.child(
-                                "images/${restaurant.userId}/${restaurant.restaurantId}" +
+                                "images/${restaurant.userId}/${restaurant._id}" +
                                         "${System.currentTimeMillis()}.webp"
                             )
 
@@ -180,7 +180,7 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
                     // Appel au ViewModel pour créer le menu avec l'URL de l'image déjà uploadée
                     menuViewModel.createMenu(
                         token, nameState.value, descriptorState.value,
-                        price, restaurant.restaurantId, categoryState.value, imageUri
+                        price, restaurant._id, categoryState.value, imageUri
                     )
                     Toast.makeText(context, "nouveau menu bien créé", Toast.LENGTH_SHORT)
                         .show()
@@ -188,7 +188,7 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
                     // Si aucune image n'a été uploadée, appeler directement createMenu sans l'URL
                     menuViewModel.createMenu(
                         token, nameState.value, descriptorState.value,
-                        price, restaurant.restaurantId, categoryState.value, ""
+                        price, restaurant._id, categoryState.value, ""
                     )
                 }
             },

@@ -23,7 +23,7 @@ class AdminRestaurantsViewModel : ViewModel() {
             rating = 4.5,
             reviews = listOf(),
             imageUrl = "https://source.unsplash.com/random/200x200",
-            restaurantId = "1",
+            _id = "1",
             userId = "1",
         ),
     )

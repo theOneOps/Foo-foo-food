@@ -74,38 +74,6 @@ import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
-val restaurantTest = Restaurant(
-    userId = "1",
-    restaurantId = "1",
-    name = "Le Gourmet",
-    address = Address(123, "Rue de Paris", "75000", "Paris", "France"),
-    speciality = "French cuisine",
-    phone = "0123456789",
-    openingHours = "09:00 - 22:00",
-    items = listOf(
-        Menu(
-            _id = "1",
-            name = "Coq au Vin",
-            description = "Classic French chicken dish cooked with wine",
-            price = 25.0,
-            category = "Main course",
-            image = "https://images.unsplash.com/photo-1468070975228-085c1fdd2d3e?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            restaurantId = "1"
-        ), Menu(
-            _id = "2",
-            name = "Crème Brûlée",
-            description = "Rich custard base topped with a layer of caramelized sugar",
-            price = 10.0,
-            category = "Dessert",
-            image = "https://images.unsplash.com/photo-1487004121828-9fa15a215a7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            restaurantId = "1"
-        )
-    ),
-    rating = 4.7,
-    reviews = listOf("Delicious food!", "Amazing ambiance."),
-    imageUrl = "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-)
-
 @Composable
 fun HomeScreen(
     navController: NavHostController,

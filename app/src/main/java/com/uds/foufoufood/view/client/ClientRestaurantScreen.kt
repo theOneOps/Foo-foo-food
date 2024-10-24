@@ -1,5 +1,6 @@
 package com.uds.foufoufood.view.client
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -74,6 +75,7 @@ fun ClientRestaurantScreen(
     menuViewModel: MenuViewModel,
     restaurant: Restaurant
 ) {
+
     // Obtenir le contexte
     val context = LocalContext.current
     val token = getToken(context) ?: ""
@@ -84,7 +86,7 @@ fun ClientRestaurantScreen(
 
     // Lancer la récupération des menus dans un effet à composition stable
     LaunchedEffect(Unit) {
-        menuViewModel.getAllMenus(token, restaurant.restaurantId)
+        menuViewModel.getAllMenus(token, restaurant._id)
     }
 
     LazyColumn {

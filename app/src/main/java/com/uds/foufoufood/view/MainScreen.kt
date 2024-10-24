@@ -48,6 +48,11 @@ fun MainScreen(
             // Si l'utilisateur est un utilisateur classique, afficher UserNavHost
             ConnectedNavHost(navController, userViewModel, homeViewModel, menuViewModel)
         }
+        "restaurateur" -> {
+            Log.d("MainScreen", "Restaurateur")
+            // Si l'utilisateur est un utilisateur classique, afficher UserNavHost
+            ConnectedNavHost(navController, userViewModel, homeViewModel, menuViewModel)
+        }
         "livreur" -> {
             Log.d("MainScreen", "Livreur")
             DeliveryNavHost(navController, deliveryViewModel, orderViewModel)
