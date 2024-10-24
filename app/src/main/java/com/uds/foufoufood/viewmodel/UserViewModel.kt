@@ -117,6 +117,9 @@ class UserViewModel(
                 response?.token?.let { saveToken(context, it) }
                 response?.user?.email?.let { userRepository.setUserEmail(it) }
                 _registrationCompleteSuccess.value = true
+                saveToken(context, response?.token!!)
+                saveUserId(context,response.user._id)
+                userRepository.setUserEmail(email)
             } catch (e: Exception) {
                 _registrationCompleteSuccess.value = false
             } finally {
@@ -176,6 +179,7 @@ class UserViewModel(
                 _user.value = null
                 _token.value = null
                 _errorMessage.value = null
+
                 deleteToken(context)
             } catch (e: IOException) {
                 _errorMessage.value = "Erreur réseau, veuillez vérifier votre connexion"

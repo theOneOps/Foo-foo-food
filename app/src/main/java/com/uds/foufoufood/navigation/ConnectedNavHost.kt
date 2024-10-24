@@ -26,7 +26,6 @@ fun ConnectedNavHost(
     homeViewModel: HomeViewModel,
     menuViewModel: MenuViewModel
 ) {
-//    Log.d("UserNavHost", "UserNavHost")
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
             if (userViewModel.user.value?.role == "client" ||
@@ -34,6 +33,7 @@ fun ConnectedNavHost(
             ) {
                 HomeScreen(navController, homeViewModel, userViewModel, menuViewModel)
             }
+        } // <-- Ajoutez cette fermeture ici !
 
         composable(Screen.Welcome.route) {
             WelcomeScreen(navController)
@@ -66,13 +66,11 @@ fun ConnectedNavHost(
             UpdateAddressScreen(navController, userViewModel)
         }
 
-        composable(Screen.ClientRestaurantAllMenusPage.route)
-        {
+        composable(Screen.ClientRestaurantAllMenusPage.route) {
             Log.d("ConnectedNavHost", "ClientRestaurantAllMenusPage")
             if (userViewModel.user.value?.role == "client" ||
                 userViewModel.user.value?.role == "restaurateur"
-            )
-                //Log.d("ConnectedNavHost", "ClientRestaurantAllMenusPageIFFFF")
+            ) {
                 menuViewModel.shared_restaurant.value?.let { theRestaurant ->
                     ClientRestaurantScreen(
                         navController,
@@ -81,7 +79,8 @@ fun ConnectedNavHost(
                         theRestaurant
                     )
                 }
+            }
         }
     }
 }
-}
+

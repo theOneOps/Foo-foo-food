@@ -15,6 +15,7 @@ import com.uds.foufoufood.navigation.AdminNavHost
 import com.uds.foufoufood.navigation.AuthNavHost
 import com.uds.foufoufood.navigation.ConnectedNavHost
 import com.uds.foufoufood.navigation.DeliveryNavHost
+import com.uds.foufoufood.navigation.UnifiedNavHost
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
@@ -34,23 +35,38 @@ fun MainScreen(
     deliveryViewModel: DeliveryViewModel,
     orderViewModel: OrderViewModel,
     homeViewModel: HomeViewModel,
-    menuViewModel: MenuViewModel,
-    connectUser: String?
+    menuViewModel: MenuViewModel
 ) {
-    // Basculer entre AdminNavHost et UserNavHost en fonction du rôle
-    when (connectUser) {
-        "admin" -> {
-            // Si l'utilisateur est admin, afficher AdminNavHost
-            AdminNavHost(navController, adminUsersViewModel, adminRestaurantsViewModel)
+    val context = LocalContext.current
+    val user by userViewModel.user.observeAsState()
+    val isLoading by userViewModel.loading.observeAsState()
+    var connectUser by remember { mutableStateOf<String>("") }
+
+    LaunchedEffect(user) {
+        val token = getToken(context)
+        if (token != null) {
+            userViewModel.getUserFromToken(token)
         }
-        "client" -> {
-            Log.d("MainScreen", "Client")
-            // Si l'utilisateur est un utilisateur classique, afficher UserNavHost
-            ConnectedNavHost(navController, userViewModel, homeViewModel, menuViewModel)
+
+        user?.let {
+            connectUser = it.role.toString()
         }
-        "livreur" -> {
-            Log.d("MainScreen", "Livreur")
-            DeliveryNavHost(navController, deliveryViewModel, orderViewModel)
+        if (connectUser == "") {
+            connectUser = ""
         }
+
+        Log.d("MainScreen", "connectUser: $connectUser")
     }
+
+    UnifiedNavHost(
+        navController = navController,
+        connectUser = connectUser,
+        userViewModel = userViewModel,
+        adminUsersViewModel = adminUsersViewModel,
+        adminRestaurantsViewModel = adminRestaurantsViewModel,
+        deliveryViewModel = deliveryViewModel,
+        orderViewModel = orderViewModel,
+        homeViewModel = homeViewModel,
+        menuViewModel = menuViewModel
+    )
 }
