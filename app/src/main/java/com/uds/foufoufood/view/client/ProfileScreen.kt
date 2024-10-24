@@ -2,7 +2,7 @@ package com.uds.foufoufood.view.client
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,13 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,8 +33,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -48,10 +42,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.navigation.Screen
-import com.uds.foufoufood.ui.component.PasswordTextField
 import com.uds.foufoufood.view.auth.isValidEmail
 import com.uds.foufoufood.view.auth.isValidPassword
 import com.uds.foufoufood.viewmodel.UserViewModel
+import com.uds.foufoufood.ui.component.TitlePage
 
 
 @Composable
@@ -60,27 +54,26 @@ fun ProfileScreen(navController: NavController, userViewModel: UserViewModel) {
     val name = userViewModel.user.value?.name ?: ""
     val email = userViewModel.user.value?.email ?: ""
     val role = userViewModel.user.value?.role
-    val address = userViewModel.user.value?.address
-    val hasAddress = address != null
 
     val errorMessage by userViewModel.errorMessage.observeAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
+            .padding(20.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))
+        TitlePage(label = stringResource(id = R.string.my_profile))
 
         ProfileName(name = name)
 
         Spacer(modifier = Modifier.height(16.dp))
 
         if (role != null) {
-            ProfileType(role = role)
+            ProfileType(role = role.capitalizeFirstLetter())
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -115,10 +108,9 @@ fun ProfileScreen(navController: NavController, userViewModel: UserViewModel) {
         Spacer(modifier = Modifier.height(24.dp))
 
         ProfilePasswordSection(
-            initialPassword = "Cliquez sur l'icone pour modifier",
-            onSaveClick = { newPassword ->
-                if (isValidPassword(newPassword)) {
-                    userViewModel.updatePassword(newPassword)
+            onSaveClick = { previousPassword, newPassword ->
+                if (isValidPassword(newPassword) && isValidPassword(previousPassword)) {
+                    userViewModel.updatePassword(previousPassword, newPassword)
                     navController.navigate(Screen.Profile.route)
                 } else {
                     Toast.makeText(
@@ -129,12 +121,6 @@ fun ProfileScreen(navController: NavController, userViewModel: UserViewModel) {
                 }
             }
         )
-
-        if (hasAddress) {
-            ProfileExistingAddress( /* TODO : Afficher l'adresse existante */)
-        } else {
-            NoAddressSection(onAddAddressClick = { /* TODO: Ajouter une adresse */ })
-        }
     }
 
     errorMessage?.let {
@@ -249,13 +235,15 @@ fun ProfileEmailSection(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfilePasswordSection(
-    initialPassword: String,
-    onSaveClick: (String) -> Unit
+    onSaveClick: (String, String) -> Unit
 ) {
     var isEditable by remember { mutableStateOf(false) }
-    var password by remember { mutableStateOf("Cliquez sur l'icone pour modifier") }
-    var isError by remember { mutableStateOf(false) }
-    var isPasswordVisible by remember { mutableStateOf(false) }
+    var previousPassword by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
+    var isNewPasswordError by remember { mutableStateOf(false) }
+    var isPreviousPasswordError by remember { mutableStateOf(false) }
+    var isNewPasswordVisible by remember { mutableStateOf(false) }
+    var isPreviousPasswordVisible by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -272,7 +260,8 @@ fun ProfilePasswordSection(
                 // Bouton pour activer l'édition du mot de passe
                 IconButton(onClick = {
                     isEditable = true // Passer en mode édition
-                    password = ""
+                    previousPassword = ""
+                    newPassword = ""
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.pen_square_icon), // Icône pour modifier
@@ -283,9 +272,9 @@ fun ProfilePasswordSection(
             } else {
                 // Bouton pour sauvegarder le mot de passe modifié
                 IconButton(onClick = {
-                    if (!isError) {
+                    if (!isNewPasswordError && !isPreviousPasswordError) {
                         isEditable = false // Désactiver le mode édition
-                        onSaveClick(password) // Appeler la fonction de sauvegarde
+                        onSaveClick(previousPassword, newPassword) // Appeler la fonction de sauvegarde
                     }
                 }) {
                     Icon(
@@ -300,144 +289,94 @@ fun ProfilePasswordSection(
         Spacer(modifier = Modifier.height(10.dp))
 
         // Champ de texte pour afficher/modifier le mot de passe
-        TextField(
-            value = password,
-            onValueChange = {
-                password = it
-                isError = !isValidPassword(it) // Valider le mot de passe
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                focusedTextColor = colorResource(id = R.color.black),
-                unfocusedTextColor = Color.Gray,
-                focusedIndicatorColor = colorResource(id = R.color.orange),
-                unfocusedIndicatorColor = Color.Gray,
-                errorIndicatorColor = Color.Red,
-                cursorColor = colorResource(id = R.color.orange),
-                containerColor = colorResource(id = R.color.white),
-                errorContainerColor = colorResource(id = R.color.white_grey),
-            ),
-            label = {
-                Text(
-                    text = stringResource(id = R.string.password),
-                    color = Color.Gray,
-                    fontFamily = FontFamily(Font(R.font.sofiapro_regular))
-                )
-            },
-            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            singleLine = true,
-            isError = isError,
-            supportingText = {
-                if (isError) {
-                    Text(stringResource(R.string.password_constraint), color = Color.Red)
-                }
-            },
-            trailingIcon = {
-                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-                    Image(
-                        painter = painterResource(id = if (isPasswordVisible) R.drawable.visibility_off else R.drawable.visibility),
-                        contentDescription = if (isPasswordVisible) "Hide password" else "Show password",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            },
-            enabled = isEditable, // Activer ou désactiver l'édition
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
-}
-
-
-@Composable
-fun ProfileExistingAddress() {
-    Column {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            // Appliquer Modifier.weight dans le Row ici
-            AddressTextField(
-                value = "123",
-                placeholder = "Numéro de rue",
-                onValueChange = { /* Gérer le changement */ },
-                modifier = Modifier.weight(1f) // Appliquer le weight dans le Row
+        if (isEditable) {
+            TextField(
+                label = { Text(stringResource(id = R.string.previous_password)) },
+                value = previousPassword,
+                onValueChange = {
+                    previousPassword = it
+                    isPreviousPasswordError = !isValidPassword(it) // Valider le mot de passe
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedTextColor = colorResource(id = R.color.black),
+                    unfocusedTextColor = Color.Gray,
+                    focusedIndicatorColor = colorResource(id = R.color.orange),
+                    unfocusedIndicatorColor = Color.Gray,
+                    errorIndicatorColor = Color.Red,
+                    cursorColor = colorResource(id = R.color.orange),
+                    containerColor = colorResource(id = R.color.white),
+                    errorContainerColor = colorResource(id = R.color.white_grey),
+                    unfocusedLabelColor = Color.Gray,
+                    focusedLabelColor = colorResource(id = R.color.black),
+                ),
+                visualTransformation = if (isPreviousPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                singleLine = true,
+                isError = isPreviousPasswordError,
+                supportingText = {
+                    if (isPreviousPasswordError) {
+                        Text(stringResource(R.string.password_constraint), color = Color.Red)
+                    }
+                },
+                trailingIcon = {
+                    IconButton(onClick = { isPreviousPasswordVisible = !isPreviousPasswordVisible }) {
+                        Image(
+                            painter = painterResource(id = if (isPreviousPasswordVisible) R.drawable.visibility_off else R.drawable.visibility),
+                            contentDescription = if (isPreviousPasswordVisible) "Hide password" else "Show password",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                },
+                enabled = isEditable, // Activer ou désactiver l'édition
+                modifier = Modifier.fillMaxWidth(),
             )
 
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            AddressTextField(
-                value = "Rue de la Paix",
-                placeholder = "Nom de rue",
-                onValueChange = { /* Gérer le changement */ },
-                modifier = Modifier.weight(3f) // Appliquer un autre poids
-            )
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Row(modifier = Modifier.fillMaxWidth()) {
-            AddressTextField(
-                value = "75000",
-                placeholder = "Code postal",
-                onValueChange = { /* Gérer le changement */ },
-                modifier = Modifier.weight(1.3f) // Appliquer le weight
-            )
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            AddressTextField(
-                value = "Paris",
-                placeholder = "Ville",
-                onValueChange = { /* Gérer le changement */ },
-                modifier = Modifier.weight(1.7f) // Appliquer le weight ici aussi
+            TextField(
+                label = { Text(stringResource(id = R.string.new_password)) },
+                value = newPassword,
+                onValueChange = {
+                    newPassword = it
+                    isNewPasswordError = !isValidPassword(it) // Valider le mot de passe
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedTextColor = colorResource(id = R.color.black),
+                    unfocusedTextColor = Color.Gray,
+                    focusedIndicatorColor = colorResource(id = R.color.orange),
+                    unfocusedIndicatorColor = Color.Gray,
+                    errorIndicatorColor = Color.Red,
+                    cursorColor = colorResource(id = R.color.orange),
+                    containerColor = colorResource(id = R.color.white),
+                    errorContainerColor = colorResource(id = R.color.white_grey),
+                    unfocusedLabelColor = Color.Gray,
+                    focusedLabelColor = colorResource(id = R.color.black),
+                ),
+                visualTransformation = if (isNewPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                singleLine = true,
+                isError = isNewPasswordError,
+                supportingText = {
+                    if (isNewPasswordError) {
+                        Text(stringResource(R.string.password_constraint), color = Color.Red)
+                    }
+                },
+                trailingIcon = {
+                    IconButton(onClick = { isNewPasswordVisible = !isNewPasswordVisible }) {
+                        Image(
+                            painter = painterResource(id = if (isNewPasswordVisible) R.drawable.visibility_off else R.drawable.visibility),
+                            contentDescription = if (isNewPasswordVisible) "Hide password" else "Show password",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                },
+                enabled = isEditable, // Activer ou désactiver l'édition
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
 }
 
-@Composable
-fun AddressTextField(
-    value: String,
-    placeholder: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier // Accepter un Modifier externe pour personnalisation
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier
-            .height(65.dp)
-            .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
-            .padding(start = 25.dp),
-        placeholder = {
-            Text(text = placeholder, color = Color.Gray)
-        },
-        textStyle = TextStyle(fontSize = 16.sp)
-    )
-}
-
-@Composable
-fun NoAddressSection(onAddAddressClick: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(id = R.string.no_address),
-            fontSize = 16.sp,
-            color = Color.Gray,
-            modifier = Modifier.padding(bottom = 20.dp)
-        )
-
-        Button(
-            onClick = { onAddAddressClick() },
-            modifier = Modifier
-                .height(60.dp)
-                .padding(horizontal = 50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.orange))
-        ) {
-            Text(
-                text = stringResource(id = R.string.add_address),
-                fontSize = 15.sp,
-                color = Color.White
-            )
-        }
-    }
+fun String.capitalizeFirstLetter(): String {
+    return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }

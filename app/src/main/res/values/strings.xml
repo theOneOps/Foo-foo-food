@@ -56,6 +56,7 @@
     <string name="change_email" translatable="true">Changer de mail</string>
     <string name="password_constraint" translatable="true">Votre mot de passe doit être long d\'au moins 6 caractères</string>
     <string name="new_password" translatable="true">Entrez votre nouveau mot de passe</string>
+    <string name="previous_password" translatable="true">Entrez votre mot de passe actuel</string>
     <string name="confirm_new_password" translatable="true">Confirmez le nouveau mot de passe</string>
 
     <string name="next" translatable="true">Suivant</string>
@@ -78,6 +79,9 @@
     <string name="my_orders">Mes commandes</string>
     <string name="my_profile">Mon profil</string>
     <string name="delivery_address">Adresse de livraison</string>
+    <string name="update_delivery_address">Mise à jour de l\'adresse de livraison</string>
+    <string name="update_address">Mettre à jour l\'adresse</string>
+
     <string name="logout">Déconnexion</string>
     <!--
     <string name="" translatable="true"></string>

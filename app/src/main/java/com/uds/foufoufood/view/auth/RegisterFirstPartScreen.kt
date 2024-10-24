@@ -62,6 +62,7 @@ fun RegisterFirstPartScreen(
                 "Veuillez vérifier votre boîte de réception, un code de vérification vous a été envoyé",
                 Toast.LENGTH_SHORT
             ).show()
+            userViewModel.resetStatus()
             navController.navigate("verify_code/${email}")
         }
         else if (registrationSuccess == false) {

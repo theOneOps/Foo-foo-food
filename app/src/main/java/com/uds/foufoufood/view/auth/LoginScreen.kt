@@ -56,6 +56,7 @@ fun LoginScreen(
 
     LaunchedEffect(user) {
         user?.let {
+            userViewModel.resetStatus()
             // La navigation sera gérée par MainScreen après la mise à jour du rôle de l'utilisateur
             Toast.makeText(context, "Connexion réussie", Toast.LENGTH_SHORT).show()
         }

@@ -4,8 +4,8 @@ data class Address(
     var number: Number? = null,
     var street: String? = null,
     var city: String? = null,
-    var state: String? = null,
     var zipCode: String? = null,
+    var state: String? = null,
     var country: String? = null
 ){
     override fun toString(): String {

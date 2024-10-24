@@ -72,12 +72,12 @@ fun VerifyCodeScreen(
             Log.d("VerifyCodeScreen", "Registration complete: ${user?.registrationComplete}")
             if (user?.registrationComplete == true) {
                 Toast.makeText(context, R.string.email_update_success, Toast.LENGTH_SHORT).show()
-                userViewModel.resetCodeVerificationStatus()
+                userViewModel.resetStatus()
                 navController.navigate(Screen.Profile.route)
             }
             else if (user?.registrationComplete == false) {
                 Toast.makeText(context, "Code vérifié avec succès", Toast.LENGTH_SHORT).show()
-                userViewModel.resetCodeVerificationStatus()
+                userViewModel.resetStatus()
                 navController.navigate("define_profile/${email}")
             }
             else {
