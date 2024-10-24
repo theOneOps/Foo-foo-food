@@ -46,7 +46,7 @@ fun AddRestaurantPage(navController: NavController, onRestaurantAdded: (com.uds.
                         // Créer un nouvel objet restaurant et le passer à la fonction de callback
                         val newRestaurant = com.uds.foufoufood.data_class.model.Restaurant(
                             name = restaurantName,
-                            address = com.uds.foufoufood.data_class.model.Address(""),
+                            address = com.uds.foufoufood.data_class.model.Address(1),
                             speciality = "",
                             phone = "",
                             openingHours = "",

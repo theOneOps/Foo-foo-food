@@ -9,6 +9,6 @@ data class User(
     var role: String? = null,
     var address: Address? = null,
     var emailValidated:Boolean?= false,
-    var registrationComplete: Boolean? = false
+    var registrationComplete: Boolean? = false,
     val deliveryAvailability: Boolean? = null // Nullable pour les non-livreurs
 )

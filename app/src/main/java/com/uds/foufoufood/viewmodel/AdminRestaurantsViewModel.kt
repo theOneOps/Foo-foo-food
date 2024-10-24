@@ -15,7 +15,7 @@ class AdminRestaurantsViewModel : ViewModel() {
     private fun getRestaurants() = listOf(
         Restaurant(
             name = "Restaurant 1",
-            address = Address("Address 1"),
+            address = Address(2),
             speciality = "Speciality 1",
             phone = "Phone 1",
             openingHours = "Opening Hours 1",
@@ -27,7 +27,7 @@ class AdminRestaurantsViewModel : ViewModel() {
         ),
         Restaurant(
             name = "Restaurant 2",
-            address = Address("Address 1"),
+            address = Address(3),
             speciality = "Speciality 2",
             phone = "Phone 2",
             openingHours = "Opening Hours 2",
@@ -39,7 +39,7 @@ class AdminRestaurantsViewModel : ViewModel() {
         ),
         Restaurant(
             name = "Restaurant 3",
-            address = Address("Address 1"),
+            address = Address(4),
             speciality = "Speciality 3",
             phone = "Phone 3",
             openingHours = "Opening Hours 3",
@@ -51,7 +51,7 @@ class AdminRestaurantsViewModel : ViewModel() {
         ),
         Restaurant(
             name = "Restaurant 4",
-            address = Address("Address 1"),
+            address = Address(5),
             speciality = "Speciality 4",
             phone = "Phone 4",
             openingHours = "Opening Hours 4",
@@ -63,7 +63,7 @@ class AdminRestaurantsViewModel : ViewModel() {
         ),
         Restaurant(
             name = "Restaurant 5",
-            address = Address("Address 1"),
+            address = Address(6),
             speciality = "Speciality 5",
             phone = "Phone 5",
             openingHours = "Opening Hours 5",
