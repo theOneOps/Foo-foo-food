@@ -40,7 +40,7 @@ fun MainScreen(
     val context = LocalContext.current
     val user by userViewModel.user.observeAsState()
     val isLoading by userViewModel.loading.observeAsState()
-    var connectUser by remember { mutableStateOf<String>("") }
+    var connectUser by remember { mutableStateOf<String?>("") }
 
     LaunchedEffect(user) {
         val token = getToken(context)
@@ -49,18 +49,17 @@ fun MainScreen(
         }
 
         user?.let {
-            connectUser = it.role.toString()
-        }
-        if (connectUser == "") {
-            connectUser = ""
+            connectUser = it.role
         }
 
+        Log.d("MainScreen", "user: $user")
         Log.d("MainScreen", "connectUser: $connectUser")
     }
 
-    UnifiedNavHost(
+    connectUser?.let {
+        UnifiedNavHost(
         navController = navController,
-        connectUser = connectUser,
+        connectUser = it,
         userViewModel = userViewModel,
         adminUsersViewModel = adminUsersViewModel,
         adminRestaurantsViewModel = adminRestaurantsViewModel,
@@ -69,4 +68,5 @@ fun MainScreen(
         homeViewModel = homeViewModel,
         menuViewModel = menuViewModel
     )
+    }
 }
