@@ -54,14 +54,39 @@ fun LoginScreen(
 
     val user by userViewModel.user.observeAsState()
     val errorMessage by userViewModel.errorMessage.observeAsState()
+    val emailValidated by userViewModel.emailValidated.observeAsState()
+    val registrationComplete by userViewModel.registrationCompleteSuccess.observeAsState()
 
     Log.d("LoginScreen", "user: $user")
 
     LaunchedEffect(user) {
         user?.let {
-            userViewModel.resetStatus()
-            // La navigation sera gérée par MainScreen après la mise à jour du rôle de l'utilisateur
-            Toast.makeText(context, "Connexion réussie", Toast.LENGTH_SHORT).show()
+            if (emailValidated == true) {
+                navController.navigate(Screen.Home.route)
+                userViewModel.resetStatus()
+                // La navigation sera gérée par MainScreen après la mise à jour du rôle de l'utilisateur
+                Toast.makeText(context, "Connexion réussie", Toast.LENGTH_SHORT).show()
+            } else if (emailValidated == false) {
+                navController.navigate("verify_code/$email")
+            }
+            else {
+                if (user?.emailValidated == false) {
+                    navController.navigate("verify_code/$email")
+                }
+            }
+
+            if (registrationComplete == true) {
+                navController.navigate(Screen.Home.route)
+                userViewModel.resetStatus()
+            }
+            else if (registrationComplete == false) {
+                navController.navigate("define_profile/$email")
+            }
+            else {
+                if (user?.registrationComplete == false) {
+                    navController.navigate("define_profile/$email")
+                }
+            }
         }
     }
 

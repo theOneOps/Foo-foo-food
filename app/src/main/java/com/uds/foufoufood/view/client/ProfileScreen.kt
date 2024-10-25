@@ -30,6 +30,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -69,9 +70,28 @@ fun ProfileScreen(navController: NavHostController, userViewModel: UserViewModel
     val role = userViewModel.user.value?.role
 
     val errorMessage by userViewModel.errorMessage.observeAsState()
+    val updateEmailSuccess by userViewModel.updateEmailSuccess.observeAsState()
+    val updatePasswordSuccess by userViewModel.updatePasswordSuccess.observeAsState()
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(updatePasswordSuccess, updateEmailSuccess) {
+        if (updatePasswordSuccess == true) {
+            navController.navigate(Screen.Profile.route)
+            Toast.makeText(navController.context, "Mot de passe modifié avec succès", Toast.LENGTH_SHORT).show()
+        } else if (updatePasswordSuccess == false) {
+            Toast.makeText(navController.context, "Erreur lors de la modification du mot de passe", Toast.LENGTH_SHORT).show()
+        }
+
+        if (updateEmailSuccess == true) {
+            val newEmail = userViewModel.user.value?.email ?: ""
+            Toast.makeText(navController.context, "Email modifié avec succès, un code de vérification a été envoyé à $newEmail", Toast.LENGTH_SHORT).show()
+            navController.navigate("verify_code/${newEmail}")
+        } else if (updateEmailSuccess == false) {
+            Toast.makeText(navController.context, "Erreur lors de la modification de l'email", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -127,7 +147,6 @@ fun ProfileScreen(navController: NavHostController, userViewModel: UserViewModel
                             if (isValidEmail(newEmail)) {
                                 // Mettre à jour l'email de l'utilisateur
                                 userViewModel.updateEmail(email, newEmail)
-                                navController.navigate("verify_code/${newEmail}")
                             } else {
                                 Toast.makeText(
                                     navController.context,
@@ -151,7 +170,6 @@ fun ProfileScreen(navController: NavHostController, userViewModel: UserViewModel
                     onSaveClick = { previousPassword, newPassword ->
                         if (isValidPassword(newPassword) && isValidPassword(previousPassword)) {
                             userViewModel.updatePassword(previousPassword, newPassword)
-                            navController.navigate(Screen.Profile.route)
                         } else {
                             Toast.makeText(
                                 navController.context,

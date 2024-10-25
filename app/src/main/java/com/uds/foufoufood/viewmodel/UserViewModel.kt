@@ -34,20 +34,28 @@ class UserViewModel(
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
-    private val _registrationInitSuccess = MutableLiveData<Boolean>()
-    val registrationInitSuccess: LiveData<Boolean> get() = _registrationInitSuccess
+    private val _emailValidated = MutableLiveData<Boolean?>()
+    val emailValidated: LiveData<Boolean?> get() = _emailValidated
+
+    private val _registrationInitSuccess = MutableLiveData<Boolean?>()
+    val registrationInitSuccess: LiveData<Boolean?> get() = _registrationInitSuccess
 
     private val _codeVerificationSuccess = MutableLiveData<Boolean?>()
     val codeVerificationSuccess: LiveData<Boolean?> get() = _codeVerificationSuccess
 
-    private val _registrationCompleteSuccess = MutableLiveData<Boolean>()
-    val registrationCompleteSuccess: LiveData<Boolean> get() = _registrationCompleteSuccess
+    private val _registrationCompleteSuccess = MutableLiveData<Boolean?>()
+    val registrationCompleteSuccess: LiveData<Boolean?> get() = _registrationCompleteSuccess
+
+    private val _updateEmailSuccess = MutableLiveData<Boolean?>()
+    val updateEmailSuccess: LiveData<Boolean?> get() = _updateEmailSuccess
+
+    private val _updatePasswordSuccess = MutableLiveData<Boolean?>()
+    val updatePasswordSuccess: LiveData<Boolean?> get() = _updatePasswordSuccess
 
     private val _resendCodeEvent = MutableLiveData<Boolean>()
-    val resendCodeEvent: LiveData<Boolean> get() = _resendCodeEvent
 
-    private val _updateAddressSuccess = MutableLiveData<Boolean>()
-    val updateAddressSuccess: LiveData<Boolean> get() = _updateAddressSuccess
+    private val _updateAddressSuccess = MutableLiveData<Boolean?>()
+    val updateAddressSuccess: LiveData<Boolean?> get() = _updateAddressSuccess
 
     // Fonctions
     fun login(email: String, password: String) {
@@ -58,11 +66,30 @@ class UserViewModel(
                 if (response != null) {
                     _user.value = response.user
                     _token.value = response.token
-                    saveToken(context, response.token)
-                    saveUserId(context, response.user._id)
-                    userRepository.setUserEmail(email)
-                    Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
-                    _errorMessage.value = null
+
+                    if (response.user.emailValidated == false) {
+                        _emailValidated.value = false
+                        _loading.value = false
+                    }
+                    else {
+                        saveToken(context, response.token)
+                        saveUserId(context, response.user._id)
+                        userRepository.setUserEmail(email)
+                        Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
+                        _errorMessage.value = null
+                    }
+
+                    if (response.user.registrationComplete == false) {
+                        _registrationCompleteSuccess.value = false
+                        _loading.value = false
+                    }
+                    else {
+                        saveToken(context, response.token)
+                        saveUserId(context, response.user._id)
+                        userRepository.setUserEmail(email)
+                        Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
+                        _errorMessage.value = null
+                    }
                 } else {
                     _errorMessage.value = "Erreur, connexion échouée"
                 }
@@ -96,6 +123,7 @@ class UserViewModel(
             try {
                 val success = userRepository.verifyCode(email, code)
                 _codeVerificationSuccess.value = success
+                _emailValidated.value = success
             } catch (e: Exception) {
                 _codeVerificationSuccess.value = false
             } finally {
@@ -198,12 +226,14 @@ class UserViewModel(
                 if (token == null) {
                     _errorMessage.value = "Vous n'êtes pas connecté"
                     _loading.value = false
+                    _updateEmailSuccess.value = false
                     return@launch
                 }
                 val success = userRepository.updateEmail(token, previous, email)
                 if (success) {
                     _user.value?.email = email
                     _errorMessage.value = null
+                    _updateEmailSuccess.value = true
                 }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Erreur lors de l'édition de l'email: ${e.message}")
@@ -221,11 +251,13 @@ class UserViewModel(
                 if (token == null) {
                     _errorMessage.value = "Vous n'êtes pas connecté"
                     _loading.value = false
+                    _updatePasswordSuccess.value = false
                     return@launch
                 }
                 val success = userRepository.updatePassword(token, previousPassword, newPassword)
                 if (success) {
                     _errorMessage.value = null
+                    _updatePasswordSuccess.value = true
                     Toast.makeText(context, "Mot de passe modifié avec succès", Toast.LENGTH_SHORT).show()
                 } else {
                     _errorMessage.value = "Erreur lors de la modification du mot de passe, veuillez réessayer"
@@ -257,11 +289,14 @@ class UserViewModel(
 
     fun resetStatus() {
         _codeVerificationSuccess.value = null
-        _registrationInitSuccess.value = false
-        _registrationCompleteSuccess.value = false
+        _registrationInitSuccess.value = null
+        _registrationCompleteSuccess.value = null
         _resendCodeEvent.value = false
         _loading.value = false
-        _updateAddressSuccess.value = false
+        _updateAddressSuccess.value = null
         _errorMessage.value = null
+        _emailValidated.value = null
+        _updateEmailSuccess.value = null
+        _updatePasswordSuccess.value = null
     }
 }

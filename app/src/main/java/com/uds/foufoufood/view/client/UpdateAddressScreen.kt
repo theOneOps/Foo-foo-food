@@ -68,6 +68,8 @@ fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewMod
             Toast.makeText(context, "Adresse mise à jour avec succès", Toast.LENGTH_SHORT).show()
             userViewModel.resetStatus()
             navController.navigate(Screen.Address.route)
+        } else if (updateAddressSuccess == false) {
+            Toast.makeText(context, "Échec de la mise à jour de l'adresse", Toast.LENGTH_SHORT).show()
         }
     }
 
