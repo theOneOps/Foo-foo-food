@@ -42,4 +42,9 @@ object TokenManager {
             context.getSharedPreferences("myAppPrefs", Context.MODE_PRIVATE)
         return sharedPreferences.getString("userid", null)
     }
+
+    fun updateToken(context: Context, token: String) {
+        deleteToken(context)
+        saveToken(context, token)
+    }
 }

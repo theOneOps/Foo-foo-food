@@ -48,6 +48,7 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 fun UnifiedNavHost(
     navController: NavHostController,
     connectUser: String,
+    emailValidated: Boolean,
     userViewModel: UserViewModel,
     adminUsersViewModel: AdminUsersViewModel,
     adminRestaurantsViewModel: AdminRestaurantsViewModel,
@@ -76,26 +77,10 @@ fun UnifiedNavHost(
                 BottomNavBarAdmin(selectedItem = selectedItem) { index ->
                     selectedItem = index // Met à jour l'élément sélectionné
                     when (index) {
-                        0 -> navController.navigate(Screen.AdminClient.route) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                        1 -> navController.navigate(Screen.AdminLivreur.route) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                        2 -> navController.navigate(Screen.AdminGerant.route) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                        3 -> navController.navigate(Screen.AdminRestaurant.route) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        0 -> navController.navigate(Screen.AdminClient.route)
+                        1 -> navController.navigate(Screen.AdminLivreur.route)
+                        2 -> navController.navigate(Screen.AdminGerant.route)
+                        3 -> navController.navigate(Screen.AdminRestaurant.route)
                     }
                 }
             }
@@ -103,7 +88,7 @@ fun UnifiedNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = getStartDestination(connectUser),
+            startDestination = getStartDestination(connectUser, emailValidated),
             modifier = Modifier.padding(innerPadding)
         ) {
             addAuthGraph(navController, userViewModel)
@@ -114,7 +99,10 @@ fun UnifiedNavHost(
     }
 }
 
-fun getStartDestination(connectUser: String): String {
+fun getStartDestination(connectUser: String, emailValidated: Boolean): String {
+    if (!emailValidated) {
+        return Screen.Welcome.route
+    }
     return when (connectUser) {
         "admin" -> Screen.AdminClient.route
         "livreur" -> Screen.DeliveryAvailablePage.route

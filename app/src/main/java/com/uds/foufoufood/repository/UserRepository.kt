@@ -122,14 +122,15 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
         }
     }
 
-    suspend fun updateEmail(token: String, previous: String, email: String): Boolean = withContext(Dispatchers.IO) {
+    suspend fun updateEmail(token: String, previous: String, email: String): AuthResponse? = withContext(Dispatchers.IO) {
         return@withContext try {
             Log.d("UserRepository", "Token: $token")
             val response = userApi.updateEmail("Bearer $token", UpdateEmailRequest(previous, email))
-            response.isSuccessful
+            Log.d("UserRepository", "Response: ${response.body()}")
+            response.body()
         } catch (e: Exception) {
             Log.e("UserRepository", "Erreur lors de l'édition de l'email: ${e.message}")
-            false
+            null
         }
     }
 
