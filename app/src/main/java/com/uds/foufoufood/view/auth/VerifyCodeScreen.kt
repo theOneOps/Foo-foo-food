@@ -65,7 +65,7 @@ fun VerifyCodeScreen(
     val user by userViewModel.user.observeAsState()
     Log.d("VerifyCodeScreen", "User: $user")
 
-    LaunchedEffect(codeVerificationSuccess) {
+    LaunchedEffect(codeVerificationSuccess, user) {
         userViewModel.getUser(email)
 
         if (codeVerificationSuccess == true) {

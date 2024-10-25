@@ -39,6 +39,7 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 fun UnifiedNavHost(
     navController: NavHostController,
     connectUser: String,
+    emailValidated: Boolean,
     userViewModel: UserViewModel,
     adminUsersViewModel: AdminUsersViewModel,
     adminRestaurantsViewModel: AdminRestaurantsViewModel,
@@ -47,7 +48,7 @@ fun UnifiedNavHost(
     homeViewModel: HomeViewModel,
     menuViewModel: MenuViewModel
 ) {
-    NavHost(navController = navController, startDestination = getStartDestination(connectUser)) {
+    NavHost(navController = navController, startDestination = getStartDestination(connectUser, emailValidated)) {
         addAuthGraph(navController, userViewModel)
         addAdminGraph(navController, adminUsersViewModel, adminRestaurantsViewModel)
         addDeliveryGraph(navController, deliveryViewModel, orderViewModel)
@@ -55,7 +56,10 @@ fun UnifiedNavHost(
     }
 }
 
-fun getStartDestination(connectUser: String): String {
+fun getStartDestination(connectUser: String, emailValidated: Boolean): String {
+    if (!emailValidated) {
+        return Screen.Welcome.route
+    }
     return when (connectUser) {
         "admin" -> Screen.AdminClient.route
         "livreur" -> Screen.DeliveryAvailablePage.route

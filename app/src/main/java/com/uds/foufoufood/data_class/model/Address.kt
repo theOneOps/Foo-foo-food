@@ -19,11 +19,11 @@ data class Address(
             if (!city.isNullOrEmpty()) {
                 append(city).append(", ")
             }
-            if (!state.isNullOrEmpty()) {
-                append(state).append(" ")
-            }
             if (!zipCode.isNullOrEmpty()) {
                 append(zipCode).append(", ")
+            }
+            if (!state.isNullOrEmpty()) {
+                append(state).append(" ")
             }
             if (!country.isNullOrEmpty()) {
                 append(country)

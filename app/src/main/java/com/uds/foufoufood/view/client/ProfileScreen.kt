@@ -79,6 +79,7 @@ fun ProfileScreen(navController: NavHostController, userViewModel: UserViewModel
     LaunchedEffect(updatePasswordSuccess, updateEmailSuccess) {
         if (updatePasswordSuccess == true) {
             navController.navigate(Screen.Profile.route)
+            userViewModel.resetStatus()
             Toast.makeText(navController.context, "Mot de passe modifié avec succès", Toast.LENGTH_SHORT).show()
         } else if (updatePasswordSuccess == false) {
             Toast.makeText(navController.context, "Erreur lors de la modification du mot de passe", Toast.LENGTH_SHORT).show()
@@ -86,7 +87,7 @@ fun ProfileScreen(navController: NavHostController, userViewModel: UserViewModel
 
         if (updateEmailSuccess == true) {
             val newEmail = userViewModel.user.value?.email ?: ""
-            Toast.makeText(navController.context, "Email modifié avec succès, un code de vérification a été envoyé à $newEmail", Toast.LENGTH_SHORT).show()
+            Toast.makeText(navController.context, "Email modifié avec succès, un code de vérification. Vous allez être déconnecté", Toast.LENGTH_SHORT).show()
             navController.navigate("verify_code/${newEmail}")
         } else if (updateEmailSuccess == false) {
             Toast.makeText(navController.context, "Erreur lors de la modification de l'email", Toast.LENGTH_SHORT).show()

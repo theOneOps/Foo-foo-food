@@ -56,12 +56,18 @@ fun LoginScreen(
     val errorMessage by userViewModel.errorMessage.observeAsState()
     val emailValidated by userViewModel.emailValidated.observeAsState()
     val registrationComplete by userViewModel.registrationCompleteSuccess.observeAsState()
+    val loginSuccess by userViewModel.loginSuccess.observeAsState()
 
     Log.d("LoginScreen", "user: $user")
 
-    LaunchedEffect(user) {
-        user?.let {
-            if (emailValidated == true) {
+    LaunchedEffect(user, loginSuccess) {
+        Log.d("LoginScreen", "loginSuccess: $loginSuccess")
+        if (loginSuccess == true) {
+            Log.d("LoginScreen", "emailValidated: $emailValidated")
+            Log.d("LoginScreen", "registrationComplete: $registrationComplete")
+            Log.d("LoginScreen", "user.emailValidated: ${user?.emailValidated}")
+            Log.d("LoginScreen", "user.registrationComplete: ${user?.registrationComplete}")
+            if (emailValidated == true && registrationComplete == true) {
                 navController.navigate(Screen.Home.route)
                 userViewModel.resetStatus()
                 // La navigation sera gérée par MainScreen après la mise à jour du rôle de l'utilisateur
@@ -69,23 +75,8 @@ fun LoginScreen(
             } else if (emailValidated == false) {
                 navController.navigate("verify_code/$email")
             }
-            else {
-                if (user?.emailValidated == false) {
-                    navController.navigate("verify_code/$email")
-                }
-            }
-
-            if (registrationComplete == true) {
-                navController.navigate(Screen.Home.route)
-                userViewModel.resetStatus()
-            }
             else if (registrationComplete == false) {
                 navController.navigate("define_profile/$email")
-            }
-            else {
-                if (user?.registrationComplete == false) {
-                    navController.navigate("define_profile/$email")
-                }
             }
         }
     }
