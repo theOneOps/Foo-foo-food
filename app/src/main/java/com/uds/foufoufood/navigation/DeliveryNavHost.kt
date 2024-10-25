@@ -7,12 +7,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
+import com.uds.foufoufood.viewmodel.OrderViewModel
 
 
 @Composable
 fun DeliveryNavHost(
     navController: NavHostController,
-    deliveryViewModel : DeliveryViewModel
+    deliveryViewModel : DeliveryViewModel,
+    orderViewModel: OrderViewModel
 ) {
     Scaffold(
         topBar = { },
@@ -23,8 +25,7 @@ fun DeliveryNavHost(
             startDestination = Screen.DeliveryAvailablePage.route,
             modifier = Modifier.padding(paddingValues)
         ) {
-
-            addDeliveryRoutes(navController, deliveryViewModel)
+            addDeliveryRoutes(navController, deliveryViewModel, orderViewModel)
         }
     }
 }

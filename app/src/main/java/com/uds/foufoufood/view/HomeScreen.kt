@@ -62,48 +62,26 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Address
-import com.uds.foufoufood.data_class.model.Category
+import com.uds.foufoufood.data_class.model.Speciality
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Restaurant
+import com.uds.foufoufood.ui.component.SpecialityPills
 import com.uds.foufoufood.navigation.Screen
-import com.uds.foufoufood.ui.component.CategoryPills
 import com.uds.foufoufood.ui.component.RestaurantCard
 import com.uds.foufoufood.ui.component.SearchBar
 import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
-val restaurantTest = Restaurant(
-    name = "Le Gourmet",
-    address = Address(123, "Rue de Paris", "75000", "Paris", "France"),
-    speciality = "French cuisine",
-    phone = "0123456789",
-    openingHours = "09:00 - 22:00",
-    items = listOf(
-        Menu(
-            name = "Coq au Vin",
-            descriptor = "Classic French chicken dish cooked with wine",
-            price = 25.0,
-            category = "Main course",
-            image = "https://images.unsplash.com/photo-1468070975228-085c1fdd2d3e?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            restaurantId = "1"
-        ), Menu(
-            name = "Crème Brûlée",
-            descriptor = "Rich custard base topped with a layer of caramelized sugar",
-            price = 10.0,
-            category = "Dessert",
-            image = "https://images.unsplash.com/photo-1487004121828-9fa15a215a7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            restaurantId = "1"
-        )
-    ),
-    rating = 4.7,
-    reviews = listOf("Delicious food!", "Amazing ambiance."),
-    imageUrl = "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    category = "French"
-)
-
 @Composable
-fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel, userViewModel: UserViewModel) {
+fun HomeScreen(
+    navController: NavHostController,
+    homeViewModel: HomeViewModel,
+    userViewModel: UserViewModel,
+    menuViewModel: MenuViewModel
+) {
+    Log.d("HomeScreen", "HomeScreen")
     // State for controlling drawer
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -111,17 +89,16 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel, u
     // Initialize the categories and restaurants here with drawables
     LaunchedEffect(Unit) {
         homeViewModel.initialize(
-            categoriesList = listOf(
-                Category(1, "Pizza", R.drawable.ic_category_pizza),
-                Category(2, "Burger", R.drawable.ic_category_burger),
-                Category(3, "Mexican", R.drawable.ic_category_mexican),
-                Category(4, "Pizza", R.drawable.ic_category_pizza),
-                Category(5, "Burger", R.drawable.ic_category_burger),
-                Category(6, "Pizza", R.drawable.ic_category_pizza),
-                Category(7, "Burger", R.drawable.ic_category_burger),
+            specialityList = listOf(
+                Speciality(1, "Pizza", R.drawable.ic_category_pizza),
+                Speciality(2, "Burger", R.drawable.ic_category_burger),
+                Speciality(3, "Mexican", R.drawable.ic_category_mexican),
+                Speciality(4, "Pizza", R.drawable.ic_category_pizza),
+                Speciality(5, "Burger", R.drawable.ic_category_burger),
+                Speciality(6, "Pizza", R.drawable.ic_category_pizza),
+                Speciality(7, "Burger", R.drawable.ic_category_burger),
 
-                ),
-            restaurantsList = listOf(restaurantTest)
+                )
         )
     }
 
@@ -186,16 +163,16 @@ fun HomeScreen(navController: NavHostController, homeViewModel: HomeViewModel, u
                 LazyColumn {
                     // Category Pills
                     item {
-                        CategoryPills(
-                            categories = homeViewModel.categories,
-                            selectedCategory = homeViewModel.selectedCategory,
-                            onCategorySelected = homeViewModel::onCategorySelected
+                        SpecialityPills(
+                            specialities = homeViewModel.specialities,
+                            selectedSpeciality = homeViewModel.selectedSpeciality,
+                            onSpecialitySelected = homeViewModel::onSpecialitySelected
                         )
                     }
 
                     // Restaurant List
                     items(homeViewModel.filteredRestaurants) { restaurant ->
-                        RestaurantCard(restaurant = restaurant)
+                        RestaurantCard(navController, menuViewModel, restaurant, userViewModel)
                     }
                 }
             }
@@ -345,15 +322,3 @@ fun DrawerMenuItem(icon: ImageVector, label: String, onClick: () -> Unit) {
         )
     }
 }
-
-//        // Category Pills
-//        CategoryPills(
-//            categories = homeViewModel.categories,
-//            selectedCategory = homeViewModel.selectedCategory,
-//            onCategorySelected = homeViewModel::onCategorySelected
-//        )
-//
-//        Spacer(modifier = Modifier.height(16.dp))
-//
-//        // Restaurant List
-//        RestaurantList(restaurants = homeViewModel.filteredRestaurants)

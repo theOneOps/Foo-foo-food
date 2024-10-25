@@ -54,7 +54,8 @@ fun AddRestaurantPage(navController: NavController, onRestaurantAdded: (com.uds.
                             rating = 0.0,
                             reviews = listOf(),
                             imageUrl = "",
-                            category = ""
+                            userId = "",
+                            _id = ""
                         )
                         onRestaurantAdded(newRestaurant)
                         navController.popBackStack() // Retour à la liste des restaurants après l'ajout

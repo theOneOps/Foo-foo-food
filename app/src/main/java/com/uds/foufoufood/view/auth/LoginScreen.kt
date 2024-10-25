@@ -1,5 +1,6 @@
 package com.uds.foufoufood.view.auth
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,8 @@ fun LoginScreen(
 
     val user by userViewModel.user.observeAsState()
     val errorMessage by userViewModel.errorMessage.observeAsState()
+
+    Log.d("LoginScreen", "user: $user")
 
     LaunchedEffect(user) {
         user?.let {

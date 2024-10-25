@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +39,7 @@ fun CounterProductBought() {
             onClick = { if (stateCount > 0) stateCount-- },
             modifier = Modifier
                 .size(40.dp)
+                .shadow(4.dp, shape = CircleShape)
                 .clip(CircleShape)
                 .background(Color.White)
         ) {
@@ -45,7 +47,7 @@ fun CounterProductBought() {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center  // Centre le contenu
             ) {
-                Text("-", style = TextStyle(Color.Red, fontSize = 30.sp))
+                Text("-", style = TextStyle(Color.Red, fontSize = 25.sp))
             }
         }
 
@@ -61,6 +63,7 @@ fun CounterProductBought() {
             onClick = { stateCount++ },
             modifier = Modifier
                 .size(40.dp)
+                .shadow(4.dp, shape = CircleShape)
                 .clip(CircleShape)
                 .background(Color.Red)
         ) {

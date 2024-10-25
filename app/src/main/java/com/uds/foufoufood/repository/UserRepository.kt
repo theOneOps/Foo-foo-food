@@ -1,3 +1,4 @@
+import android.content.Context
 import android.util.Log
 import com.uds.foufoufood.data_class.model.User
 import com.uds.foufoufood.data_class.request.AddressRequest
@@ -15,7 +16,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 
-class UserRepository(private val userApi: UserApi) {
+class UserRepository(private val userApi: UserApi, private val context: Context) {
+
+    private val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     suspend fun getUser(email: String): Response<User> = withContext(Dispatchers.IO) {
         return@withContext userApi.getUser(email)
@@ -48,7 +51,7 @@ class UserRepository(private val userApi: UserApi) {
                     null
                 }
             } catch (e: Exception) {
-                Log.e("UserRepository", "Erreur réseau: ${e.message}")
+                Log.e("UserRepository", "Erreur reseau: ${e.message}")
                 null
             }
         }
@@ -73,7 +76,7 @@ class UserRepository(private val userApi: UserApi) {
             val response = userApi.verifyCode(request)
             response.isSuccessful && response.body()?.success == true
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur de vérification: ${e.message}")
+            Log.e("UserRepository", "Erreur de verification: ${e.message}")
             false
         }
     }
@@ -148,5 +151,13 @@ class UserRepository(private val userApi: UserApi) {
             Log.e("UserRepository", "Erreur lors de l'édition de l'adresse: ${e.message}")
             false
         }
+    }
+
+    fun getUserEmail(): String? {
+        return sharedPreferences.getString("user_email", null)
+    }
+
+    fun setUserEmail(email: String) {
+        sharedPreferences.edit().putString("user_email", email).apply()
     }
 }

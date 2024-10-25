@@ -13,7 +13,9 @@ import com.uds.foufoufood.view.auth.WelcomeScreen
 import com.uds.foufoufood.view.client.AddressScreen
 import com.uds.foufoufood.view.client.ProfileScreen
 import com.uds.foufoufood.view.client.UpdateAddressScreen
+import com.uds.foufoufood.view.client.ClientRestaurantScreen
 import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 
@@ -21,15 +23,18 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 fun ConnectedNavHost(
     navController: NavHostController,
     userViewModel: UserViewModel,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    menuViewModel: MenuViewModel
 ) {
-    Log.d("UserNavHost", "UserNavHost")
+//    Log.d("UserNavHost", "UserNavHost")
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
-            if (userViewModel.user.value?.role == "client")
-                HomeScreen(navController, homeViewModel, userViewModel)
+            if (userViewModel.user.value?.role == "client" ||
+                userViewModel.user.value?.role == "restaurateur"
+            ) {
+                HomeScreen(navController, homeViewModel, userViewModel, menuViewModel)
+            }
         }
-
         composable(Screen.Welcome.route) {
             WelcomeScreen(navController)
         }
@@ -59,6 +64,25 @@ fun ConnectedNavHost(
 
         composable(Screen.UpdateAddress.route) {
             UpdateAddressScreen(navController, userViewModel)
+        }
+
+        composable(Screen.ClientRestaurantAllMenusPage.route) {
+            Log.d("ConnectedNavHost", "ClientRestaurantAllMenusPage")
+            if (userViewModel.user.value?.role == "client" ||
+                userViewModel.user.value?.role == "restaurateur"
+            ) {
+                val restaurant = menuViewModel.shared_restaurant.value
+                restaurant?.let { theRestaurant ->
+                    ClientRestaurantScreen(
+                        navController,
+                        userViewModel,
+                        menuViewModel,
+                        theRestaurant
+                    )
+                } ?: Log.d("ConnectedNavHost", "Restaurant data is null")
+            } else {
+                Log.d("ConnectedNavHost", "Invalid role or no restaurant selected")
+            }
         }
     }
 }

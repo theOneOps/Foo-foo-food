@@ -14,6 +14,14 @@ object TokenManager {
         editor.apply()
     }
 
+    fun saveUserId(context: Context, userId: String) {
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences("myAppPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("userid", userId)
+        editor.apply()
+    }
+
     // Récupérer le token JWT
     fun getToken(context: Context): String? {
         val sharedPreferences: SharedPreferences =
@@ -27,5 +35,11 @@ object TokenManager {
         val editor = sharedPreferences.edit()
         editor.remove("token")
         editor.apply()
+    }
+
+    fun getUserId(context: Context): String? {
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences("myAppPrefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("userid", null)
     }
 }
