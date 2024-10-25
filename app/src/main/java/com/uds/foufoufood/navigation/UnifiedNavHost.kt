@@ -4,6 +4,8 @@ import AddRestaurantPage
 import RestaurantPage
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -11,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.uds.foufoufood.data_class.model.Restaurant
+import com.uds.foufoufood.view.client.MenuRestaurantScreen
 import com.uds.foufoufood.view.HomeScreen
 import com.uds.foufoufood.view.admin.ClientScreen
 import com.uds.foufoufood.view.admin.GerantPage
@@ -27,6 +30,7 @@ import com.uds.foufoufood.view.client.ProfileScreen
 import com.uds.foufoufood.view.client.UpdateAddressScreen
 import com.uds.foufoufood.view.delivery.AvailabilityScreen
 import com.uds.foufoufood.view.delivery.DeliveryOrderScreen
+import com.uds.foufoufood.view.restorer.FormModifyRestaurantScreen
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
@@ -263,15 +267,42 @@ fun NavGraphBuilder.addConnectedGraph(
     // Client Restaurant All Menus Page (accessible pour 'client' et 'restaurateur')
     composable(Screen.ClientRestaurantAllMenusPage.route) {
         Log.d("ConnectedNavHost", "ClientRestaurantAllMenusPage")
-        val restaurant = menuViewModel.shared_restaurant.value
+        val restaurant by menuViewModel.shared_restaurant.observeAsState()
         restaurant?.let { theRestaurant ->
             ClientRestaurantScreen(
                 navController,
-                userViewModel,
                 menuViewModel,
                 theRestaurant
             )
         } ?: Log.d("ConnectedNavHost", "Restaurant data is null")
+    }
+
+    composable(Screen.ModifyRestaurantPage.route) {
+        Log.d("ConnectedNavHost", Screen.ModifyRestaurantPage.route)
+        if (userViewModel.user.value?.role == "restaurateur"
+        ) {
+            val restaurant by menuViewModel.shared_restaurant.observeAsState()
+            restaurant?.let { theRestaurant ->
+                FormModifyRestaurantScreen(theRestaurant, homeViewModel)
+            } ?: Log.d("ConnectedNavHost", "Menu data is null")
+        } else {
+            Log.d("ConnectedNavHost", "Invalid role or no menu selected")
+        }
+    }
+
+    composable(Screen.ClientInstanceMenuPage.route)
+    {
+        Log.d("ConnectedNavHost", Screen.ClientInstanceMenuPage.route)
+        if (userViewModel.user.value?.role == "client" ||
+            userViewModel.user.value?.role == "restaurateur"
+        ) {
+            val menu by menuViewModel.shared_current_menu.observeAsState()
+            menu?.let { selectMenu ->
+                MenuRestaurantScreen(selectMenu, menuViewModel)
+            } ?: Log.d("ConnectedNavHost", "Menu data is null")
+        } else {
+            Log.d("ConnectedNavHost", "Invalid role or no menu selected")
+        }
     }
 }
 

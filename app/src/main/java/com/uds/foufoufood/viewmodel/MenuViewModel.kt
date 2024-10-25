@@ -17,6 +17,12 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
     private val _shared_restaurant = MutableLiveData<Restaurant>()
     val shared_restaurant: LiveData<Restaurant> get() = _shared_restaurant
 
+    private val _shared_current_menu = MutableLiveData<Menu>()
+    val shared_current_menu: LiveData<Menu> get() = _shared_current_menu
+
+    private val _isConnectedRestorer = MutableLiveData<Boolean>()
+    val isConnectedRestorer: LiveData<Boolean> get() = _isConnectedRestorer
+
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
@@ -84,6 +90,16 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
 
     fun setSharedRestaurant(restaurant: Restaurant) {
         _shared_restaurant.value = restaurant
+    }
+
+    fun setIsConnectedRestorer(value:Boolean)
+    {
+        _isConnectedRestorer.value = value
+    }
+
+    fun setSharedCurrentMenu(menu:Menu)
+    {
+        _shared_current_menu.value = menu
     }
 
     fun deleteMenu(token: String, menuId: String) {
@@ -156,9 +172,13 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                             )
                             // Remplacer l'ancien menu par le nouveau
                             currentMenus[menuIndex] = updatedMenu
+                            if (_shared_current_menu.value?._id == updatedMenu._id)
+                                setSharedCurrentMenu(updatedMenu)
 
                             // Mettre à jour la liste des menus
                             _menus.value = currentMenus
+
+
                         } else {
                             _errorMessage.value = "Menu non trouvé pour modification"
                         }

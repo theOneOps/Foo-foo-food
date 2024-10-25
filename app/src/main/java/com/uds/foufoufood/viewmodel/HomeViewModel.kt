@@ -1,5 +1,6 @@
 package com.uds.foufoufood.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -30,7 +31,7 @@ class HomeViewModel(private val restaurantRepository: RestaurantRepository) : Vi
         private set
 
     // Initialize categories and restaurants (you can load from a repository or hardcode)
-    fun initialize(specialityList: List<Speciality>,) {
+    fun initialize(specialityList: List<Speciality>) {
         specialities = specialityList
         fetchRestaurants()
     }
@@ -70,6 +71,32 @@ class HomeViewModel(private val restaurantRepository: RestaurantRepository) : Vi
             } ?: true // If no category is selected, show all
 
             matchesQuery && matchesSpeciality
+        }
+    }
+
+    fun updateRestaurant( id: String, restaurant: Restaurant) {
+        viewModelScope.launch {
+            try {
+                val response = restaurantRepository.updateRestaurant( id, restaurant)
+                if (response != null) {
+                    if (response.success)
+                    {
+                        val currentRestaurants = restaurants.toMutableList()
+
+                        val restaurantIndex = currentRestaurants.indexOfFirst { it._id == id }
+
+                        if (restaurantIndex != -1) {
+                            currentRestaurants[restaurantIndex] = restaurant
+                        }
+                        restaurants = currentRestaurants
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d(
+                    "HomeViewModel",
+                    "Exception lors de la modification du restaurant: ${e.message}"
+                )
+            }
         }
     }
 }

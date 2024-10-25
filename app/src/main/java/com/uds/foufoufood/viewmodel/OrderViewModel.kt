@@ -17,7 +17,8 @@ class OrderViewModel(private val repository: OrderRepository, private val contex
     val currentOrder: StateFlow<Order?> = _currentOrder
 
     // Fonction pour charger la commande depuis un ID
-    fun loadOrder(orderId: String) {
+    fun loadOrder(orderId: String)
+    {
         viewModelScope.launch {
             val order = repository.getOrderById(orderId)
             _currentOrder.value = order

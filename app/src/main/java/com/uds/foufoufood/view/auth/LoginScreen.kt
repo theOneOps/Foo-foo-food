@@ -49,8 +49,8 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
 
-    var email by remember { mutableStateOf("lili.schmidlin04@gmail.com") }
-    var password by remember { mutableStateOf("testtest") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     val user by userViewModel.user.observeAsState()
     val errorMessage by userViewModel.errorMessage.observeAsState()
