@@ -1,12 +1,15 @@
 package com.uds.foufoufood.data_class.model
 
+import com.google.gson.annotations.SerializedName
+
+
 data class Order(
-    val orderId: String,
-    val items: List<Pair<Menu, Int>>,
+    @SerializedName("_id") val orderId: String, // Correction : utilisez SerializedName pour mapper "_id"
+    @SerializedName("dishes") val items: List<OrderItem>, // Correction : "dishes" au lieu de "items"
     val clientEmail: String,
     val clientName: String,
     val restaurantName: String,
-    val restaurantAddress: Address,
-    val deliveryAddress: Address,
-    var status: OrderStatus = OrderStatus.WAITING
+    @SerializedName("restaurantAddress") val restaurantAddress: Address,
+    @SerializedName("deliveryAddress") val deliveryAddress: Address,
+    var status: OrderStatus // Enum optionnelle si nécessaire
 )

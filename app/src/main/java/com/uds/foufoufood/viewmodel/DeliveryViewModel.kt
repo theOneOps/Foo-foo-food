@@ -27,6 +27,8 @@ class DeliveryViewModel(
     private val _newOrderAssigned = MutableStateFlow<JSONObject?>(null)
     val newOrderAssigned: StateFlow<JSONObject?> = _newOrderAssigned
 
+    val currentDeliveryManEmail = userRepository.getUserEmail()
+
     private lateinit var socket: Socket
 
     fun connectSocketForOrders() {
@@ -74,7 +76,7 @@ class DeliveryViewModel(
     }
     private fun setupSocketConnection(token: String) {
         try {
-            socket = IO.socket("http://10.0.2.2:3000")
+            socket = IO.socket("http://192.168.21.13:3000")
             socket.connect()
 
             socket.emit("join", token)

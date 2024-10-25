@@ -1,6 +1,7 @@
 package com.uds.foufoufood.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uds.foufoufood.data_class.model.Order
@@ -19,7 +20,28 @@ class OrderViewModel(private val repository: OrderRepository, private val contex
     // Fonction pour charger la commande depuis un ID
     fun loadOrder(orderId: String) {
         viewModelScope.launch {
-            val order = repository.getOrderById(orderId)
+            try {
+                val response = repository.getOrderById(orderId)
+                if (response.isSuccessful) {
+                    val order = response.body()
+                    if (order != null) {
+                        _currentOrder.value = order
+                    } else {
+                        Log.e("OrderViewModel", "Erreur : La commande récupérée est nulle.")
+                    }
+                } else {
+                    Log.e("OrderViewModel", "Erreur lors de la récupération de la commande : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("OrderViewModel", "Erreur lors de la récupération de la commande : ${e.message}")
+            }
+        }
+    }
+
+    fun loadOrderByDeliverManEmail(email: String) {
+        viewModelScope.launch {
+            val order = repository.getOrderByDeliverManEmail(email)
+            Log.d("OrderViewModel", "Order found: $order")
             _currentOrder.value = order
         }
     }

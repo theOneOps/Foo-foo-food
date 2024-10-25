@@ -49,12 +49,17 @@ fun MainScreen(
         connectUser = it.role ?: ""
     }
 
+
+
     Log.d("MainScreen", "connectUser: $connectUser, isLoading: $isLoading, user: $user")
 
 
     if (user == null) {
         connectUser = ""
     }
+    // Détermine si la BottomBar doit être affichée pour l'admin
+    val showAdminBottomBar = connectUser == "admin"
+
     UnifiedNavHost(
         navController = navController,
         connectUser = connectUser,
@@ -64,6 +69,7 @@ fun MainScreen(
         deliveryViewModel = deliveryViewModel,
         orderViewModel = orderViewModel,
         homeViewModel = homeViewModel,
-        menuViewModel = menuViewModel
+        menuViewModel = menuViewModel,
+        showAdminBottomBar = showAdminBottomBar
     )
 }
