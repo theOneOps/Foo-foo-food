@@ -1,13 +1,9 @@
 package com.uds.foufoufood.viewmodel
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.data_class.model.CartItem
 import com.uds.foufoufood.data_class.model.OrderItem
 import com.uds.foufoufood.data_class.request.OrderRequest
@@ -80,13 +76,20 @@ class CartViewModel(
             val deliveryAddress = userViewModel.user.value?.address
             val items = cartItems.value ?: emptyList() // Get the actual list from LiveData
 
+            // Check for an active order before proceeding with checkout
             if (token != null && deliveryAddress != null) {
+                val hasActiveOrder = orderRepository.hasActiveOrder(token, clientEmail)
+                if (hasActiveOrder) {
+                    _errorMessage.value = "Vous avez déjà une commande en cours."
+                    return@launch
+                }
+
                 val orderRequest = OrderRequest(
                     clientEmail = clientEmail,
                     clientName = clientName,
                     restaurantId = restaurantId,
                     deliveryAddress = deliveryAddress,
-                    items = items.map { OrderItem(menu = it.menu, quantity = it.quantity) } // Map items to OrderItem list
+                    dishes = items.map { OrderItem(menu = it.menu, quantity = it.quantity) } // Map items to OrderItem list
                 )
 
                 val orderResponse = orderRepository.createOrder(token, orderRequest)

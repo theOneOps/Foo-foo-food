@@ -2,6 +2,7 @@ package com.uds.foufoufood.network
 
 import com.uds.foufoufood.data_class.model.Order
 import com.uds.foufoufood.data_class.request.OrderRequest
+import com.uds.foufoufood.data_class.response.HasActiveOrderResponse
 import com.uds.foufoufood.data_class.response.OrderResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -24,4 +25,9 @@ interface OrderApi {
         @Body orderRequest: OrderRequest
     ): Response<OrderResponse>
 
+    @GET("api/orders/hasActiveOrder/{clientEmail}")
+    suspend fun hasActiveOrder(
+        @Header("Authorization") token: String,
+        @Path("clientEmail") clientEmail: String
+    ): Response<HasActiveOrderResponse>
 }

@@ -16,3 +16,6 @@ data class OrderResponse(
     val status: OrderStatus
 )
 
+data class HasActiveOrderResponse(val hasActiveOrder: Boolean)
+
+

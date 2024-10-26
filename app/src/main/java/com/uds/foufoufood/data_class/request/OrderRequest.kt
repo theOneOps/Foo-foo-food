@@ -8,6 +8,6 @@ data class OrderRequest(
     val clientName: String,
     val restaurantId: String,
     val deliveryAddress: Address,
-    val items: List<OrderItem>,
+    val dishes: List<OrderItem>,
     val status: String = "en attente d'un livreur"
 )
