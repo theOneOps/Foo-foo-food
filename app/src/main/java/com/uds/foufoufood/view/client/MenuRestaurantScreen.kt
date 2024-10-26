@@ -162,16 +162,18 @@ fun MenuRestaurantScreen(menu: Menu, menuViewModel: MenuViewModel)
             }
         }
 
-        // Bouton "Add to Cart"
+
         Column(
             modifier = Modifier
-                .fillMaxWidth() // Occupe toute la largeur
-                .padding(vertical = 120.dp), // Ajout d'un padding vertical pour plus d'espace
-            verticalArrangement = Arrangement.Center, // Centre verticalement le contenu
-            horizontalAlignment = Alignment.CenterHorizontally // Centre horizontalement le bouton
+                .fillMaxWidth()
+                .padding(vertical = 16.dp), // Reduced vertical padding
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(Modifier.height(16.dp)) // Add space as needed
             AddToCartButton()
         }
+
     }
 }
 
