@@ -29,12 +29,13 @@ import androidx.compose.ui.unit.dp
 import com.uds.foufoufood.Firebase_management.FirebaseInstance
 import com.uds.foufoufood.Firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
 import com.uds.foufoufood.data_class.model.Menu
+import com.uds.foufoufood.viewmodel.MenuViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit) {
+fun FormModifyMenu(menuViewModel: MenuViewModel,menu: Menu, onUpdate: (Menu) -> Unit) {
     // State pour les champs du formulaire
     val nameState = remember { mutableStateOf(menu.name) }
     val descriptorState = remember { mutableStateOf(menu.description) }
@@ -163,6 +164,8 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit) {
                     image = imageState.value
                 )
                 onUpdate(updatedMenu) // Appeler la fonction de mise à jour
+
+
                 Toast.makeText(context, "menu bien modifié", Toast.LENGTH_SHORT)
                     .show()
             },

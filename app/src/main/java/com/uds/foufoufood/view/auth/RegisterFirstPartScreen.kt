@@ -47,9 +47,9 @@ fun RegisterFirstPartScreen(
     val context = LocalContext.current
 
     // Champs d'entrée utilisateur (nom, email, mot de passe)
-    var name by remember { mutableStateOf("lili") }
-    var email by remember { mutableStateOf("lili.schmidlin04@gmail.com") }
-    var password by remember { mutableStateOf("testtest") }
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     // Observer LiveData registrationInitSuccess avec observeAsState
     val registrationSuccess by userViewModel.registrationInitSuccess.observeAsState()

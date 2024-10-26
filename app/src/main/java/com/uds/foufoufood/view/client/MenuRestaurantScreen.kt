@@ -1,4 +1,4 @@
-package com.uds.foufoufood.ui.component
+package com.uds.foufoufood.view.client
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,33 +31,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.uds.foufoufood.R
 import com.uds.foufoufood.activities.main.TokenManager.getToken
-import com.uds.foufoufood.activities.main.TokenManager.getUserId
 import com.uds.foufoufood.data_class.model.Menu
+import com.uds.foufoufood.ui.component.CounterProductBought
+import com.uds.foufoufood.ui.component.FormModifyMenu
+import com.uds.foufoufood.ui.component.HeartIconButton
+import com.uds.foufoufood.ui.component.TextLink
 import com.uds.foufoufood.viewmodel.MenuViewModel
 
 
-//val menuTest = Menu(
-//    name = "Crème Brûlée",
-//    description = "Rich custard base topped with a layer of caramelized sugar",
-//    price = 10.0,
-//    category = "Dessert",
-//    image = "https://images.unsplash.com/photo-1487004121828-9fa15a215a7a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//    restaurantId = "1",
-//    _id = "ABC",
-//)
-
 @Composable
-fun MenuRestaurant(menu: Menu, menuViewModel: MenuViewModel , isConnectedRestaurateur:Boolean) {
+fun MenuRestaurantScreen(menu: Menu, menuViewModel: MenuViewModel)
+{
     val context = LocalContext.current
     val token = getToken(context) ?: ""
-    val userId = getUserId(context) ?: ""
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Card(
@@ -132,10 +124,12 @@ fun MenuRestaurant(menu: Menu, menuViewModel: MenuViewModel , isConnectedRestaur
                             Text("⭐", style = TextStyle(fontSize = 15.sp))
                             Text("${menu.price}", style = TextStyle(fontSize = 18.sp))
                             Spacer(Modifier.width(20.dp))
-                            TextLink(onClick = { /* Lien pour les avis todo */ }, label = "See Review")
+                            //TextLink(onClick = { /* Lien pour les avis todo */ }, label = "See Review")
                         }
                         // todo : tester si l'user connecté est bien celui qui possède
                         //  le restaurant, voire dans ClientRestaurantScreen
+
+                        val isConnectedRestaurateur = menuViewModel.isConnectedRestorer.value!!
                         if (isConnectedRestaurateur)
                             ModifyMenu(token, menuViewModel, menu)
                     }
@@ -232,7 +226,7 @@ fun ModifyMenu(token:String, menuViewModel: MenuViewModel, menu: Menu) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        FormModifyMenu(menu, onUpdate = {menuRes->
+                        FormModifyMenu(menuViewModel,menu, onUpdate = {menuRes->
                             menuViewModel.updateMenu(token,
                                 menuRes._id,
                                 menuRes.name,
