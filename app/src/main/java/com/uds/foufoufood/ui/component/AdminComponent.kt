@@ -1,8 +1,11 @@
 package com.uds.foufoufood.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -31,52 +34,76 @@ fun BottomNavBarAdmin(selectedItem: Int, onItemSelected: (Int) -> Unit) {
         containerColor = Color.White,
         contentColor = Color.Black
     ) {
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.groups), // Utilisation du fichier SVG converti
-                    contentDescription = "Clients"
-                )
-            },
-            selected = selectedItem == 0,
-            onClick = { onItemSelected(0) },
-            label = { Text("Clients", fontSize = 12.sp) }
-        )
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.delivery), // Utilisation du fichier SVG converti
-                    contentDescription = "Livreurs"
-                )
-            },
-            selected = selectedItem == 1,
-            onClick = { onItemSelected(1) },
-            label = { Text("Livreurs", fontSize = 12.sp) }
-        )
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.cook), // Utilisation du fichier SVG converti
-                    contentDescription = "Gérants"
-                )
-            },
-            selected = selectedItem == 2,
-            onClick = { onItemSelected(2) },
-            label = { Text("Gérants", fontSize = 12.sp) }
-        )
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.restaurant),
-                    contentDescription = "Restaurants"
-                )
-            },
-            selected = selectedItem == 3,
-            onClick = { onItemSelected(3) },
-            label = { Text("Restaus", fontSize = 12.sp) }
-        )
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+        ) {
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.groups),
+                        contentDescription = "Clients",
+                        modifier = Modifier.size(24.dp) // Limite la taille de l'icône
+                    )
+                },
+                selected = selectedItem == 0,
+                onClick = { onItemSelected(0) },
+                label = { Text("Clients", fontSize = 12.sp) }
+            )
+
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.delivery),
+                        contentDescription = "Livreurs",
+                        modifier = Modifier.size(24.dp) // Limite la taille de l'icône
+                    )
+                },
+                selected = selectedItem == 1,
+                onClick = { onItemSelected(1) },
+                label = { Text("Livreurs", fontSize = 12.sp) }
+            )
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.cook),
+                        contentDescription = "Gérants",
+                        modifier = Modifier.size(24.dp) // Limite la taille de l'icône
+                    )
+                },
+                selected = selectedItem == 2,
+                onClick = { onItemSelected(2) },
+                label = { Text("Gérants", fontSize = 12.sp) }
+            )
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.restaurant),
+                        contentDescription = "Restaurants",
+                        modifier = Modifier.size(24.dp) // Limite la taille de l'icône
+                    )
+                },
+                selected = selectedItem == 3,
+                onClick = { onItemSelected(3) },
+                label = { Text("Restaurants", fontSize = 12.sp) }
+            )
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_drawer_logout),
+                        contentDescription = "Déconnexion",
+                        modifier = Modifier.size(24.dp) // Limite la taille de l'icône
+                    )
+                },
+                selected = selectedItem == 4,
+                onClick = { onItemSelected(4) },
+                label = { Text("Déconnexion", fontSize = 12.sp) }
+            )
+        }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

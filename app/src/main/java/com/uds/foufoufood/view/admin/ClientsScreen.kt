@@ -10,6 +10,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -29,8 +31,9 @@ fun ClientScreen(
         Log.d("ClientPage", "Appel à fetchUsers")
         adminUsersViewModel.fetchUsers("client") // AdminViewModel get all users
     }
-
-    val clientUsers = adminUsersViewModel.filteredUsers
+    adminUsersViewModel.filterUsers("client")
+    val clientUsersState by adminUsersViewModel.filteredUsers.observeAsState()
+    val clientUsers = clientUsersState!!
     Scaffold()
     { paddingValues ->
         // Contenu principal de la page (la liste des utilisateurs)

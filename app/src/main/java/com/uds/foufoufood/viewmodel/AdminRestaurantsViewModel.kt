@@ -20,6 +20,13 @@ class AdminRestaurantsViewModel(private val restaurantRepository: RestaurantRepo
     private val _restaurants = MutableLiveData<List<Restaurant>?>()
     val restaurants: LiveData<List<Restaurant>?> get() = _restaurants
 
+    private val _selected_Restorer = MutableLiveData<Restaurant>()
+    val selected_Restorer: LiveData<Restaurant> get() = _selected_Restorer
+
+    fun setSelectedRestaurant(restaurant: Restaurant) {
+        _selected_Restorer.value = restaurant
+    }
+
 
     fun fetchRestaurants() {
         viewModelScope.launch {
@@ -38,14 +45,18 @@ class AdminRestaurantsViewModel(private val restaurantRepository: RestaurantRepo
                 val response = restaurantRepository.createRestaurant(restaurant)
                 if (response != null) {
                     if (response.success) {
-                        val currentRestaurants = _restaurants.value?.toMutableList() ?: mutableListOf()
+                        val currentRestaurants =
+                            _restaurants.value?.toMutableList() ?: mutableListOf()
                         currentRestaurants.add(restaurant)
                         _restaurants.value = currentRestaurants.toList()
                     } else {
                         Log.e("AdminRestaurantsViewModel", "addRestaurant is not working")
                     }
                 } else {
-                    Log.e("AdminRestaurantsViewModel", "response from addRestaurant null, problem to fix !")
+                    Log.e(
+                        "AdminRestaurantsViewModel",
+                        "response from addRestaurant null, problem to fix !"
+                    )
                 }
             } catch (e: Exception) {
                 Log.e("AdminRestaurantsViewModel", "Exception during addRestaurant: ${e.message}")
@@ -53,6 +64,61 @@ class AdminRestaurantsViewModel(private val restaurantRepository: RestaurantRepo
         }
     }
 
+    fun deleteRestaurant(restaurantId: String) {
+        viewModelScope.launch {
+            try {
+                val response = restaurantRepository.deleteRestaurant(restaurantId)
+                if (response != null) {
+                    if (response.success) {
+                        val currentRestaurants =
+                            _restaurants.value?.toMutableList() ?: mutableListOf()
+//                        val newMenusList = currentMenus.filter { it.menuId != menuId }
+//                        _menus.value = newMenusList
+                        currentRestaurants.removeIf { it._id == restaurantId }
+                        _restaurants.value = currentRestaurants
+                    } else
+                        Log.e(
+                            "AdminRestaurantsViewModel",
+                            "response from deleteRestaurant null, problem to fix !"
+                        )
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    "AdminRestaurantsViewModel",
+                    "Exception during deleteRestaurant: ${e.message}"
+                )
+
+            }
+        }
+    }
+
+    fun linkARestorer(id: String, restaurantId: String) {
+        viewModelScope.launch {
+            try {
+                val response = restaurantRepository.linkARestorer(id, restaurantId)
+                if (response != null) {
+                    if (response.success) {
+                        response.message?.let {
+                            Log.e(
+                                "linkRestorer from AdminRestaurantsViewModel sucess message :",
+                                it
+                            )
+                        }
+                    } else
+                        Log.e(
+                            "AdminRestaurantsViewModel",
+                            "response from linkARestorer null, problem to fix !"
+                        )
+
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    "AdminRestaurantsViewModel",
+                    "Exception during linkARestorer: ${e.message}"
+                )
+            }
+        }
+    }
 
 
 }

@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,6 +25,7 @@ import com.uds.foufoufood.ui.component.BottomNavBarAdmin
 import com.uds.foufoufood.view.HomeScreen
 import com.uds.foufoufood.view.admin.ClientScreen
 import com.uds.foufoufood.view.admin.GerantPage
+import com.uds.foufoufood.view.admin.LinkRestorerRestoAndRestoPage
 import com.uds.foufoufood.view.admin.LivreurPage
 import com.uds.foufoufood.view.admin.UserProfileAdminPage
 import com.uds.foufoufood.view.auth.DefineProfileScreen
@@ -85,6 +85,7 @@ fun UnifiedNavHost(
                         1 -> navController.navigate(Screen.AdminLivreur.route)
                         2 -> navController.navigate(Screen.AdminGerant.route)
                         3 -> navController.navigate(Screen.AdminRestaurant.route)
+                        4 -> userViewModel.logout()
                     }
                 }
             }
@@ -199,6 +200,7 @@ fun NavGraphBuilder.addAdminGraph(
     ) { backStackEntry ->
         val userEmail = backStackEntry.arguments?.getString("userEmail")
         UserProfileAdminPage(
+            adminUsersViewModel=adminUsersViewModel,
             navController = navController,
             userEmail = userEmail,
             users = adminUsersViewModel.getAll(),
@@ -214,6 +216,7 @@ fun NavGraphBuilder.addAdminGraph(
         val allRestaurants by adminRestaurantsViewModel.restaurants.observeAsState()
         allRestaurants?.let { theRestaurants ->
             RestaurantPage(
+                adminRestaurantsViewModel = adminRestaurantsViewModel,
                 navController = navController,
                 restaurants = theRestaurants
             )
@@ -229,6 +232,20 @@ fun NavGraphBuilder.addAdminGraph(
             }
         )
     }
+
+    // page pour linker un restaurateur à un restaurant
+    composable(Screen.AdminLinkARestorerToAResto.route)
+    {
+        val selectAdRestaurant by adminRestaurantsViewModel.selected_Restorer.observeAsState()
+        selectAdRestaurant?.let { it1 ->
+            LinkRestorerRestoAndRestoPage(
+                navController,
+                adminRestaurantsViewModel,
+                adminUsersViewModel,
+                it1
+            )
+        }
+    }
 }
 
 /////////////////////////////DELIVERY
@@ -240,7 +257,7 @@ fun NavGraphBuilder.addDeliveryGraph(
     userViewModel: UserViewModel
 ) {
     composable(Screen.DeliveryAvailablePage.route) {
-        AvailabilityScreen (
+        AvailabilityScreen(
             navController = navController,
             deliveryViewModel = deliveryViewModel,
             orderViewModel = orderViewModel
@@ -248,7 +265,7 @@ fun NavGraphBuilder.addDeliveryGraph(
     }
 
     composable(Screen.DeliveryOrderPage.route) {
-        DeliveryOrderScreen (
+        DeliveryOrderScreen(
             navController = navController,
             orderViewModel = orderViewModel,
             userViewModel = userViewModel

@@ -67,34 +67,42 @@ class UserViewModel(
             try {
                 val response = userRepository.login(email, password)
                 if (response != null) {
-                    _user.value = response.user
-                    _token.value = response.token
-                    _loginSuccess.value = true
+                    if (response.user.blockedAccount == false)
+                    {
+                        _user.value = response.user
+                        _token.value = response.token
+                        _loginSuccess.value = true
 
-                    if (response.user.emailValidated == false) {
-                        _emailValidated.value = false
-                        _loading.value = false
-                    }
-                    else {
-                        saveToken(context, response.token)
-                        saveUserId(context, response.user._id)
-                        _emailValidated.value = true
-                        userRepository.setUserEmail(email)
-                        Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
-                        _errorMessage.value = null
-                    }
+                        if (response.user.emailValidated == false) {
+                            _emailValidated.value = false
+                            _loading.value = false
+                        }
+                        else {
+                            saveToken(context, response.token)
+                            saveUserId(context, response.user._id)
+                            _emailValidated.value = true
+                            userRepository.setUserEmail(email)
+                            Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
+                            _errorMessage.value = null
+                        }
 
-                    if (response.user.registrationComplete == false) {
-                        _registrationCompleteSuccess.value = false
-                        _loading.value = false
+                        if (response.user.registrationComplete == false) {
+                            _registrationCompleteSuccess.value = false
+                            _loading.value = false
+                        }
+                        else {
+                            saveToken(context, response.token)
+                            saveUserId(context, response.user._id)
+                            userRepository.setUserEmail(email)
+                            _registrationCompleteSuccess.value = true
+                            Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
+                            _errorMessage.value = null
+                        }
                     }
-                    else {
-                        saveToken(context, response.token)
-                        saveUserId(context, response.user._id)
-                        userRepository.setUserEmail(email)
-                        _registrationCompleteSuccess.value = true
-                        Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
-                        _errorMessage.value = null
+                    else
+                    {
+                        _errorMessage.value = "Erreur, connexion échouée car compte bloqué"
+                        _loginSuccess.value = false
                     }
                 } else {
                     _errorMessage.value = "Erreur, connexion échouée"

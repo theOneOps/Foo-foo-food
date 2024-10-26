@@ -35,4 +35,10 @@ interface RestaurantApi {
     // Delete a restaurant by ID
     @DELETE("api/restaurants/{id}")
     suspend fun deleteRestaurant(@Path("id") restaurantId: String): Response<ApiResponse>
+
+    @PUT("api/restaurants/linkarestorer/{id}/{restaurantId}")
+    suspend fun linkedARestorer(
+        @Path("id") id: String,
+        @Path("restaurantId") restaurantId: String
+    ): Response<ApiResponse>
 }

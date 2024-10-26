@@ -1,5 +1,6 @@
 package com.uds.foufoufood.view.admin
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,25 +18,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserProfileAdminPage(
+    adminUsersViewModel: AdminUsersViewModel,
     navController: NavController,
     userEmail: String?,
     users: List<User>,
     onRoleChanged: (User, String) -> Unit
 ) {
+    val context = LocalContext.current
     if (userEmail != null) {
         // Récupérer les détails de l'utilisateur
         val user = users.find { it.email == userEmail }
         var selectedRole by remember { mutableStateOf(user?.role ?: "Client") }
         var showDropdown by remember { mutableStateOf(false) }
+
+        var isBlocked by remember { mutableStateOf(user?.blockedAccount) }
+
 
         if (user != null) {
             Scaffold(
@@ -142,23 +150,37 @@ fun UserProfileAdminPage(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
-                    // Bouton pour désactiver le compte
+                    // Bouton pour activer/désactiver le compte
                     Button(
                         onClick = {
-                            // Logique pour désactiver le compte
+                            if (isBlocked == true) {
+                                adminUsersViewModel.unlockAccount(user._id)
+                            } else {
+                                adminUsersViewModel.blockAccount(user._id)
+                            }
+                            isBlocked = !isBlocked!! // Mise à jour immédiate de l'état local
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = "Désactiver le compte", color = Color.White)
+                        Text(
+                            text = if (isBlocked == true) "Activer le compte" else "Désactiver le compte",
+                            color = Color.White
+                        )
                     }
+
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Bouton pour supprimer le compte
                     Button(
                         onClick = {
-                            // Logique pour supprimer le compte
+                            // todo Logique pour supprimer le compte PAS ENCORE FAIT
+                            adminUsersViewModel.deleteAccount(user._id)
+                            navController.popBackStack()
+
+                            Toast.makeText(context, "compte bien supprimé", Toast.LENGTH_SHORT)
+                                .show()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                         modifier = Modifier.fillMaxWidth()
@@ -168,9 +190,7 @@ fun UserProfileAdminPage(
                 }
             }
         } else {
-            Text("Utilisateur introuvable")
+            Text("ID utilisateur manquant")
         }
-    } else {
-        Text("ID utilisateur manquant")
     }
 }

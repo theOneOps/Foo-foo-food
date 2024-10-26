@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -29,8 +31,8 @@ fun GerantPage(
         Log.d("GerantPage", "Appel à fetchUsers")
         adminUsersViewModel.fetchUsers("restaurateur") // AdminViewModel get all users
     }
-
-    val restaurateurUsers = adminUsersViewModel.filteredUsers
+    val restaurateurState by adminUsersViewModel.filteredUsers.observeAsState()
+    val restaurateurUsers = restaurateurState!!
     Scaffold()
     { paddingValues ->
         // Contenu principal de la page (la liste des utilisateurs)
