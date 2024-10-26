@@ -5,7 +5,10 @@ import android.util.Log
 import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Order
+import com.uds.foufoufood.data_class.model.OrderItem
 import com.uds.foufoufood.data_class.model.OrderStatus
+import com.uds.foufoufood.data_class.request.OrderRequest
+import com.uds.foufoufood.data_class.response.OrderResponse
 import com.uds.foufoufood.network.OrderApi
 import com.uds.foufoufood.network.UserApi
 import kotlinx.coroutines.Dispatchers
@@ -66,5 +69,21 @@ class OrderRepository(private val api: OrderApi, private val context: Context) {
             true // Simule une mise à jour réussie
         }
     }
+
+    suspend fun createOrder(token: String, orderRequest: OrderRequest): OrderResponse? =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = api.createOrder("Bearer $token", orderRequest)
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    Log.e("OrderRepository", "Failed to create order: ${response.message()}")
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("OrderRepository", "Exception creating order: ${e.message}")
+                null
+            }
+        }
 }
 

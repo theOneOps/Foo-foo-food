@@ -1,5 +1,6 @@
 package com.uds.foufoufood.view.client
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,19 +16,26 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,19 +45,25 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.uds.foufoufood.R
 import com.uds.foufoufood.activities.main.TokenManager.getToken
+import com.uds.foufoufood.data_class.model.CartItem
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.ui.component.CounterProductBought
 import com.uds.foufoufood.ui.component.FormModifyMenu
 import com.uds.foufoufood.ui.component.HeartIconButton
 import com.uds.foufoufood.ui.component.TextLink
+import com.uds.foufoufood.viewmodel.CartViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
 
 
 @Composable
-fun MenuRestaurantScreen(menu: Menu, menuViewModel: MenuViewModel)
-{
+fun MenuRestaurantScreen(
+    menu: Menu,
+    menuViewModel: MenuViewModel,
+    cartViewModel: CartViewModel // Add CartViewModel here
+) {
     val context = LocalContext.current
     val token = getToken(context) ?: ""
+    val quantity = remember { mutableIntStateOf(1) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Card(
@@ -133,7 +147,9 @@ fun MenuRestaurantScreen(menu: Menu, menuViewModel: MenuViewModel)
                         if (isConnectedRestaurateur)
                             ModifyMenu(token, menuViewModel, menu)
                     }
+
                     Spacer(Modifier.height(10.dp))
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -150,8 +166,8 @@ fun MenuRestaurantScreen(menu: Menu, menuViewModel: MenuViewModel)
                             Spacer(Modifier.width(20.dp))
                         }
 
-                        // Counter
-                        CounterProductBought()
+                        // Counter for quantity selection
+                        CounterProductBought(quantity)
                     }
 
                     Text(
@@ -171,15 +187,63 @@ fun MenuRestaurantScreen(menu: Menu, menuViewModel: MenuViewModel)
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(16.dp)) // Add space as needed
-            AddToCartButton()
+            AddToCartButton(
+                menu = menu,
+                cartViewModel = cartViewModel,
+                quantity = quantity.value // Pass the selected quantity
+            )
         }
 
     }
 }
 
 @Composable
-fun AddToCartButton() {
-    Button(onClick = { /* Ajouter au panier action */ }) {
+fun AddToCartButton(
+    menu: Menu,
+    cartViewModel: CartViewModel,
+    quantity: Int
+) {
+    val context = LocalContext.current
+    val scale = remember { mutableStateOf(1f) }
+    var showDialog by remember { mutableStateOf(false) } // State to manage dialog visibility
+
+    Button(
+        onClick = {
+            val restaurantId = menu.restaurantId
+            val cartItems = cartViewModel.cartItems.value ?: emptyList()
+            val isCartEmptyOrSameRestaurant = cartItems.isEmpty() ||
+                    cartItems.all { it.menu.restaurantId == restaurantId }
+
+
+            if (isCartEmptyOrSameRestaurant) {
+                // Add item to cart directly if it's the same restaurant or cart is empty
+                cartViewModel.addItem(
+                    CartItem(
+                        menu = menu,
+                        quantity = quantity,
+                    ),
+                    restaurantId = restaurantId
+                )
+                Toast.makeText(context, "${menu.name} ajouté au panier", Toast.LENGTH_SHORT).show()
+            } else {
+                // Show confirmation dialog if a different restaurant's item is being added
+                showDialog = true
+            }
+
+            // Button press effect
+            scale.value = 0.9f
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.orange)),
+        modifier = Modifier
+            .scale(scale.value)
+            .padding(8.dp)
+    ) {
+        LaunchedEffect(scale.value) {
+            if (scale.value == 0.9f) {
+                scale.value = 1f
+            }
+        }
+
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
@@ -192,23 +256,54 @@ fun AddToCartButton() {
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.buy_cart_icon),
-                    contentDescription = "Buy Cart Icon",
+                    contentDescription = "Icône d'achat",
                     modifier = Modifier.size(24.dp)
                 )
             }
-            Spacer(Modifier.width(8.dp)) // Espacement entre l'icône et le texte
+            Spacer(Modifier.width(8.dp))
             Text(
-                text = "ADD TO CART",
-                fontSize = 16.sp,  // Taille du texte
-                fontWeight = FontWeight.Bold, // Texte en gras
-                color = Color.White // Couleur du texte
+                text = "AJOUTER AU PANIER",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
             )
         }
+    }
+
+    // Confirmation dialog for clearing the cart
+    if (showDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Vider le panier ?") },
+            text = { Text("Votre panier contient des articles d'un autre restaurant. Vider le panier et ajouter cet article ?") },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = {
+                    cartViewModel.clearCart() // Clear the cart
+                    cartViewModel.addItem(
+                        CartItem(
+                            menu = menu,
+                            quantity = quantity
+                        ),
+                        restaurantId = menu.restaurantId
+                    )
+                    Toast.makeText(context, "${menu.name} ajouté au panier", Toast.LENGTH_SHORT)
+                        .show()
+                    showDialog = false // Close the dialog
+                }) {
+                    Text("Oui")
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { showDialog = false }) {
+                    Text("Non")
+                }
+            }
+        )
     }
 }
 
 @Composable
-fun ModifyMenu(token:String, menuViewModel: MenuViewModel, menu: Menu) {
+fun ModifyMenu(token: String, menuViewModel: MenuViewModel, menu: Menu) {
     val openDialog = remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
@@ -228,15 +323,17 @@ fun ModifyMenu(token:String, menuViewModel: MenuViewModel, menu: Menu) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        FormModifyMenu(menuViewModel,menu, onUpdate = {menuRes->
-                            menuViewModel.updateMenu(token,
+                        FormModifyMenu(menuViewModel, menu, onUpdate = { menuRes ->
+                            menuViewModel.updateMenu(
+                                token,
                                 menuRes._id,
                                 menuRes.name,
                                 menuRes.description,
                                 menuRes.price,
                                 menuRes.category,
                                 menuRes.restaurantId,
-                                menuRes.image)
+                                menuRes.image
+                            )
                         })
                     }
                 }
