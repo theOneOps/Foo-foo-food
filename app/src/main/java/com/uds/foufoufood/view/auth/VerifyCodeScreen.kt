@@ -63,10 +63,11 @@ fun VerifyCodeScreen(
     val codeVerificationSuccess by userViewModel.codeVerificationSuccess.observeAsState()
     Log.d("VerifyCodeScreen", "Code verification success: $codeVerificationSuccess")
     val user by userViewModel.user.observeAsState()
-    userViewModel.getUser(email)
     Log.d("VerifyCodeScreen", "User: $user")
 
-    LaunchedEffect(codeVerificationSuccess) {
+    LaunchedEffect(codeVerificationSuccess, user) {
+        userViewModel.getUser(email)
+
         if (codeVerificationSuccess == true) {
             Log.d("VerifyCodeScreen", "Code verification success")
             Log.d("VerifyCodeScreen", "Registration complete: ${user?.registrationComplete}")

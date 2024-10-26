@@ -34,6 +34,7 @@ fun MainScreen(
     val context = LocalContext.current
     val user by userViewModel.user.observeAsState()
     val isLoading by userViewModel.loading.observeAsState()
+    var emailValidated by remember { mutableStateOf(false) }
     var connectUser by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
@@ -47,23 +48,38 @@ fun MainScreen(
     // Met à jour connectUser dès que l'utilisateur est disponible
     user?.let {
         connectUser = it.role ?: ""
+        emailValidated = it.emailValidated ?: false
     }
+
+
 
     Log.d("MainScreen", "connectUser: $connectUser, isLoading: $isLoading, user: $user")
 
 
     if (user == null) {
         connectUser = ""
+        emailValidated = false
     }
+    // Détermine si la BottomBar doit être affichée pour l'admin
+    val showAdminBottomBar = connectUser == "admin"
+
+
+    if (isLoading == true) {
+        LoadingScreen()
+    }
+
+
     UnifiedNavHost(
         navController = navController,
         connectUser = connectUser,
+        emailValidated = emailValidated,
         userViewModel = userViewModel,
         adminUsersViewModel = adminUsersViewModel,
         adminRestaurantsViewModel = adminRestaurantsViewModel,
         deliveryViewModel = deliveryViewModel,
         orderViewModel = orderViewModel,
         homeViewModel = homeViewModel,
-        menuViewModel = menuViewModel
+        menuViewModel = menuViewModel,
+        showAdminBottomBar = showAdminBottomBar
     )
 }

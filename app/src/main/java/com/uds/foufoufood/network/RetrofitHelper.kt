@@ -13,8 +13,7 @@ class RetrofitHelper {
     companion object {
         private fun getBaseUrl(): String {
             return "http://10.0.2.2:3000" // Pour l'émulateur
-             //return "http://192.168.21.13:3000" // Pour son propre téléphone /!\ MODIFIER SELON SON ADRESSE IP
-            //return "http://10.235.176.84:3000"
+            //return "http://192.168.21.13:3000" // Pour son propre téléphone /!\ MODIFIER SELON SON ADRESSE IP
         }
 
         fun getRetrofitInstance(context: Context): Retrofit {

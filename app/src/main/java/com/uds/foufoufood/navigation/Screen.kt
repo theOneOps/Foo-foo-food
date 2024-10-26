@@ -15,7 +15,7 @@ sealed class Screen(val route: String) {
     object AdminLivreur : Screen("admin_livreur")
     object AdminGerant : Screen("admin_gerant")
     object AdminRestaurant : Screen("admin_restaurant")
-    object UserProfile : Screen("userProfile/{userEmail}") {
+    object AdminUserProfile : Screen("userProfile/{userEmail}") {
         fun createRoute(userEmail: String): String {
             return "userProfile/$userEmail"
         }

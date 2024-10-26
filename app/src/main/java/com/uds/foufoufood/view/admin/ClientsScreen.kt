@@ -25,7 +25,6 @@ fun ClientScreen(
     adminUsersViewModel: AdminUsersViewModel,
     onRoleChanged: (User, String) -> Unit
 ) {
-
     LaunchedEffect(Unit) {
         Log.d("ClientPage", "Appel à fetchUsers")
         adminUsersViewModel.fetchUsers("client") // AdminViewModel get all users
@@ -48,34 +47,32 @@ fun ClientScreen(
                 onSearchTextChanged = adminUsersViewModel::onSearchQueryChanged,
             )
 
-            if (clientUsers != null) {
-                if (clientUsers.isEmpty()) {
-                    Text("Aucun client trouvé.")
-                    Log.d("ClientPage", "Aucun utilisateur trouvé.")
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxSize()
-                    ) {
+            if (clientUsers.isEmpty()) {
+                Text("Aucun client trouvé.")
+                Log.d("ClientPage", "Aucun utilisateur trouvé.")
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize()
+                ) {
 
-                        items(clientUsers.size) { index ->
-                            val user = clientUsers[index]
-                            UserItem(user = user, onClick = {
-                                if (user.email.isNotEmpty()) {
-                                    navController.navigate("userProfile/${user.email}")
-                                } else {
-                                    Log.e("ClientPage", "L'utilisateur n'a pas d'email valide")
-                                }
-                            },
-                                onRoleChanged = { newRole ->
-                                    onRoleChanged(
-                                        user,
-                                        newRole
-                                    ) // Appelle la fonction onRoleChanged avec l'utilisateur
-                                    // et le nouveau rôle
-                                })
-                        }
+                    items(clientUsers.size) { index ->
+                        val user = clientUsers[index]
+                        UserItem(user = user, onClick = {
+                            if (user.email.isNotEmpty()) {
+                                navController.navigate("userProfile/${user.email}")
+                            } else {
+                                Log.e("ClientPage", "L'utilisateur n'a pas d'email valide")
+                            }
+                        },
+                            onRoleChanged = { newRole ->
+                                onRoleChanged(
+                                    user,
+                                    newRole
+                                ) // Appelle la fonction onRoleChanged avec l'utilisateur
+                                // et le nouveau rôle
+                            })
                     }
                 }
             }

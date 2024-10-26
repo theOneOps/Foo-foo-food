@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.compose.rememberNavController
 import com.uds.foufoufood.network.MenuApi
+import com.uds.foufoufood.network.OrderApi
 import com.uds.foufoufood.network.RestaurantApi
 import com.uds.foufoufood.network.RetrofitHelper
 import com.uds.foufoufood.network.UserApi
@@ -47,12 +48,13 @@ class MainActivity : AppCompatActivity() {
         // ADMIN
         val adminRepository = AdminRepository(userApi, this)
         adminUsersViewModel = AdminUsersViewModel(adminRepository)
-        adminRestaurantsViewModel = AdminRestaurantsViewModel()
+        adminRestaurantsViewModel = AdminRestaurantsViewModel(restaurantRepository)
 
         // DELIVERY
         val deliveryRepository = DeliveryRepository(userApi, this)
         deliveryViewModel = DeliveryViewModel(deliveryRepository, userRepository, this)
-        val orderRepository = OrderRepository(userApi, this)
+        val orderApi = retrofit.create(OrderApi::class.java)
+        val orderRepository = OrderRepository(orderApi, this)
         orderViewModel = OrderViewModel(orderRepository, this)
 
         homeViewModel = HomeViewModel(restaurantRepository)

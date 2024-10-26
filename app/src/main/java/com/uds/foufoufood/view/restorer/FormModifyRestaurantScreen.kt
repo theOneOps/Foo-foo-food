@@ -256,7 +256,8 @@ fun FormModifyRestaurantScreen(
                         _id = restaurant._id,
                         rating = restaurant.rating,
                         reviews = restaurant.reviews, // conserver les avis actuels
-                        items = restaurant.items, // conserver les items actuels
+                        // conserver les items actuels
+                        items = restaurant.items
                     )
 
                     // Appel de la fonction de mise à jour avec l'id du restaurant et l'objet mis à jour

@@ -34,8 +34,25 @@ fun AvailabilityScreen(
 ) {
 
     val isAvailable by deliveryViewModel.isAvailable.collectAsState()
-
     val newOrder by deliveryViewModel.newOrderAssigned.collectAsState()
+    val currentOrder by orderViewModel.currentOrder.collectAsState()
+
+    // Vérifiez s'il y a déjà une commande en cours à l'arrivée sur l'écran
+    val email = deliveryViewModel.currentDeliveryManEmail
+
+    LaunchedEffect(email) {
+        if (!email.isNullOrEmpty()) {
+            orderViewModel.loadOrderByDeliverManEmail(email)
+
+        }
+    }
+
+    // Redirection vers la page de commande si une commande en cours est trouvée
+    LaunchedEffect(currentOrder) {
+        currentOrder?.let {
+            navController.navigate(Screen.DeliveryOrderPage.route)
+        }
+    }
 
     // Utiliser LaunchedEffect pour détecter les nouvelles commandes et naviguer
     LaunchedEffect(newOrder) {
@@ -49,10 +66,9 @@ fun AvailabilityScreen(
             Log.d("Availability", "Order ID: $orderId")
             // Afficher l'ID pour vérification
             Log.d("OrderDetails", "Order ID: $orderId")
-            // Naviguer vers l'écran de détail de la commande
+
             orderViewModel.loadOrder(orderId)
             navController.navigate(Screen.DeliveryOrderPage.route)
-            //navController.navigate("orderDetail/$orderData")
         }
     }
 

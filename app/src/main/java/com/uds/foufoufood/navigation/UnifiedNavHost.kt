@@ -3,9 +3,17 @@ package com.uds.foufoufood.navigation
 import AddRestaurantPage
 import RestaurantPage
 import android.util.Log
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -14,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.view.client.MenuRestaurantScreen
+import com.uds.foufoufood.ui.component.BottomNavBarAdmin
 import com.uds.foufoufood.view.HomeScreen
 import com.uds.foufoufood.view.admin.ClientScreen
 import com.uds.foufoufood.view.admin.GerantPage
@@ -43,23 +52,61 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 fun UnifiedNavHost(
     navController: NavHostController,
     connectUser: String,
+    emailValidated: Boolean,
     userViewModel: UserViewModel,
     adminUsersViewModel: AdminUsersViewModel,
     adminRestaurantsViewModel: AdminRestaurantsViewModel,
     deliveryViewModel: DeliveryViewModel,
     orderViewModel: OrderViewModel,
     homeViewModel: HomeViewModel,
-    menuViewModel: MenuViewModel
+    menuViewModel: MenuViewModel,
+    showAdminBottomBar: Boolean // Nouveau paramètre pour conditionner la BottomBar
 ) {
-    NavHost(navController = navController, startDestination = getStartDestination(connectUser)) {
-        addAuthGraph(navController, userViewModel)
-        addAdminGraph(navController, adminUsersViewModel, adminRestaurantsViewModel)
-        addDeliveryGraph(navController, deliveryViewModel, orderViewModel)
-        addConnectedGraph(navController, homeViewModel, menuViewModel, userViewModel)
+    var selectedItem by remember { mutableStateOf(0) }
+
+    LaunchedEffect(navController) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            selectedItem = when (destination.route) {
+                Screen.AdminClient.route -> 0
+                Screen.AdminLivreur.route -> 1
+                Screen.AdminGerant.route -> 2
+                Screen.AdminRestaurant.route -> 3
+                else -> selectedItem // Ne change pas si ce n'est pas une des routes admin
+            }
+        }
+    }
+    Scaffold(
+        bottomBar = {
+            if (showAdminBottomBar) {
+                BottomNavBarAdmin(selectedItem = selectedItem) { index ->
+                    selectedItem = index // Met à jour l'élément sélectionné
+                    when (index) {
+                        0 -> navController.navigate(Screen.AdminClient.route)
+                        1 -> navController.navigate(Screen.AdminLivreur.route)
+                        2 -> navController.navigate(Screen.AdminGerant.route)
+                        3 -> navController.navigate(Screen.AdminRestaurant.route)
+                    }
+                }
+            }
+        }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = getStartDestination(connectUser, emailValidated),
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            addAuthGraph(navController, userViewModel)
+            addAdminGraph(navController, adminUsersViewModel, adminRestaurantsViewModel)
+            addDeliveryGraph(navController, deliveryViewModel, orderViewModel, userViewModel)
+            addConnectedGraph(navController, homeViewModel, menuViewModel, userViewModel)
+        }
     }
 }
 
-fun getStartDestination(connectUser: String): String {
+fun getStartDestination(connectUser: String, emailValidated: Boolean): String {
+    if (!emailValidated) {
+        return Screen.Welcome.route
+    }
     return when (connectUser) {
         "admin" -> Screen.AdminClient.route
         "livreur" -> Screen.DeliveryAvailablePage.route
@@ -145,21 +192,9 @@ fun NavGraphBuilder.addAdminGraph(
         )
     }
 
-    // Ajouter les routes utilisateur
-    composable(Screen.AdminClient.route) {
-        UserProfileAdminPage(
-            navController = navController,
-            userEmail = null,
-            users = adminUsersViewModel.getAll(),
-            onRoleChanged = { user, newRole ->
-                adminUsersViewModel.updateUserRole(user, newRole)
-            }
-        )
-    }
-
     // Page de profil utilisateur
     composable(
-        route = Screen.UserProfile.route,
+        route = Screen.AdminUserProfile.route,
         arguments = listOf(navArgument("userEmail") { type = NavType.StringType })
     ) { backStackEntry ->
         val userEmail = backStackEntry.arguments?.getString("userEmail")
@@ -175,10 +210,14 @@ fun NavGraphBuilder.addAdminGraph(
 
     // Page de gestion des restaurants
     composable(Screen.AdminRestaurant.route) {
-        RestaurantPage(
-            navController = navController,
-            restaurants = adminRestaurantsViewModel.restaurants
-        )
+        adminRestaurantsViewModel.fetchRestaurants()
+        val allRestaurants by adminRestaurantsViewModel.restaurants.observeAsState()
+        allRestaurants?.let { theRestaurants ->
+            RestaurantPage(
+                navController = navController,
+                restaurants = theRestaurants
+            )
+        }
     }
 
     // Page pour ajouter un restaurant
@@ -197,7 +236,8 @@ fun NavGraphBuilder.addAdminGraph(
 fun NavGraphBuilder.addDeliveryGraph(
     navController: NavHostController,
     deliveryViewModel: DeliveryViewModel,
-    orderViewModel: OrderViewModel
+    orderViewModel: OrderViewModel,
+    userViewModel: UserViewModel
 ) {
     composable(Screen.DeliveryAvailablePage.route) {
         AvailabilityScreen (
@@ -210,7 +250,8 @@ fun NavGraphBuilder.addDeliveryGraph(
     composable(Screen.DeliveryOrderPage.route) {
         DeliveryOrderScreen (
             navController = navController,
-            orderViewModel = orderViewModel
+            orderViewModel = orderViewModel,
+            userViewModel = userViewModel
         )
     }
 }
