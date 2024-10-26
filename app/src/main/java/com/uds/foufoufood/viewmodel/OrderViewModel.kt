@@ -13,9 +13,14 @@ import kotlinx.coroutines.launch
 
 class OrderViewModel(private val repository: OrderRepository, private val context: Context) : ViewModel() {
 
+
     // État de la commande active
     private val _currentOrder = MutableStateFlow<Order?>(null)
     val currentOrder: StateFlow<Order?> = _currentOrder
+
+    // État des commandes récupérées pour le livreur
+    private val _orders = MutableStateFlow<List<Order>>(emptyList())
+    val orders: StateFlow<List<Order>> = _orders
 
     // Fonction pour charger la commande depuis un ID
     fun loadOrder(orderId: String) {
@@ -37,6 +42,24 @@ class OrderViewModel(private val repository: OrderRepository, private val contex
             }
         }
     }
+
+    fun fetchOrdersForDeliveryMan(email: String) {
+        viewModelScope.launch {
+            try {
+                val orders = repository.getOrdersByDeliveryManEmail(email)
+                _orders.value = orders.sortedBy { it.orderId } // Tri par ordre décroissant
+            } catch (e: Exception) {
+                Log.e("OrderViewModel", "Erreur lors de la récupération des commandes : ${e.message}")
+            }
+        }
+    }
+
+
+    // Fonction pour définir la commande courante (utile pour naviguer vers la page de détail)
+    fun setCurrentOrder(order: Order) {
+        _currentOrder.value = order
+    }
+
 
     fun loadOrderByDeliverManEmail(email: String) {
         viewModelScope.launch {

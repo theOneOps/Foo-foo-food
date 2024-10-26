@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.uds.foufoufood.viewmodel.UserViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)

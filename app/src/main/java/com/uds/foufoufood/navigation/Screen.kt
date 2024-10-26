@@ -22,7 +22,8 @@ sealed class Screen(val route: String) {
     }
     // Delivery
     object DeliveryAvailablePage : Screen("delivery_available_page")
-    object DeliveryOrderPage : Screen("delivery_order_page")
+    object DeliveryOrderDetailsPage : Screen("delivery_order_page")
+    object DeliveryAllOrdersPage : Screen("delivery_all_orders_page")
 
     // Client
     object ClientRestaurantAllMenusPage : Screen("client_restaurant_all_menu_page")

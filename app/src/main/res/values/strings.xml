@@ -86,6 +86,7 @@
 
     <string name="password_instructions">Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe. Vous devez connaître votre mot de passe actuel pour pouvoir le changer.</string>
     <string name="home" translatable="true">Accueil</string>
+    <string name="my_deliveries" translatable="true">Mes livraisons</string>
     <!--
     <string name="" translatable="true"></string>
     <string name="" translatable="true"></string>

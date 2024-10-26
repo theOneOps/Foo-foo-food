@@ -62,10 +62,13 @@ fun AddressScreen(navController: NavHostController, userViewModel: UserViewModel
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            DrawerContent(navController = navController, closeDrawer = {
-                scope.launch { drawerState.close() }
-            },
-                logout = userViewModel::logout, userViewModel = userViewModel)
+            DrawerContent(
+                navController = navController,
+                closeDrawer = { scope.launch { drawerState.close() } },
+                logout = userViewModel::logout,
+                userViewModel = userViewModel,
+                currentScreen = Screen.Address.route
+            )
         },
         content = {
             Box(

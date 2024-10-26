@@ -30,16 +30,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,7 +42,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -61,10 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
-import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.data_class.model.Speciality
-import com.uds.foufoufood.data_class.model.Menu
-import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.ui.component.SpecialityPills
 import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.ui.component.RestaurantCard
@@ -109,10 +99,13 @@ fun HomeScreen(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            DrawerContent(navController = navController, closeDrawer = {
-                scope.launch { drawerState.close() }
-            },
-            logout = userViewModel::logout, userViewModel = userViewModel)
+            DrawerContent(
+                navController = navController,
+                closeDrawer = { scope.launch { drawerState.close() } },
+                logout = userViewModel::logout,
+                userViewModel = userViewModel,
+                currentScreen = Screen.Home.route
+            )
         },
         content = {
             Column(
@@ -181,7 +174,11 @@ fun HomeScreen(
 }
 
 @Composable
-fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit, logout: () -> Unit, userViewModel: UserViewModel) {
+fun DrawerContent(navController: NavHostController,
+                  closeDrawer: () -> Unit, logout: () -> Unit,
+                  userViewModel: UserViewModel,
+                  currentScreen: String
+) {
     val context = LocalContext.current
 
     val name = userViewModel.user.value?.name ?: ""
@@ -223,24 +220,40 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit, log
             }
         }
 
-        DrawerMenuItem(
-            icon = ImageVector.vectorResource(R.drawable.home),
-            label = stringResource(R.string.home),
-            onClick = {
-                closeDrawer()
-                navController.navigate(Screen.Home.route)
-            },
-        )
+        if (currentScreen !in listOf(Screen.AdminClient.route, Screen.AdminLivreur.route, Screen.AdminGerant.route, Screen.AdminRestaurant.route, Screen.DeliveryOrderDetailsPage.route, Screen.DeliveryAvailablePage)) {
+            DrawerMenuItem(
+                icon = ImageVector.vectorResource(R.drawable.home),
+                label = stringResource(R.string.home),
+                onClick = {
+                    closeDrawer()
+                    navController.navigate(Screen.Home.route)
+                },
+            )
+        }
 
         // Menu items with icons
-        DrawerMenuItem(
-            icon = ImageVector.vectorResource(R.drawable.ic_drawer_orders),
-            label = stringResource(R.string.my_orders),
-            onClick = {
-                closeDrawer()
-                // Handle navigation to orders
-            },
-        )
+        if (currentScreen !in listOf(Screen.AdminClient.route, Screen.AdminLivreur.route, Screen.AdminGerant.route, Screen.AdminRestaurant.route, Screen.DeliveryOrderDetailsPage.route, Screen.DeliveryAvailablePage)) {
+            DrawerMenuItem(
+                icon = ImageVector.vectorResource(R.drawable.ic_drawer_orders),
+                label = stringResource(R.string.my_orders),
+                onClick = {
+                    closeDrawer()
+                    // Handle navigation to orders
+                },
+            )
+        }
+
+        if (currentScreen in listOf(Screen.DeliveryOrderDetailsPage.route, Screen.DeliveryAvailablePage)) {
+            DrawerMenuItem(
+                icon = ImageVector.vectorResource(R.drawable.ic_drawer_orders),
+                label = stringResource(R.string.my_deliveries),
+                onClick = {
+                    closeDrawer()
+                    // Handle navigation to orders
+                    navController.navigate(Screen.DeliveryAllOrdersPage.route)
+                },
+            )
+        }
 
         DrawerMenuItem(
             icon = ImageVector.vectorResource(R.drawable.ic_profile_avatar),
@@ -252,15 +265,17 @@ fun DrawerContent(navController: NavHostController, closeDrawer: () -> Unit, log
             }
         )
 
-        DrawerMenuItem(
-            icon = ImageVector.vectorResource(R.drawable.ic_drawer_address),
-            label = stringResource(R.string.delivery_address),
-            onClick = {
-                closeDrawer()
-                // Handle navigation to address
-                navController.navigate(Screen.Address.route)
-            },
-        )
+        if (currentScreen !in listOf(Screen.AdminClient.route, Screen.AdminLivreur.route, Screen.AdminGerant.route, Screen.AdminRestaurant.route, Screen.DeliveryOrderDetailsPage.route, Screen.DeliveryAvailablePage)) {
+            DrawerMenuItem(
+                icon = ImageVector.vectorResource(R.drawable.ic_drawer_address),
+                label = stringResource(R.string.delivery_address),
+                onClick = {
+                    closeDrawer()
+                    // Handle navigation to address
+                    navController.navigate(Screen.Address.route)
+                },
+            )
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 

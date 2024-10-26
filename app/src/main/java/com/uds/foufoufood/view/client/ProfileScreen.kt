@@ -98,10 +98,11 @@ fun ProfileScreen(navController: NavHostController, userViewModel: UserViewModel
         drawerState = drawerState,
         drawerContent = {
             DrawerContent(
-                navController = navController, closeDrawer = {
-                    scope.launch { drawerState.close() }
-                },
-                logout = userViewModel::logout, userViewModel = userViewModel
+                navController = navController,
+                closeDrawer = { scope.launch { drawerState.close() } },
+                logout = userViewModel::logout,
+                userViewModel = userViewModel,
+                currentScreen = Screen.Profile.route
             )
         },
         content = {

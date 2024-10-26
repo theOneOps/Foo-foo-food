@@ -34,6 +34,7 @@ import com.uds.foufoufood.view.client.AddressScreen
 import com.uds.foufoufood.view.client.ClientRestaurantScreen
 import com.uds.foufoufood.view.client.ProfileScreen
 import com.uds.foufoufood.view.client.UpdateAddressScreen
+import com.uds.foufoufood.view.delivery.AllOrdersScreen
 import com.uds.foufoufood.view.delivery.AvailabilityScreen
 import com.uds.foufoufood.view.delivery.DeliveryOrderScreen
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
@@ -92,7 +93,7 @@ fun UnifiedNavHost(
             modifier = Modifier.padding(innerPadding)
         ) {
             addAuthGraph(navController, userViewModel)
-            addAdminGraph(navController, adminUsersViewModel, adminRestaurantsViewModel)
+            addAdminGraph(navController, adminUsersViewModel, adminRestaurantsViewModel, userViewModel)
             addDeliveryGraph(navController, deliveryViewModel, orderViewModel, userViewModel)
             addConnectedGraph(navController, homeViewModel, menuViewModel, userViewModel)
         }
@@ -157,13 +158,15 @@ fun NavGraphBuilder.addAuthGraph(navController: NavHostController, userViewModel
 fun NavGraphBuilder.addAdminGraph(
     navController: NavHostController,
     adminUsersViewModel: AdminUsersViewModel,
-    adminRestaurantsViewModel: AdminRestaurantsViewModel
+    adminRestaurantsViewModel: AdminRestaurantsViewModel,
+    userViewModel: UserViewModel
 ) {
 
     composable(Screen.AdminClient.route) {
         ClientScreen(
             navController = navController,
             adminUsersViewModel = adminUsersViewModel,
+            userViewModel = userViewModel,
             onRoleChanged = { user, newRole ->
                 adminUsersViewModel.updateUserRole(user, newRole)
             }
@@ -173,6 +176,7 @@ fun NavGraphBuilder.addAdminGraph(
         LivreurPage(
             navController = navController,
             adminUsersViewModel = adminUsersViewModel,
+            userViewModel = userViewModel,
             onRoleChanged = { user, newRole ->
                 adminUsersViewModel.updateUserRole(user, newRole)
             }
@@ -182,6 +186,7 @@ fun NavGraphBuilder.addAdminGraph(
         GerantPage(
             navController = navController,
             adminUsersViewModel = adminUsersViewModel,
+            userViewModel = userViewModel,
             onRoleChanged = { user, newRole ->
                 adminUsersViewModel.updateUserRole(user, newRole)
             }
@@ -208,7 +213,8 @@ fun NavGraphBuilder.addAdminGraph(
     composable(Screen.AdminRestaurant.route) {
         RestaurantPage(
             navController = navController,
-            restaurants = adminRestaurantsViewModel.restaurants
+            restaurants = adminRestaurantsViewModel.restaurants,
+            userViewModel = userViewModel
         )
     }
 
@@ -235,12 +241,21 @@ fun NavGraphBuilder.addDeliveryGraph(
         AvailabilityScreen (
             navController = navController,
             deliveryViewModel = deliveryViewModel,
-            orderViewModel = orderViewModel
+            orderViewModel = orderViewModel,
+            userViewModel = userViewModel
         )
     }
 
-    composable(Screen.DeliveryOrderPage.route) {
+    composable(Screen.DeliveryOrderDetailsPage.route) {
         DeliveryOrderScreen (
+            navController = navController,
+            orderViewModel = orderViewModel,
+            userViewModel = userViewModel
+        )
+    }
+
+    composable(Screen.DeliveryAllOrdersPage.route) {
+        AllOrdersScreen(
             navController = navController,
             orderViewModel = orderViewModel,
             userViewModel = userViewModel

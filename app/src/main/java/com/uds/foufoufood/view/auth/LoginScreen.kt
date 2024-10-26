@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.navigation.Screen
+import com.uds.foufoufood.navigation.getStartDestination
 import com.uds.foufoufood.ui.component.NetworksButtons
 import com.uds.foufoufood.ui.component.PasswordTextField
 import com.uds.foufoufood.ui.component.TextFieldWithError
@@ -68,7 +69,12 @@ fun LoginScreen(
             Log.d("LoginScreen", "user.emailValidated: ${user?.emailValidated}")
             Log.d("LoginScreen", "user.registrationComplete: ${user?.registrationComplete}")
             if (emailValidated == true && registrationComplete == true) {
-                navController.navigate(Screen.Home.route)
+                val startDestination = user?.role?.let { getStartDestination(it, emailValidated!!) }
+                if (startDestination != null) {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                    }
+                }
                 userViewModel.resetStatus()
                 // La navigation sera gérée par MainScreen après la mise à jour du rôle de l'utilisateur
                 Toast.makeText(context, "Connexion réussie", Toast.LENGTH_SHORT).show()

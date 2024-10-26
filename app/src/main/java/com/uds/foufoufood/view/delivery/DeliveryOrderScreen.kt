@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,7 +23,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,10 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.OrderStatus
+import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.view.DrawerContent
 import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
@@ -59,11 +57,10 @@ fun DeliveryOrderScreen(
         drawerContent = {
             DrawerContent(
                 navController = navController,
-                closeDrawer = {
-                    scope.launch { drawerState.close() }
-                },
+                closeDrawer = { scope.launch { drawerState.close() } },
                 logout = userViewModel::logout,
-                userViewModel = userViewModel
+                userViewModel = userViewModel,
+                currentScreen = Screen.DeliveryOrderDetailsPage.route
             )
         },
         content = {

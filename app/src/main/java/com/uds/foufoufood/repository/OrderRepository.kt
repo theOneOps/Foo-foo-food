@@ -37,6 +37,27 @@ class OrderRepository(private val api: OrderApi, private val context: Context) {
         }
     }
 
+    suspend fun getOrdersByDeliveryManEmail(email: String): List<Order> {
+        return try {
+            Log.d("OrderRepository", "Récupération des commandes pour l'email du livreur : $email")
+            val response = api.getOrdersByDeliveryManEmail(email)
+            if (response.isSuccessful) {
+                val ordersList = response.body() ?: emptyList()
+                Log.d("OrderRepository", "Commandes récupérées : $ordersList")
+                // Retourne toutes les commandes récupérées
+                ordersList
+            } else {
+                Log.e("OrderRepository", "Erreur lors de la récupération des commandes : ${response.errorBody()?.string()}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("OrderRepository", "Erreur lors de la récupération des commandes : ${e.message}")
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+
     // Simule la mise à jour du statut de la commande
     suspend fun updateOrderStatus(order: Order): Boolean {
         return withContext(Dispatchers.IO) {

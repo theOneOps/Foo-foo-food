@@ -8,30 +8,45 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.navigation.Screen
+import com.uds.foufoufood.view.DrawerContent
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
+import com.uds.foufoufood.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun AvailabilityScreen(
     navController: NavHostController,
     deliveryViewModel: DeliveryViewModel,
-    orderViewModel: OrderViewModel
+    orderViewModel: OrderViewModel,
+    userViewModel: UserViewModel
 ) {
+
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
     val isAvailable by deliveryViewModel.isAvailable.collectAsState()
     val newOrder by deliveryViewModel.newOrderAssigned.collectAsState()
@@ -50,7 +65,7 @@ fun AvailabilityScreen(
     // Redirection vers la page de commande si une commande en cours est trouvée
     LaunchedEffect(currentOrder) {
         currentOrder?.let {
-            navController.navigate(Screen.DeliveryOrderPage.route)
+            navController.navigate(Screen.DeliveryOrderDetailsPage.route)
         }
     }
 
@@ -68,39 +83,67 @@ fun AvailabilityScreen(
             Log.d("OrderDetails", "Order ID: $orderId")
 
             orderViewModel.loadOrder(orderId)
-            navController.navigate(Screen.DeliveryOrderPage.route)
+            navController.navigate(Screen.DeliveryOrderDetailsPage.route)
         }
     }
 
-
-    // Utilisation de la Box pour centrer les éléments
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Texte pour afficher l'état actuel de disponibilité
-            Text(
-                text = if (isAvailable) "Disponible pour livrer" else "Indisponible",
-                style = MaterialTheme.typography.headlineSmall,
-                color = if (isAvailable) Color.Green else Color.Red
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            DrawerContent(
+                navController = navController,
+                closeDrawer = { scope.launch { drawerState.close() } },
+                logout = userViewModel::logout,
+                userViewModel = userViewModel,
+                currentScreen = Screen.DeliveryOrderDetailsPage.route
             )
+        },
+        content = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = 20.dp, top = 20.dp)
+            ) {
+                // Bouton pour ouvrir le drawer
+                IconButton(
+                    onClick = {
+                        scope.launch { drawerState.open() }
+                    },
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                }
+                // Utilisation de la Box pour centrer les éléments
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Texte pour afficher l'état actuel de disponibilité
+                        Text(
+                            text = if (isAvailable) "Disponible pour livrer" else "Indisponible",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = if (isAvailable) Color.Green else Color.Red
+                        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-            // Switch pour changer l'état de disponibilité
-            Switch(
-                checked = isAvailable,
-                onCheckedChange = { deliveryViewModel.setAvailability(it) },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color.Green,
-                    uncheckedThumbColor = Color.Red
-                )
-            )
+                        // Switch pour changer l'état de disponibilité
+                        Switch(
+                            checked = isAvailable,
+                            onCheckedChange = { deliveryViewModel.setAvailability(it) },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.Green,
+                                uncheckedThumbColor = Color.Red
+                            )
+                        )
+                    }
+                }
+            }
         }
-    }
+    )
 }
