@@ -37,7 +37,7 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
     private val _selectedCategory = MutableLiveData<Speciality?>(null)
     val selectedCategory: LiveData<Speciality?> get() = _selectedCategory
 
-    var searchText by mutableStateOf("")
+    var searchTextCategory by mutableStateOf("")
 
     private val _filteredMenu = MutableLiveData<List<Menu>?>()
     val filteredMenu: LiveData<List<Menu>?> get() = _filteredMenu
@@ -229,18 +229,17 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
 
     private fun fetchMenu() {
         viewModelScope.launch {
-            val fetchedMenu = repository.getAllMenus()
+            val fetchedMenu = repository.getAllMenus()?.data
             if (fetchedMenu != null) {
-                _filteredMenu.value = fetchedMenu.data ?: emptyList()
-                var countCategory = 0
-                for (menu in _filteredMenu.value!!) {
+                _menus.value = fetchedMenu
+                _filteredMenu.value = _menus.value
+                for ((countCategory, menu) in _menus.value!!.withIndex()) {
                     if (_categories.value?.any { it.name == menu.category } != true) {
                         _categories.value = (_categories.value ?: emptyList()) + Speciality(
                             countCategory,
                             menu.category,
                             getIconCategoryResId(menu.category)
                         )
-                        countCategory++
                     }
                 }
             }
@@ -253,14 +252,14 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
     }
 
     fun onSearchQueryChangedCategory(query: String) {
-        searchText = query
+        searchTextCategory = query
         filterMenus()
     }
 
     private fun filterMenus() {
         _filteredMenu.value = _menus.value?.filter { menu ->
             // Match by search query
-            val matchesQuery = menu.name.contains(searchText, ignoreCase = true)
+            val matchesQuery = menu.name.contains(searchTextCategory, ignoreCase = true)
 
             // Match by category (if a category is selected)
             val matchesCategory = _selectedCategory.value?.let {

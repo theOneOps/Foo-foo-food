@@ -1,5 +1,6 @@
 package com.uds.foufoufood.network
 
+import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.request.MenuRequest
 import com.uds.foufoufood.data_class.response.MenuResponse
 import retrofit2.Response

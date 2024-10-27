@@ -32,14 +32,10 @@ class RestaurantViewModel(private val restaurantRepository: RestaurantRepository
     private val _filteredRestaurants = MutableLiveData<List<Restaurant>?>()
     val filteredRestaurants: LiveData<List<Restaurant>?> get() = _filteredRestaurants
 
-    private val _isConnectedRestorer = MutableLiveData<Boolean>()
-    val isConnectedRestorer: LiveData<Boolean> get() = _isConnectedRestorer
-
     private val _idRestaurantOfConnectedUser = MutableLiveData<String>()
     val idRestaurantOfConnectedUser: LiveData<String> get() = _idRestaurantOfConnectedUser
 
     fun initialize(context: Context) {
-        /*specialities = specialityList*/
         val userIdConnected = getUserId(context)
         if (userIdConnected != null) {
             fetchRestaurants(userIdConnected)
@@ -48,10 +44,10 @@ class RestaurantViewModel(private val restaurantRepository: RestaurantRepository
 
     private fun getIconSpecialityResId(speciality: String): Int {
         return when (speciality) {
-            "USA" -> R.drawable.americain
-            "Français" -> R.drawable.francais
-            "Japonais" -> R.drawable.japonais
-            "Italien" -> R.drawable.italien
+            "USA" -> R.drawable.usa
+            "Français" -> R.drawable.france
+            "Japonais" -> R.drawable.japon
+            "Italien" -> R.drawable.italie
             else -> R.drawable.autre
         }
     }

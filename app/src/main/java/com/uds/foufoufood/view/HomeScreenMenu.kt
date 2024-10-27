@@ -136,7 +136,7 @@ fun HomeScreenMenu(
 
                     // Search Bar
                     SearchBar(
-                        searchText = menuViewModel.searchText,
+                        searchText = menuViewModel.searchTextCategory,
                         onSearchTextChanged = menuViewModel::onSearchQueryChangedCategory
                     )
 
