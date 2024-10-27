@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
@@ -37,7 +38,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -77,24 +77,24 @@ fun HomeScreenRestaurant(
     userViewModel: UserViewModel,
     menuViewModel: MenuViewModel
 ) {
-    // State for controlling drawer
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
     var selectedItem by remember { mutableIntStateOf(0) }
-
     val context = LocalContext.current
 
     val specialities by restaurantViewModel.specialities.observeAsState()
     val selectedSpeciality by restaurantViewModel.selectedSpeciality.observeAsState()
     val filteredRestaurants by restaurantViewModel.filteredRestaurants.observeAsState()
 
-    // Initialize the categories and restaurants here with drawables
+    var textAddress = userViewModel.user.value?.address.toString()
+    if (textAddress == "null") {
+        textAddress = "Aucune adresse de livraison"
+    }
+
     LaunchedEffect(Unit) {
         restaurantViewModel.initialize(context)
     }
 
-    // Modal navigation drawer
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -110,7 +110,7 @@ fun HomeScreenRestaurant(
             Scaffold(
                 bottomBar = {
                     BottomNavbarHome(selectedItem = selectedItem) { index ->
-                        selectedItem = index // Met à jour l'élément sélectionné
+                        selectedItem = index
                         when (index) {
                             0 -> navController.navigate(Screen.HomeRestaurant.route)
                             1 -> navController.navigate(Screen.HomeMenu.route)
@@ -121,37 +121,51 @@ fun HomeScreenRestaurant(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding) // Apply innerPadding here
+                        .padding(innerPadding)
                         .padding(16.dp)
                         .background(MaterialTheme.colorScheme.background)
                 ) {
-                    // Row at the top with title and menu button
+                    // Row at the top with hamburger menu and delivery address centered
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // Title
-                        Text(
-                            text = "Que souhaitez-vous commander ?",
-                            style = TextStyle(
-                                fontFamily =  FontFamily(Font(R.font.sofiapro_regular)),
-                                fontWeight = FontWeight.Bold, // 700 weight
-                                fontSize = 30.sp,             // Font size 30px
-                                lineHeight = 30.sp,           // Line height 30px
-                                textAlign = TextAlign.Left    // Align text to the left
-                            ),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.weight(1f).padding(8.dp)
-                        )
-
-                        // Menu button
+                        // Menu button on the left
                         IconButton(onClick = {
                             scope.launch { drawerState.open() }
                         }) {
                             Icon(Icons.Filled.Menu, contentDescription = "Menu")
                         }
+
+                        // Delivery Address centered
+                        Text(
+                            text = textAddress,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                            color = colorResource(id = R.color.orange),
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center
+                        )
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Page Title
+                    Text(
+                        text = "Que souhaitez-vous commander ?",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.sofiapro_bold)),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp,
+                            lineHeight = 32.sp,
+                            textAlign = TextAlign.Start
+                        ),
+                        color = colorResource(id = R.color.black),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -165,7 +179,6 @@ fun HomeScreenRestaurant(
 
                     // Category Pills and Restaurant List
                     LazyColumn {
-                        // Category Pills
                         item {
                             SpecialityPills(
                                 specialities = specialities ?: emptyList(),
@@ -174,10 +187,9 @@ fun HomeScreenRestaurant(
                             )
                         }
 
-                        // Restaurant List
                         for (restaurant in filteredRestaurants ?: emptyList()) {
                             item {
-                                RestaurantCard(navController, menuViewModel, restaurant, userViewModel)
+                                RestaurantCard(navController, menuViewModel, restaurant)
                             }
                         }
                     }
@@ -187,35 +199,49 @@ fun HomeScreenRestaurant(
     )
 }
 
+
 @Composable
 fun BottomNavbarHome(selectedItem: Int, onItemSelected: (Int) -> Unit) {
     NavigationBar(
-        containerColor = Color.White,
-        contentColor = Color.Black,
+        containerColor = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground,
     ) {
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.restaurant_building), // Utilisation du fichier SVG converti
-                    contentDescription = "Restaurants",
-                )
-            },
-            selected = selectedItem == 0,
-            onClick = { onItemSelected(0) },
-            label = { Text("Restaurants", fontSize = 12.sp) }
+        // Liste des éléments avec des icônes Material et des libellés
+        val items = listOf(
+            Pair("Restaurants", R.drawable.storefront),
+            Pair("Menus", R.drawable.menubook)
         )
 
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.restaurant_menu), // Utilisation du fichier SVG converti
-                    contentDescription = "Menus"
+        items.forEachIndexed { index, item ->
+            val isSelected = selectedItem == index
+
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        painterResource(id = item.second),
+                        contentDescription = item.first,
+                        modifier = Modifier.size(if (isSelected) 28.dp else 24.dp),
+                        tint = if (isSelected) colorResource(id = R.color.orange) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                },
+                selected = isSelected,
+                onClick = { onItemSelected(index) },
+                label = {
+                    Text(
+                        text = item.first,
+                        fontSize = 12.sp,
+                        color = if (isSelected) colorResource(id = R.color.orange) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                },
+                alwaysShowLabel = true,
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = colorResource(id = R.color.orange),
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    selectedTextColor = colorResource(id = R.color.orange),
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
-            },
-            selected = selectedItem == 1,
-            onClick = { onItemSelected(1) },
-            label = { Text("Menus", fontSize = 12.sp) }
-        )
+            )
+        }
     }
 }
 

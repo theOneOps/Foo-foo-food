@@ -23,6 +23,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Speciality
@@ -83,6 +85,7 @@ fun SpecialityPill(speciality: Speciality, isSelected: Boolean, onClick: () -> U
 
             // Category name
             Text(
+                fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
                 text = speciality.name,
                 color = if (isSelected) colorResource(id = R.color.white)
                 else colorResource(id = R.color.black), // Text color based on selection

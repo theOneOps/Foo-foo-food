@@ -14,16 +14,16 @@ data class Address(
                 append(number).append(", ")
             }
             if (!street.isNullOrEmpty()) {
-                append(street).append(", ")
+                append(street).append("\n")
             }
             if (!city.isNullOrEmpty()) {
                 append(city).append(", ")
             }
-            if (!zipCode.isNullOrEmpty()) {
-                append(zipCode).append(", ")
-            }
             if (!state.isNullOrEmpty()) {
                 append(state).append(" ")
+            }
+            if (!zipCode.isNullOrEmpty()) {
+                append(zipCode).append(", ")
             }
             if (!country.isNullOrEmpty()) {
                 append(country)
