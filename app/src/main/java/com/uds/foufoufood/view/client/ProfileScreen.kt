@@ -1,13 +1,9 @@
 package com.uds.foufoufood.view.client
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,26 +12,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,145 +38,68 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.navigation.Screen
+import com.uds.foufoufood.ui.component.DrawerScaffold
+import com.uds.foufoufood.ui.component.TitlePage
 import com.uds.foufoufood.view.auth.isValidEmail
 import com.uds.foufoufood.view.auth.isValidPassword
 import com.uds.foufoufood.viewmodel.UserViewModel
-import com.uds.foufoufood.ui.component.TitlePage
-import com.uds.foufoufood.view.DrawerContent
-import kotlinx.coroutines.launch
 
 
 @Composable
 fun ProfileScreen(navController: NavHostController, userViewModel: UserViewModel) {
-    // Extraire les données de l'utilisateur connecté
     val name = userViewModel.user.value?.name ?: ""
     val email = userViewModel.user.value?.email ?: ""
     val role = userViewModel.user.value?.role
 
-    val errorMessage by userViewModel.errorMessage.observeAsState()
-    val updateEmailSuccess by userViewModel.updateEmailSuccess.observeAsState()
-    val updatePasswordSuccess by userViewModel.updatePasswordSuccess.observeAsState()
+    DrawerScaffold(
+        navController = navController,
+        userViewModel = userViewModel,
+        currentScreen = Screen.Profile.route
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(top = 60.dp, start = 20.dp, end = 20.dp)
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(30.dp))
 
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
+            TitlePage(label = stringResource(id = R.string.my_profile))
 
-    LaunchedEffect(updatePasswordSuccess, updateEmailSuccess) {
-        if (updatePasswordSuccess == true) {
-            navController.navigate(Screen.Profile.route)
-            userViewModel.resetStatus()
-            Toast.makeText(navController.context, "Mot de passe modifié avec succès", Toast.LENGTH_SHORT).show()
-        } else if (updatePasswordSuccess == false) {
-            Toast.makeText(navController.context, "Erreur lors de la modification du mot de passe", Toast.LENGTH_SHORT).show()
-        }
+            ProfileName(name = name)
 
-        if (updateEmailSuccess == true) {
-            val newEmail = userViewModel.user.value?.email ?: ""
-            Toast.makeText(navController.context, "Email modifié avec succès, un code de vérification. Vous allez être déconnecté", Toast.LENGTH_SHORT).show()
-            navController.navigate("verify_code/${newEmail}")
-        } else if (updateEmailSuccess == false) {
-            Toast.makeText(navController.context, "Erreur lors de la modification de l'email", Toast.LENGTH_SHORT).show()
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (role != null) {
+                ProfileType(role = role.capitalizeFirstLetter())
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            ProfileEmailSection(
+                initialEmail = email,
+                onSaveClick = { newEmail ->
+                    if (newEmail != email && isValidEmail(newEmail)) {
+                        userViewModel.updateEmail(email, newEmail)
+                    }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            ProfilePasswordSection { previousPassword, newPassword ->
+                if (isValidPassword(newPassword) && isValidPassword(previousPassword)) {
+                    userViewModel.updatePassword(previousPassword, newPassword)
+                }
+            }
         }
     }
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            DrawerContent(
-                navController = navController,
-                closeDrawer = { scope.launch { drawerState.close() } },
-                logout = userViewModel::logout,
-                userViewModel = userViewModel,
-                currentScreen = Screen.Profile.route
-            )
-        },
-        content = {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(end = 20.dp, top = 20.dp),
-            ) {
-                IconButton(
-                    onClick = {
-                        scope.launch { drawerState.open() }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.TopEnd) // Placer en haut à droite
-                ) {
-                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .padding(top = 60.dp, start = 20.dp, end = 20.dp)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(30.dp))
-
-                TitlePage(label = stringResource(id = R.string.my_profile))
-
-                ProfileName(name = name)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                if (role != null) {
-                    ProfileType(role = role.capitalizeFirstLetter())
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Gestion de l'email
-                ProfileEmailSection(
-                    initialEmail = email,
-                    onSaveClick = { newEmail ->
-                        if (newEmail != email) {
-                            if (isValidEmail(newEmail)) {
-                                // Mettre à jour l'email de l'utilisateur
-                                userViewModel.updateEmail(email, newEmail)
-                            } else {
-                                Toast.makeText(
-                                    navController.context,
-                                    "Veuillez saisir un email valide",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        } else {
-                            Toast.makeText(
-                                navController.context,
-                                "Aucune modification apportée",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                ProfilePasswordSection(
-                    onSaveClick = { previousPassword, newPassword ->
-                        if (isValidPassword(newPassword) && isValidPassword(previousPassword)) {
-                            userViewModel.updatePassword(previousPassword, newPassword)
-                        } else {
-                            Toast.makeText(
-                                navController.context,
-                                R.string.password_constraint,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                )
-            }
-
-            errorMessage?.let {
-                Text(text = "$it", color = Color.Red, modifier = Modifier.padding(16.dp))
-            }
-        }
-    )
 }
+
 
 @Composable
 fun ProfileName(name: String) {

@@ -21,6 +21,7 @@ import com.uds.foufoufood.repository.RestaurantRepository
 import com.uds.foufoufood.view.MainScreen
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
+import com.uds.foufoufood.viewmodel.CartViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.HomeViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var orderViewModel: OrderViewModel
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var menuViewModel: MenuViewModel
+    private lateinit var cartViewModel: CartViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -62,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         val orderApi = retrofit.create(OrderApi::class.java)
         val orderRepository = OrderRepository(orderApi, this)
         orderViewModel = OrderViewModel(orderRepository, this)
+        cartViewModel = CartViewModel(orderRepository, userViewModel)
 
         homeViewModel = HomeViewModel(restaurantRepository)
 
@@ -91,7 +94,8 @@ class MainActivity : AppCompatActivity() {
                 deliveryViewModel = deliveryViewModel,
                 orderViewModel = orderViewModel,
                 homeViewModel = homeViewModel,
-                menuViewModel = menuViewModel
+                menuViewModel = menuViewModel,
+                cartViewModel = cartViewModel
             )
 
         }

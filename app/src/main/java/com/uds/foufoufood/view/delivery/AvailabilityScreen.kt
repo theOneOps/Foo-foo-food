@@ -10,14 +10,33 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -29,13 +48,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.navigation.Screen
-import com.uds.foufoufood.view.DrawerContent
+import com.uds.foufoufood.ui.component.DrawerScaffold
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
+import org.json.JSONObject
+
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 @Composable
 fun AvailabilityScreen(
@@ -44,11 +64,13 @@ fun AvailabilityScreen(
     orderViewModel: OrderViewModel,
     userViewModel: UserViewModel
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
     val isAvailable by deliveryViewModel.isAvailable.collectAsState()
     val newOrder by deliveryViewModel.newOrderAssigned.collectAsState()
+    val currentOrder by orderViewModel.currentOrder.collectAsState()
     var showTick by remember { mutableStateOf(false) }
+
+    // Vérifiez s'il y a déjà une commande en cours à l'arrivée sur l'écran
+    val email = deliveryViewModel.currentDeliveryManEmail
 
     // Animation de l'affichage "En attente d'une commande..."
     val infiniteTransition = rememberInfiniteTransition(label = "")
@@ -58,11 +80,23 @@ fun AvailabilityScreen(
         animationSpec = infiniteRepeatable(tween(1000), RepeatMode.Reverse), label = ""
     )
 
+    LaunchedEffect(email) {
+        if (!email.isNullOrEmpty()) {
+            orderViewModel.loadOrderByDeliverManEmail(email)
+        }
+    }
+
+    // Detect new orders and navigate to the order details page
     LaunchedEffect(newOrder) {
         newOrder?.let {
+            // Convertir l'objet JSON en chaîne de caractères ou extraire les données nécessaires
             val orderData = it.toString()
             val orderJson = JSONObject(orderData)
             val orderId = orderJson.getJSONObject("order").getString("_id")
+
+            Log.d("Availability", "New order assigned: $orderData")
+            Log.d("OrderDetails", "Order ID: $orderId")
+
             orderViewModel.loadOrder(orderId)
             showTick = true
             delay(2000L)
@@ -71,129 +105,123 @@ fun AvailabilityScreen(
         }
     }
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            DrawerContent(
-                navController = navController,
-                closeDrawer = { scope.launch { drawerState.close() } },
-                logout = userViewModel::logout,
-                userViewModel = userViewModel,
-                currentScreen = Screen.DeliveryOrderDetailsPage.route
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(20.dp)
+    ) {
+        // Bouton de retour en haut à gauche
+        IconButton(
+            onClick = { navController.popBackStack() }, // Action de retour
+            modifier = Modifier
+                .shadow(8.dp, shape = RoundedCornerShape(12.dp))
+                .background(Color.White, shape = RoundedCornerShape(12.dp))
+                .align(Alignment.TopStart)
+                .size(42.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBackIosNew,
+                contentDescription = "Retour",
+                tint = colorResource(id = R.color.orange),
+                modifier = Modifier.size(20.dp)
             )
-        },
-        content = {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White)
-                    .padding(20.dp)
-            ) {
-                // Menu burger à gauche
-                IconButton(
-                    onClick = { scope.launch { drawerState.open() } },
-                    modifier = Modifier.align(Alignment.TopStart)
-                ) {
-                    Icon(Icons.Filled.Menu, contentDescription = "Menu", tint = colorResource(id = R.color.orange))
-                }
+        }
 
-                // Logo en haut à droite
-                Image(
-                    painter = painterResource(id = R.drawable.logo_only),
-                    contentDescription = "Logo",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .align(Alignment.TopEnd)
+        // Logo en haut à droite
+        Image(
+            painter = painterResource(id = R.drawable.logo_only),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .size(50.dp)
+                .align(Alignment.TopEnd)
+        )
+
+        // Titre principal au centre en haut
+        Text(
+            text = "Statut de Livraison",
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily(Font(R.font.sofiapro_bold)),
+            color = colorResource(id = R.color.orange),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 100.dp) // Ajustement en fonction de l'espace entre le logo et le titre
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (showTick) {
+                Icon(
+                    Icons.Filled.CheckCircle,
+                    contentDescription = "Nouvelle commande assignée",
+                    tint = colorResource(id = R.color.orange),
+                    modifier = Modifier.size(100.dp)
                 )
-
-                // Titre principal au centre en haut
-                Text(
-                    text = "Statut de Livraison",
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily(Font(R.font.sofiapro_bold)),
-                    color = colorResource(id = R.color.orange),
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 100.dp) // Ajustement en fonction de l'espace entre le logo et le titre
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    if (showTick) {
-                        Icon(
-                            Icons.Filled.CheckCircle,
-                            contentDescription = "Nouvelle commande assignée",
-                            tint = colorResource(id = R.color.orange),
-                            modifier = Modifier.size(100.dp)
+                    // Texte de message dynamique
+                    Text(
+                        text = if (isAvailable) "En attente d'une commande..." else "Appuyez pour prendre une commande",
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                        color = colorResource(id = R.color.orange),
+                        modifier = Modifier
+                            .scale(if (isAvailable) scale else 1f)
+
+                    )
+
+                    // Switch de disponibilité
+                    Box(modifier = Modifier.scale(1.3f)) {
+                        Switch(
+                            checked = isAvailable,
+                            onCheckedChange = { deliveryViewModel.setAvailability(it) },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = colorResource(id = R.color.white),
+                                uncheckedThumbColor = Color.Gray,
+                                checkedTrackColor = colorResource(id = R.color.orange)
+                            )
                         )
-                    } else {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            // Texte de message dynamique
-                            Text(
-                                text = if (isAvailable) "En attente d'une commande..." else "Appuyez pour prendre une commande",
-                                fontSize = 18.sp,
-                                fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
-                                color = colorResource(id = R.color.orange),
-                                modifier = Modifier
-                                    .scale(if (isAvailable) scale else 1f)
-
-                            )
-
-                            // Switch de disponibilité
-                            Box(modifier = Modifier.scale(1.3f)) {
-                                Switch(
-                                    checked = isAvailable,
-                                    onCheckedChange = { deliveryViewModel.setAvailability(it) },
-                                    colors = SwitchDefaults.colors(
-                                        checkedThumbColor = colorResource(id = R.color.white),
-                                        uncheckedThumbColor = Color.Gray,
-                                        checkedTrackColor = colorResource(id = R.color.orange)
-                                    )
-                                )
-                            }
-
-                            // Texte de disponibilité
-                            Text(
-                                text = if (isAvailable) "Status Livraison : Disponible pour livrer" else "Status Livraison : Indisponible",
-                                fontSize = 18.sp,
-                                fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
-                                color = if (isAvailable) colorResource(id = R.color.green) else Color.Gray
-                            )
-                        }
                     }
-                }
-            }
-            // Logo en bas de page avec animation de montée
-            val logoOffset by animateDpAsState(targetValue = if (isAvailable) 380.dp else 1000.dp)
 
-            // Logo centré en bas avec animation
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 20.dp),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Box(
-                    modifier = Modifier
-                        .offset(y = logoOffset) // Applique l'animation d'offset vertical
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.logo_only),
-                        contentDescription = "Logo",
-                        modifier = Modifier.size(1000.dp)
+                    // Texte de disponibilité
+                    Text(
+                        text = if (isAvailable) "Status Livraison : Disponible pour livrer" else "Status Livraison : Indisponible",
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                        color = if (isAvailable) colorResource(id = R.color.green) else Color.Gray
                     )
                 }
             }
         }
+    }
+    // Logo en bas de page avec animation de montée
+    val logoOffset by animateDpAsState(targetValue = if (isAvailable) 380.dp else 1000.dp)
 
-    )
+    // Logo centré en bas avec animation
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 20.dp),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .offset(y = logoOffset) // Applique l'animation d'offset vertical
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.logo_only),
+                contentDescription = "Logo",
+                modifier = Modifier.size(1000.dp)
+            )
+        }
+    }
 }
