@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
@@ -32,7 +31,7 @@ import com.uds.foufoufood.Firebase_management.FirebaseInstance
 import com.uds.foufoufood.Firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
 import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.data_class.model.Restaurant
-import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.viewmodel.RestaurantViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,7 +39,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FormModifyRestaurantScreen(
     restaurant: Restaurant,
-    homeViewModel: HomeViewModel
+    restaurantViewModel: RestaurantViewModel
 ) {
     // Récupération du restaurant à modifier et états des champs (identique à la définition précédente)
     val nameState = remember { mutableStateOf(restaurant.name) }
@@ -260,7 +259,7 @@ fun FormModifyRestaurantScreen(
                     )
 
                     // Appel de la fonction de mise à jour avec l'id du restaurant et l'objet mis à jour
-                    homeViewModel.updateRestaurant(restaurant._id, updatedRestaurant)
+                    restaurantViewModel.updateRestaurant(restaurant._id, updatedRestaurant)
                     Toast.makeText(context, "Restaurant bien modifié", Toast.LENGTH_SHORT).show()
                 },
             ) {

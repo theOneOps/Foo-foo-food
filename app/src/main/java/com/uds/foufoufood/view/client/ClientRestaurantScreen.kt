@@ -73,7 +73,7 @@ fun ClientRestaurantScreen(
 
     // Lancer la récupération des menus dans un effet à composition stable
     LaunchedEffect(Unit) {
-        menuViewModel.getAllMenus(token, restaurant._id)
+        menuViewModel.getAllMenusByRestaurant(token, restaurant._id)
     }
 
     LazyColumn {
@@ -228,7 +228,7 @@ fun PrintAllMenus(
     menuViewModel: MenuViewModel,
 ) {
     menus.forEach { e ->
-        MenuComponent(navController,menus,e, menuViewModel)
+        MenuComponent(navController, e, menuViewModel)
     }
 }
 

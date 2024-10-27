@@ -19,9 +19,9 @@ import com.uds.foufoufood.view.MainScreen
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
-import com.uds.foufoufood.viewmodel.HomeViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
+import com.uds.foufoufood.viewmodel.RestaurantViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -30,8 +30,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adminRestaurantsViewModel: AdminRestaurantsViewModel
     private lateinit var deliveryViewModel: DeliveryViewModel
     private lateinit var orderViewModel: OrderViewModel
-    private lateinit var homeViewModel: HomeViewModel
+//    private lateinit var homeViewModel: HomeViewModel
     private lateinit var menuViewModel: MenuViewModel
+    private lateinit var restaurantViewModel: RestaurantViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,11 +58,13 @@ class MainActivity : AppCompatActivity() {
         val orderRepository = OrderRepository(orderApi, this)
         orderViewModel = OrderViewModel(orderRepository, this)
 
-        homeViewModel = HomeViewModel(restaurantRepository)
-
         val menuApi = retrofit.create(MenuApi::class.java)
         val menuRepository = MenuRepository(menuApi)
         menuViewModel = MenuViewModel(menuRepository)
+
+//        homeViewModel = HomeViewModel(restaurantRepository, menuRepository)
+
+        restaurantViewModel = RestaurantViewModel(restaurantRepository)
 
         setContent {
             val navController = rememberNavController()
@@ -84,8 +87,9 @@ class MainActivity : AppCompatActivity() {
                 adminRestaurantsViewModel = adminRestaurantsViewModel,
                 deliveryViewModel = deliveryViewModel,
                 orderViewModel = orderViewModel,
-                homeViewModel = homeViewModel,
-                menuViewModel = menuViewModel
+//                +homeViewModel = homeViewModel,
+                menuViewModel = menuViewModel,
+                restaurantViewModel = restaurantViewModel
             )
 
         }

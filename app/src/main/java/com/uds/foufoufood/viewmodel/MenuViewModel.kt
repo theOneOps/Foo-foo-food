@@ -1,12 +1,17 @@
 package com.uds.foufoufood.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Restaurant
+import com.uds.foufoufood.data_class.model.Speciality
 import com.uds.foufoufood.repository.MenuRepository
 import kotlinx.coroutines.launch
 
@@ -26,9 +31,20 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
-    suspend fun getAllMenus(token: String, restaurantId: String) {
+    private val _categories = MutableLiveData<List<Speciality>?>()
+    val categories: LiveData<List<Speciality>?> get() = _categories
+
+    private val _selectedCategory = MutableLiveData<Speciality?>(null)
+    val selectedCategory: LiveData<Speciality?> get() = _selectedCategory
+
+    var searchText by mutableStateOf("")
+
+    private val _filteredMenu = MutableLiveData<List<Menu>?>()
+    val filteredMenu: LiveData<List<Menu>?> get() = _filteredMenu
+
+    suspend fun getAllMenusByRestaurant(token: String, restaurantId: String) {
         try {
-            val response = repository.getAllMenus(token, restaurantId)
+            val response = repository.getAllMenusByRestaurant(token, restaurantId)
 
             // Vérifier si la réponse est réussie
             if (response != null && response.success) {
@@ -42,6 +58,9 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
         }
     }
 
+    fun initialize() {
+        fetchMenu()
+    }
 
     fun createMenu(
         token: String,
@@ -197,6 +216,58 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                     e
                 )
             }
+        }
+    }
+
+    private fun getIconCategoryResId(category: String): Int {
+        return when (category) {
+            "Pizza" -> R.drawable.ic_category_pizza
+            "Burger" -> R.drawable.ic_category_burger
+            else -> R.drawable.autre
+        }
+    }
+
+    private fun fetchMenu() {
+        viewModelScope.launch {
+            val fetchedMenu = repository.getAllMenus()
+            if (fetchedMenu != null) {
+                _filteredMenu.value = fetchedMenu.data ?: emptyList()
+                var countCategory = 0
+                for (menu in _filteredMenu.value!!) {
+                    if (_categories.value?.any { it.name == menu.category } != true) {
+                        _categories.value = (_categories.value ?: emptyList()) + Speciality(
+                            countCategory,
+                            menu.category,
+                            getIconCategoryResId(menu.category)
+                        )
+                        countCategory++
+                    }
+                }
+            }
+        }
+    }
+
+    fun onCategorySelected(category: Speciality?) {
+        _selectedCategory.value = category
+        filterMenus()
+    }
+
+    fun onSearchQueryChangedCategory(query: String) {
+        searchText = query
+        filterMenus()
+    }
+
+    private fun filterMenus() {
+        _filteredMenu.value = _menus.value?.filter { menu ->
+            // Match by search query
+            val matchesQuery = menu.name.contains(searchText, ignoreCase = true)
+
+            // Match by category (if a category is selected)
+            val matchesCategory = _selectedCategory.value?.let {
+                menu.category == it.name
+            } ?: true // If no category is selected, show all
+
+            matchesQuery && matchesCategory
         }
     }
 }

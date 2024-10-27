@@ -38,14 +38,13 @@ import com.uds.foufoufood.viewmodel.MenuViewModel
 @Composable
 fun MenuComponent(
     navController: NavController,
-    allMenu: List<Menu>,
     menu: Menu,
     menuViewModel: MenuViewModel
 ) {
+
     // State pour contrôler l'affichage du dialog
     val context = LocalContext.current
     val token = getToken(context) ?: ""
-    val userId = getUserId(context) ?: ""
 
     Card(
         modifier = Modifier

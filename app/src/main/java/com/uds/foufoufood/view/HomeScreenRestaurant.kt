@@ -1,6 +1,5 @@
 package com.uds.foufoufood.view
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -29,11 +27,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,46 +61,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
-import com.uds.foufoufood.data_class.model.Speciality
-import com.uds.foufoufood.ui.component.SpecialityPills
 import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.ui.component.RestaurantCard
 import com.uds.foufoufood.ui.component.SearchBar
-import com.uds.foufoufood.viewmodel.HomeViewModel
+import com.uds.foufoufood.ui.component.SpecialityPills
 import com.uds.foufoufood.viewmodel.MenuViewModel
+import com.uds.foufoufood.viewmodel.RestaurantViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(
+fun HomeScreenRestaurant(
     navController: NavHostController,
-    homeViewModel: HomeViewModel,
+    restaurantViewModel: RestaurantViewModel,
     userViewModel: UserViewModel,
     menuViewModel: MenuViewModel
 ) {
-    Log.d("HomeScreen", "HomeScreen")
     // State for controlling drawer
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    var selectedItem by remember { mutableIntStateOf(0) }
+
+    val context = LocalContext.current
+
+    val specialities by restaurantViewModel.specialities.observeAsState()
+    val selectedSpeciality by restaurantViewModel.selectedSpeciality.observeAsState()
+    val filteredRestaurants by restaurantViewModel.filteredRestaurants.observeAsState()
+
     // Initialize the categories and restaurants here with drawables
     LaunchedEffect(Unit) {
-        homeViewModel.initialize(
-            specialityList = listOf(
-                Speciality(1, "Pizza", R.drawable.ic_category_pizza),
-                Speciality(2, "Burger", R.drawable.ic_category_burger),
-                Speciality(3, "Mexican", R.drawable.ic_category_mexican),
-                Speciality(4, "Pizza", R.drawable.ic_category_pizza),
-                Speciality(5, "Burger", R.drawable.ic_category_burger),
-                Speciality(6, "Pizza", R.drawable.ic_category_pizza),
-                Speciality(7, "Burger", R.drawable.ic_category_burger),
-
-                )
-        )
+        restaurantViewModel.initialize(context)
     }
-
-    // Use the default SansSerif font family
-    val defaultFontFamily = FontFamily.SansSerif
 
     // Modal navigation drawer
     ModalNavigationDrawer(
@@ -104,73 +103,120 @@ fun HomeScreen(
                 closeDrawer = { scope.launch { drawerState.close() } },
                 logout = userViewModel::logout,
                 userViewModel = userViewModel,
-                currentScreen = Screen.Home.route
+                currentScreen = Screen.HomeRestaurant.route
             )
         },
         content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .background(MaterialTheme.colorScheme.background)
-            ) {
-                // Row at the top with title and menu button
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    // Title
-                    Text(
-                        text = "Que souhaitez-vous commander ?",
-                        style = TextStyle(
-                            fontFamily =  FontFamily(Font(R.font.sofiapro_regular)),
-                            fontWeight = FontWeight.Bold, // 700 weight
-                            fontSize = 30.sp,             // Font size 30px
-                            lineHeight = 30.sp,           // Line height 30px
-                            textAlign = TextAlign.Left    // Align text to the left
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.weight(1f).padding(8.dp)
-                    )
-
-                    // Menu button
-                    IconButton(onClick = {
-                        scope.launch { drawerState.open() }
-                    }) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
+            Scaffold(
+                bottomBar = {
+                    BottomNavbarHome(selectedItem = selectedItem) { index ->
+                        selectedItem = index // Met à jour l'élément sélectionné
+                        when (index) {
+                            0 -> navController.navigate(Screen.HomeRestaurant.route)
+                            1 -> navController.navigate(Screen.HomeMenu.route)
+                        }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Search Bar
-                SearchBar(
-                    searchText = homeViewModel.searchText,
-                    onSearchTextChanged = homeViewModel::onSearchQueryChanged
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Category Pills and Restaurant List
-                LazyColumn {
-                    // Category Pills
-                    item {
-                        SpecialityPills(
-                            specialities = homeViewModel.specialities,
-                            selectedSpeciality = homeViewModel.selectedSpeciality,
-                            onSpecialitySelected = homeViewModel::onSpecialitySelected
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding) // Apply innerPadding here
+                        .padding(16.dp)
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    // Row at the top with title and menu button
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        // Title
+                        Text(
+                            text = "Que souhaitez-vous commander ?",
+                            style = TextStyle(
+                                fontFamily =  FontFamily(Font(R.font.sofiapro_regular)),
+                                fontWeight = FontWeight.Bold, // 700 weight
+                                fontSize = 30.sp,             // Font size 30px
+                                lineHeight = 30.sp,           // Line height 30px
+                                textAlign = TextAlign.Left    // Align text to the left
+                            ),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.weight(1f).padding(8.dp)
                         )
+
+                        // Menu button
+                        IconButton(onClick = {
+                            scope.launch { drawerState.open() }
+                        }) {
+                            Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                        }
                     }
 
-                    // Restaurant List
-                    items(homeViewModel.filteredRestaurants) { restaurant ->
-                        RestaurantCard(navController, menuViewModel, restaurant, userViewModel)
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Search Bar
+                    SearchBar(
+                        searchText = restaurantViewModel.searchText,
+                        onSearchTextChanged = restaurantViewModel::onSearchQueryChangedSpeciality
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Category Pills and Restaurant List
+                    LazyColumn {
+                        // Category Pills
+                        item {
+                            SpecialityPills(
+                                specialities = specialities ?: emptyList(),
+                                selectedSpeciality = selectedSpeciality,
+                                onSpecialitySelected = restaurantViewModel::onSpecialitySelected
+                            )
+                        }
+
+                        // Restaurant List
+                        for (restaurant in filteredRestaurants ?: emptyList()) {
+                            item {
+                                RestaurantCard(navController, menuViewModel, restaurant, userViewModel)
+                            }
+                        }
                     }
                 }
             }
         }
     )
+}
+
+@Composable
+fun BottomNavbarHome(selectedItem: Int, onItemSelected: (Int) -> Unit) {
+    NavigationBar(
+        containerColor = Color.White,
+        contentColor = Color.Black,
+    ) {
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.restaurant_building), // Utilisation du fichier SVG converti
+                    contentDescription = "Restaurants",
+                )
+            },
+            selected = selectedItem == 0,
+            onClick = { onItemSelected(0) },
+            label = { Text("Restaurants", fontSize = 12.sp) }
+        )
+
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.restaurant_menu), // Utilisation du fichier SVG converti
+                    contentDescription = "Menus"
+                )
+            },
+            selected = selectedItem == 1,
+            onClick = { onItemSelected(1) },
+            label = { Text("Menus", fontSize = 12.sp) }
+        )
+    }
 }
 
 @Composable
@@ -226,7 +272,7 @@ fun DrawerContent(navController: NavHostController,
                 label = stringResource(R.string.home),
                 onClick = {
                     closeDrawer()
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.HomeRestaurant.route)
                 },
             )
         }

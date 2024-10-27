@@ -12,11 +12,14 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface MenuApi{
-    @GET("api/menus/{restaurantId}")
-    suspend fun getAllMenus(
+    @GET("api/menus/menusById/{restaurantId}")
+    suspend fun getAllMenusByRestaurant(
         @Header("Authorization") token:String,
         @Path("restaurantId") restaurantId:String
     ):Response<MenuResponse>
+
+    @GET("api/menus/getAll")
+    suspend fun getAllMenus():Response<MenuResponse>
 
     @POST("api/menus/")
     suspend fun createMenu(

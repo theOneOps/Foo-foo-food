@@ -8,12 +8,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -21,9 +20,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.uds.foufoufood.data_class.model.Restaurant
-import com.uds.foufoufood.view.client.MenuRestaurantScreen
 import com.uds.foufoufood.ui.component.BottomNavBarAdmin
-import com.uds.foufoufood.view.HomeScreen
+import com.uds.foufoufood.view.HomeScreenMenu
+import com.uds.foufoufood.view.HomeScreenRestaurant
 import com.uds.foufoufood.view.admin.ClientScreen
 import com.uds.foufoufood.view.admin.GerantPage
 import com.uds.foufoufood.view.admin.LivreurPage
@@ -35,6 +34,7 @@ import com.uds.foufoufood.view.auth.VerifyCodeScreen
 import com.uds.foufoufood.view.auth.WelcomeScreen
 import com.uds.foufoufood.view.client.AddressScreen
 import com.uds.foufoufood.view.client.ClientRestaurantScreen
+import com.uds.foufoufood.view.client.MenuRestaurantScreen
 import com.uds.foufoufood.view.client.ProfileScreen
 import com.uds.foufoufood.view.client.UpdateAddressScreen
 import com.uds.foufoufood.view.delivery.AllOrdersScreen
@@ -44,9 +44,9 @@ import com.uds.foufoufood.view.restorer.FormModifyRestaurantScreen
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
-import com.uds.foufoufood.viewmodel.HomeViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
+import com.uds.foufoufood.viewmodel.RestaurantViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 @Composable
@@ -59,8 +59,9 @@ fun UnifiedNavHost(
     adminRestaurantsViewModel: AdminRestaurantsViewModel,
     deliveryViewModel: DeliveryViewModel,
     orderViewModel: OrderViewModel,
-    homeViewModel: HomeViewModel,
+//    homeViewModel: HomeViewModel,
     menuViewModel: MenuViewModel,
+    restaurantViewModel: RestaurantViewModel,
     showAdminBottomBar: Boolean // Nouveau paramètre pour conditionner la BottomBar
 ) {
     var selectedItem by remember { mutableStateOf(0) }
@@ -99,7 +100,7 @@ fun UnifiedNavHost(
             addAuthGraph(navController, userViewModel)
             addAdminGraph(navController, adminUsersViewModel, adminRestaurantsViewModel, userViewModel)
             addDeliveryGraph(navController, deliveryViewModel, orderViewModel, userViewModel)
-            addConnectedGraph(navController, homeViewModel, menuViewModel, userViewModel)
+            addConnectedGraph(navController, restaurantViewModel, menuViewModel, userViewModel)
         }
     }
 }
@@ -111,7 +112,7 @@ fun getStartDestination(connectUser: String, emailValidated: Boolean): String {
     return when (connectUser) {
         "admin" -> Screen.AdminClient.route
         "livreur" -> Screen.DeliveryAvailablePage.route
-        "client", "restaurateur" -> Screen.Home.route
+        "client", "restaurateur" -> Screen.HomeRestaurant.route
         else -> Screen.Welcome.route
     }
 }
@@ -165,7 +166,6 @@ fun NavGraphBuilder.addAdminGraph(
     adminRestaurantsViewModel: AdminRestaurantsViewModel,
     userViewModel: UserViewModel
 ) {
-
     composable(Screen.AdminClient.route) {
         ClientScreen(
             navController = navController,
@@ -271,13 +271,16 @@ fun NavGraphBuilder.addDeliveryGraph(
 
 fun NavGraphBuilder.addConnectedGraph(
     navController: NavHostController,
-    homeViewModel: HomeViewModel,
+    restaurantsViewModel: RestaurantViewModel,
     menuViewModel: MenuViewModel,
     userViewModel: UserViewModel
 ) {
-    // Home Screen (accessible pour 'client' et 'restaurateur')
-    composable(Screen.Home.route) {
-        HomeScreen(navController, homeViewModel, userViewModel, menuViewModel)
+    composable(Screen.HomeRestaurant.route) {
+        HomeScreenRestaurant(navController, restaurantsViewModel, userViewModel, menuViewModel)
+    }
+
+    composable(Screen.HomeMenu.route) {
+        HomeScreenMenu(navController, restaurantsViewModel, userViewModel, menuViewModel)
     }
 
     // Welcome Screen
@@ -335,7 +338,7 @@ fun NavGraphBuilder.addConnectedGraph(
         ) {
             val restaurant by menuViewModel.shared_restaurant.observeAsState()
             restaurant?.let { theRestaurant ->
-                FormModifyRestaurantScreen(theRestaurant, homeViewModel)
+                FormModifyRestaurantScreen(theRestaurant, restaurantsViewModel)
             } ?: Log.d("ConnectedNavHost", "Menu data is null")
         } else {
             Log.d("ConnectedNavHost", "Invalid role or no menu selected")

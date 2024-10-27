@@ -8,12 +8,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MenuRepository(private val menuApi: MenuApi) {
-    suspend fun getAllMenus(token: String, restaurantId: String): MenuResponse? =
+    suspend fun getAllMenusByRestaurant(token: String, restaurantId: String): MenuResponse? =
         withContext(Dispatchers.IO)
         {
             try {
                 Log.e("MenuRepository", restaurantId)
-                val response = menuApi.getAllMenus(token, restaurantId)
+                val response = menuApi.getAllMenusByRestaurant(token, restaurantId)
 
                 // Vérifier si la réponse est réussie
                 if (response.isSuccessful) {
@@ -42,6 +42,37 @@ class MenuRepository(private val menuApi: MenuApi) {
                 null
             }
         }
+
+    suspend fun getAllMenus(): MenuResponse? = withContext(Dispatchers.IO) {
+        try {
+            val response = menuApi.getAllMenus()
+            // Vérifier si la réponse est réussie
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                if (responseBody != null) {
+                    return@withContext responseBody
+                } else {
+                    Log.e("MenuRepository", "Réponse vide pour getAllMenus")
+                    null
+                }
+            } else {
+                // Si la réponse n'est pas réussie
+                Log.e(
+                    "MenuRepository",
+                    "Erreur d'accès aux menus : ${response.message()} " +
+                            "(Code: ${response.code()})"
+                )
+                null
+            }
+        } catch (e: Exception) {
+            // En cas d'exception
+            Log.e(
+                "MenuRepository", "Exception lors de l'accès aux menus :" +
+                        " ${e.message}", e
+            )
+            null
+        }
+    }
 
     suspend fun createMenu(
         token: String,
@@ -102,7 +133,7 @@ class MenuRepository(private val menuApi: MenuApi) {
         price: Double,
         category: String,
         restaurantId: String,
-        image : String
+        image: String
     ): MenuResponse? = withContext(Dispatchers.IO) {
         try {
             // Création de l'objet MenuRequest

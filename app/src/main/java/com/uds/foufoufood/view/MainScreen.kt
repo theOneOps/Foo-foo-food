@@ -15,9 +15,9 @@ import com.uds.foufoufood.navigation.UnifiedNavHost
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
-import com.uds.foufoufood.viewmodel.HomeViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
+import com.uds.foufoufood.viewmodel.RestaurantViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 @Composable
@@ -28,8 +28,9 @@ fun MainScreen(
     adminRestaurantsViewModel: AdminRestaurantsViewModel,
     deliveryViewModel: DeliveryViewModel,
     orderViewModel: OrderViewModel,
-    homeViewModel: HomeViewModel,
-    menuViewModel: MenuViewModel
+//    homeViewModel: HomeViewModel,
+    menuViewModel: MenuViewModel,
+    restaurantViewModel: RestaurantViewModel
 ) {
     val context = LocalContext.current
     val user by userViewModel.user.observeAsState()
@@ -78,8 +79,9 @@ fun MainScreen(
         adminRestaurantsViewModel = adminRestaurantsViewModel,
         deliveryViewModel = deliveryViewModel,
         orderViewModel = orderViewModel,
-        homeViewModel = homeViewModel,
+//        homeViewModel = homeViewModel,
         menuViewModel = menuViewModel,
+        restaurantViewModel = restaurantViewModel,
         showAdminBottomBar = showAdminBottomBar
     )
 }
