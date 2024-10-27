@@ -221,8 +221,19 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
 
     private fun getIconCategoryResId(category: String): Int {
         return when (category) {
-            "Pizza" -> R.drawable.ic_category_pizza
-            "Burger" -> R.drawable.ic_category_burger
+            "pizza" -> R.drawable.pizza
+            "nouilles" -> R.drawable.nouille
+            "burger" -> R.drawable.burger
+            "hotdog" -> R.drawable.hot_dog
+            "frite" -> R.drawable.frites
+            "dessert" -> R.drawable.part_de_gateau
+            "quiche" -> R.drawable.quiche
+            "sandwich" -> R.drawable.sandwich
+            "sushi" -> R.drawable.sushi
+            "maki" -> R.drawable.maki
+            "pâte" -> R.drawable.pates
+            "gnocchi" -> R.drawable.gnocchi
+            "salade" -> R.drawable.salade
             else -> R.drawable.autre
         }
     }
