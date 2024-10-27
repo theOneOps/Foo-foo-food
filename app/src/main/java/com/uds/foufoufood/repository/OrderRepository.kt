@@ -2,12 +2,13 @@ package com.uds.foufoufood.repository
 
 import android.content.Context
 import android.util.Log
-import com.uds.foufoufood.data_class.model.Address
-import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Order
 import com.uds.foufoufood.data_class.model.OrderStatus
+import com.uds.foufoufood.data_class.request.OrderRequest
+import com.uds.foufoufood.data_class.response.OrderResponse
+import com.uds.foufoufood.data_class.request.OrderStatusUpdateRequest
+import com.uds.foufoufood.data_class.request.OrderUpdateRequest
 import com.uds.foufoufood.network.OrderApi
-import com.uds.foufoufood.network.UserApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -47,7 +48,12 @@ class OrderRepository(private val api: OrderApi, private val context: Context) {
                 // Retourne toutes les commandes récupérées
                 ordersList
             } else {
-                Log.e("OrderRepository", "Erreur lors de la récupération des commandes : ${response.errorBody()?.string()}")
+                Log.e(
+                    "OrderRepository",
+                    "Erreur lors de la récupération des commandes : ${
+                        response.errorBody()?.string()
+                    }"
+                )
                 emptyList()
             }
         } catch (e: Exception) {
@@ -58,13 +64,70 @@ class OrderRepository(private val api: OrderApi, private val context: Context) {
     }
 
 
-    // Simule la mise à jour du statut de la commande
-    suspend fun updateOrderStatus(order: Order): Boolean {
+    suspend fun updateOrderStatus(orderId: String, newStatus: String): Boolean {
         return withContext(Dispatchers.IO) {
-            // Code pour mettre à jour la commande via une API REST
-            // return api.updateOrderStatus(order)
-            true // Simule une mise à jour réussie
+            try {
+                // Crée l'objet de requête avec le statut à mettre à jour
+                val request = OrderStatusUpdateRequest(status = newStatus)
+
+                // Effectue l'appel à l'API
+                val response = api.updateOrderStatus(orderId, request)
+
+                // Vérifie si la mise à jour a été réussie
+                response.isSuccessful
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
         }
     }
+
+    suspend fun createOrder(token: String, orderRequest: OrderRequest): OrderResponse? =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = api.createOrder("Bearer $token", orderRequest)
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    Log.e("OrderRepository", "Failed to create order: ${response.message()}")
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("OrderRepository", "Exception creating order: ${e.message}")
+                null
+            }
+        }
+
+    suspend fun hasActiveOrder(token: String, clientEmail: String): Boolean {
+        return try {
+            val response = api.hasActiveOrder("Bearer $token", clientEmail)
+            response.body()?.hasActiveOrder ?: false // Extract the Boolean field
+        } catch (e: Exception) {
+            Log.e("OrderRepository", "Error checking active order: ${e.message}")
+            false
+        }
+    }
+    suspend fun updateOrder(updatedOrder: Order): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                // Crée un objet de requête pour mettre à jour la commande
+                val request = OrderUpdateRequest(
+                    orderId = updatedOrder.orderId,
+                    status = updatedOrder.status.displayName,
+                    deliveryManEmail = updatedOrder.deliveryManEmail
+                )
+
+                // Appel réel à l'API pour mettre à jour la commande
+                val response = api.updateOrder(request)
+
+                // Vérifie si la mise à jour a réussi
+                response.isSuccessful
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+    }
+
 }
 

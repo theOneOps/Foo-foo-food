@@ -29,6 +29,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.navigation.Screen
+import com.uds.foufoufood.ui.component.DrawerScaffold
 import com.uds.foufoufood.ui.component.MenuComponent
 import com.uds.foufoufood.ui.component.SearchBar
 import com.uds.foufoufood.ui.component.SpecialityPills
@@ -60,18 +62,106 @@ fun HomeScreenMenu(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    var selectedItem by remember { mutableIntStateOf(1) }
-
     val categories by menuViewModel.categories.observeAsState()
     val filteredMenu by menuViewModel.filteredMenu.observeAsState()
     val selectedCategory by menuViewModel.selectedCategory.observeAsState()
 
     val idRestaurantOfConnectedUser by restaurantViewModel.idRestaurantOfConnectedUser.observeAsState()
 
+    var textAddress = userViewModel.user.value?.address.toString()
+    if (textAddress == "null") {
+        textAddress = "Aucune adresse de livraison"
+    }
+
     // Initialize the categories and restaurants here with drawables
     LaunchedEffect(Unit) {
         menuViewModel.initialize()
     }
+
+    DrawerScaffold(
+        navController = navController,
+        userViewModel = userViewModel,
+        currentScreen = Screen.HomeRestaurant.route
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = textAddress,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Que souhaitez-vous commander ?",
+                style = TextStyle(
+                    fontFamily = FontFamily(Font(R.font.sofiapro_bold)),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 30.sp,
+                    lineHeight = 32.sp,
+                    textAlign = TextAlign.Start
+                ),
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            SearchBar(
+                searchText = restaurantViewModel.searchText,
+                onSearchTextChanged = restaurantViewModel::onSearchQueryChangedSpeciality
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Category Pills and Restaurant List
+            LazyColumn {
+                // Category Pills
+                item {
+                    SpecialityPills(
+                        specialities = categories ?: emptyList(),
+                        selectedSpeciality = selectedCategory,
+                        onSpecialitySelected = menuViewModel::onCategorySelected
+                    )
+                }
+
+                // Restaurant List
+                for (menu in filteredMenu ?: emptyList()) {
+                    // si l'utilisateur est connecté en tant que restaurateur, on affiche le bouton de suppression
+                    if (idRestaurantOfConnectedUser == menu.restaurantId) {
+                        menuViewModel.setIsConnectedRestorer(true)
+                    }
+                    else {
+                        menuViewModel.setIsConnectedRestorer(false)
+                    }
+                    item {
+                        MenuComponent(
+                            navController = navController,
+                            menu = menu,
+                            menuViewModel = menuViewModel
+                        )
+                    }
+                }
+            }
+        }
+    }
+    /*
 
     // Modal navigation drawer
     ModalNavigationDrawer(
@@ -174,5 +264,5 @@ fun HomeScreenMenu(
                 }
             }
         }
-    )
+    )*/
 }

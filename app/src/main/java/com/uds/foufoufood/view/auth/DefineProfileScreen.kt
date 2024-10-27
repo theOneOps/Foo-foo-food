@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.uds.foufoufood.R
+import com.uds.foufoufood.navigation.getStartDestination
 import com.uds.foufoufood.ui.component.RadioButtonWithLabel
 import com.uds.foufoufood.ui.component.TitlePage
 import com.uds.foufoufood.ui.component.ValidateButton
@@ -52,7 +53,12 @@ fun DefineProfileScreen(
         if (registrationCompleteSuccess == true) {
             Toast.makeText(context, "Inscription réussie", Toast.LENGTH_SHORT).show()
             userViewModel.resetStatus()
-            navController.navigate("home")
+            val startDestination = getStartDestination(selectedProfile.lowercase(), true)
+            if (startDestination != null) {
+                navController.navigate(startDestination) {
+                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                }
+            }
         } else if (registrationCompleteSuccess == false) {
             Toast.makeText(context, "Échec de l'inscription", Toast.LENGTH_SHORT).show()
         }

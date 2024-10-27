@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 
 data class Order(
+    @SerializedName("deliveryManEmail") val deliveryManEmail: String?,
     @SerializedName("_id") val orderId: String, // Correction : utilisez SerializedName pour mapper "_id"
     @SerializedName("dishes") val items: List<OrderItem>, // Correction : "dishes" au lieu de "items"
     val clientEmail: String,

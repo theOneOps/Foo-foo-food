@@ -14,6 +14,7 @@ import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.navigation.UnifiedNavHost
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
+import com.uds.foufoufood.viewmodel.CartViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
@@ -28,8 +29,8 @@ fun MainScreen(
     adminRestaurantsViewModel: AdminRestaurantsViewModel,
     deliveryViewModel: DeliveryViewModel,
     orderViewModel: OrderViewModel,
-//    homeViewModel: HomeViewModel,
     menuViewModel: MenuViewModel,
+    cartViewModel: CartViewModel,
     restaurantViewModel: RestaurantViewModel
 ) {
     val context = LocalContext.current
@@ -79,9 +80,9 @@ fun MainScreen(
         adminRestaurantsViewModel = adminRestaurantsViewModel,
         deliveryViewModel = deliveryViewModel,
         orderViewModel = orderViewModel,
-//        homeViewModel = homeViewModel,
         menuViewModel = menuViewModel,
         restaurantViewModel = restaurantViewModel,
+        cartViewModel = cartViewModel,
         showAdminBottomBar = showAdminBottomBar
     )
 }

@@ -2,9 +2,14 @@ package com.uds.foufoufood.viewmodel
 
 import UserRepository
 import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.uds.foufoufood.R
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.repository.DeliveryRepository
 import io.socket.client.IO
@@ -29,7 +34,32 @@ class DeliveryViewModel(
 
     val currentDeliveryManEmail = userRepository.getUserEmail()
 
+    fun clearNewOrder() {
+        _newOrderAssigned.value = null
+    }
+
     private lateinit var socket: Socket
+
+    init {
+        refreshAvailability() // Synchronise l'état de disponibilité avec le serveur dès le démarrage
+        observeNewOrders()
+    }
+
+    private fun observeNewOrders() {
+        viewModelScope.launch {
+            newOrderAssigned.collect { newOrder ->
+                newOrder?.let {
+                    val orderData = it.toString()
+                    val orderJson = JSONObject(orderData)
+                    val orderId = orderJson.getJSONObject("order").getString("_id")
+
+                    // Charger la commande et afficher la notification
+                    sendNotification(context, "Nouvelle commande", "Une nouvelle commande vous a été assignée.")
+                    // Délai avant d'ouvrir la commande ou gérer l'ouverture
+                }
+            }
+        }
+    }
 
     fun connectSocketForOrders() {
         viewModelScope.launch {
@@ -74,6 +104,12 @@ class DeliveryViewModel(
             }
         }
     }
+
+    fun resetAvailability() {
+        _isAvailable.value = false
+    }
+
+
     private fun setupSocketConnection(token: String) {
         try {
             socket = IO.socket("http://192.168.21.13:3000")
@@ -103,4 +139,44 @@ class DeliveryViewModel(
             socket.disconnect() // Déconnecter le socket lorsque le ViewModel est détruit
         }
     }
+
+
+
+    fun refreshAvailability() {
+        viewModelScope.launch {
+            val token = getToken(context)
+            if (token != null) {
+                try {
+                    val serverAvailability = repository.getAvailabilityFromServer(token)
+                    Log.d("DeliveryViewModel", "Disponibilité récupérée: $serverAvailability")
+                    serverAvailability?.let {
+                        _isAvailable.value = it
+                        Log.d("DeliveryViewModel", "Disponibilité après mise à jour: ${_isAvailable.value}")
+                    }
+                } catch (e: Exception) {
+                    Log.e("DeliveryViewModel", "Erreur lors de la récupération de la disponibilité: ${e.message}")
+                }
+            }
+        }
+    }
+
+    private fun sendNotification(context: Context, title: String, message: String) {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val builder = NotificationCompat.Builder(context, "order_notifications")
+                .setSmallIcon(R.drawable.full_logo)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+            NotificationManagerCompat.from(context).notify(System.currentTimeMillis().toInt(), builder.build())
+        } else {
+            Log.d("sendNotification", "Permission de notification non accordée")
+        }
+    }
+
+
 }

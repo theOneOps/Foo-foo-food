@@ -4,8 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.data_class.model.User
+import com.uds.foufoufood.data_class.request.RoleUpdateRequest
 import com.uds.foufoufood.data_class.response.ApiResponse
-import com.uds.foufoufood.network.RoleUpdateRequest
 import com.uds.foufoufood.network.UserApi
 import retrofit2.Response
 
