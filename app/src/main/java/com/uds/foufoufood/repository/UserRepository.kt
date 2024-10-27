@@ -161,4 +161,6 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
     fun setUserEmail(email: String) {
         sharedPreferences.edit().putString("user_email", email).apply()
     }
+
+
 }

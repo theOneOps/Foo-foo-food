@@ -14,4 +14,6 @@
     <color name="grey_location">#8C9099</color>
     <color name="grey_border">#EFEFEF</color>
     <color name="grey_bg">#FCFCFD</color>
+    <color name="grey_bg_deactivated">#D9D9D9</color>
+    <color name="green">#01F60A</color>
 </resources>

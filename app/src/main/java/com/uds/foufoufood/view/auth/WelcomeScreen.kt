@@ -50,12 +50,17 @@ fun WelcomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .paint(
-                painter = painterResource(id = R.drawable.pizza),
+                painter = painterResource(id = R.drawable.welcome_bg),
                 contentScale = ContentScale.Crop
             )
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color.Transparent, Color.Black)
+                    colors = listOf(
+                        Color.White,
+                        Color.White.copy(alpha = 0.5f),
+                        Color.Black.copy(alpha = 0.5f),
+                        Color.Black.copy(alpha = 0.7f),
+                    )
                 )
             )
 

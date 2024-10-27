@@ -2,15 +2,18 @@ package com.uds.foufoufood.network
 
 import com.uds.foufoufood.data_class.model.User
 import com.uds.foufoufood.data_class.request.AddressRequest
+import com.uds.foufoufood.data_class.request.AvailabilityRequest
 import com.uds.foufoufood.data_class.request.EmailRequest
 import com.uds.foufoufood.data_class.request.LoginRequest
 import com.uds.foufoufood.data_class.request.PasswordRequest
 import com.uds.foufoufood.data_class.request.ProfileRequest
 import com.uds.foufoufood.data_class.request.RegistrationRequest
+import com.uds.foufoufood.data_class.request.RoleUpdateRequest
 import com.uds.foufoufood.data_class.request.UpdateEmailRequest
 import com.uds.foufoufood.data_class.request.VerificationRequest
 import com.uds.foufoufood.data_class.response.ApiResponse
 import com.uds.foufoufood.data_class.response.AuthResponse
+import com.uds.foufoufood.data_class.response.AvailabilityResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -73,10 +76,12 @@ interface UserApi {
         @Header("Authorization") token: String,
         @Body deliveryAvailability : AvailabilityRequest
     ): Response<ApiResponse>
+
+    @GET("api/users/delivery/deliveryAvailability")
+    suspend fun getAvailability(
+        @Header("Authorization") token: String
+    ): Response<AvailabilityResponse>
 }
 
-data class AvailabilityRequest(val available: Boolean)
 
-data class RoleUpdateRequest(
-    val newRole: String  // Nouveau rôle que tu veux attribuer à l'utilisateur
-)
+

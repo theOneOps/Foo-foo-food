@@ -1,8 +1,16 @@
 package com.uds.foufoufood.navigation
 
 import AddRestaurantPage
+import AvailabilityScreen
 import RestaurantPage
 import android.util.Log
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -12,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -38,8 +45,7 @@ import com.uds.foufoufood.view.client.ClientRestaurantScreen
 import com.uds.foufoufood.view.client.ProfileScreen
 import com.uds.foufoufood.view.client.UpdateAddressScreen
 import com.uds.foufoufood.view.delivery.AllOrdersScreen
-import com.uds.foufoufood.view.delivery.AvailabilityScreen
-import com.uds.foufoufood.view.delivery.DeliveryOrderScreen
+import com.uds.foufoufood.view.delivery.DeliveryOrderDetailsScreen
 import com.uds.foufoufood.view.restorer.FormModifyRestaurantScreen
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
@@ -94,7 +100,11 @@ fun UnifiedNavHost(
         NavHost(
             navController = navController,
             startDestination = getStartDestination(connectUser, emailValidated),
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            enterTransition = { fadeIn(animationSpec = tween(700)) + scaleIn(initialScale = 0.95f) },
+            exitTransition = { fadeOut(animationSpec = tween(700)) + scaleOut(targetScale = 1.05f) }
+
+
         ) {
             addAuthGraph(navController, userViewModel)
             addAdminGraph(navController, adminUsersViewModel, adminRestaurantsViewModel, userViewModel)
@@ -110,7 +120,7 @@ fun getStartDestination(connectUser: String, emailValidated: Boolean): String {
     }
     return when (connectUser) {
         "admin" -> Screen.AdminClient.route
-        "livreur" -> Screen.DeliveryAvailablePage.route
+        "livreur" -> Screen.DeliveryAllOrdersPage.route
         "client", "restaurateur" -> Screen.Home.route
         else -> Screen.Welcome.route
     }
@@ -251,16 +261,18 @@ fun NavGraphBuilder.addDeliveryGraph(
     }
 
     composable(Screen.DeliveryOrderDetailsPage.route) {
-        DeliveryOrderScreen (
+        DeliveryOrderDetailsScreen (
             navController = navController,
             orderViewModel = orderViewModel,
-            userViewModel = userViewModel
+            userViewModel = userViewModel,
+            deliveryViewModel = deliveryViewModel
         )
     }
 
     composable(Screen.DeliveryAllOrdersPage.route) {
         AllOrdersScreen(
             navController = navController,
+            deliveryViewModel = deliveryViewModel,
             orderViewModel = orderViewModel,
             userViewModel = userViewModel
         )

@@ -1,9 +1,12 @@
 package com.uds.foufoufood.activities.main
 
 import UserRepository
+import android.app.Activity
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
 import com.uds.foufoufood.network.MenuApi
 import com.uds.foufoufood.network.OrderApi
@@ -34,9 +37,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var menuViewModel: MenuViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
 
         val retrofit = RetrofitHelper.getRetrofitInstance(this)
+        requestNotificationPermission(this)
+
         val userApi = retrofit.create(UserApi::class.java)
         val userRepository = UserRepository(userApi, this)
 
@@ -90,4 +96,22 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
+    fun requestNotificationPermission(activity: Activity) {
+        if (ActivityCompat.checkSelfPermission(
+                activity,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                activity,
+                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                NOTIFICATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
+
+
 }

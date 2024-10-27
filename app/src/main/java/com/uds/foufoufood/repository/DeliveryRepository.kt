@@ -2,7 +2,9 @@ package com.uds.foufoufood.repository
 
 import android.content.Context
 import android.util.Log
-import com.uds.foufoufood.network.AvailabilityRequest
+import com.uds.foufoufood.data_class.request.AvailabilityRequest
+import com.uds.foufoufood.data_class.response.AvailabilityResponse
+
 import com.uds.foufoufood.network.UserApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,4 +27,20 @@ class DeliveryRepository(private val api: UserApi, private val context: Context)
             }
         }
     }
+
+    suspend fun getAvailabilityFromServer(token: String): Boolean? {
+        val response = api.getAvailability("Bearer $token")  // Méthode GET vers l’API
+        return if (response.isSuccessful) {
+            val availabilityResponse: AvailabilityResponse? = response.body()
+            Log.d("DeliveryRepository", "Availability response: $availabilityResponse")
+            availabilityResponse?.isAvailable
+        } else {
+            Log.e("DeliveryRepository", "Erreur de requête: ${response.errorBody()?.string()}")
+            null
+        }
+    }
+
+
+
+
 }
