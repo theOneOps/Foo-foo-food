@@ -36,7 +36,7 @@ class NotificationViewModel(
         }
 
         try {
-            socket = IO.socket("http://192.168.1.124:3000") // Replace with your server URL
+            socket = IO.socket("http://192.168.185.108:3000")
             socket?.connect()
             val data = JSONObject()
             data.put("clientEmail", clientEmail)

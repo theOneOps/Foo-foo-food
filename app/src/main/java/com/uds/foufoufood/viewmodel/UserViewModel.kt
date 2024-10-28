@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.messaging.FirebaseMessaging
 import com.uds.foufoufood.activities.main.TokenManager.deleteToken
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.activities.main.TokenManager.saveToken
@@ -70,39 +71,22 @@ class UserViewModel(
                 if (response != null) {
                     _user.value = response.user
                     _token.value = response.token
+
+                    // Fetch and register FCM token with the backend
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val fcmToken = task.result
+                            registerFcmToken(email, fcmToken)
+                        }
+                    }
+
                     _loginSuccess.value = true
-
-                    if (response.user.emailValidated == false) {
-                        _emailValidated.value = false
-                        _loading.value = false
-                    }
-                    else {
-                        saveToken(context, response.token)
-                        saveUserId(context, response.user._id)
-                        _emailValidated.value = true
-                        userRepository.setUserEmail(email)
-                        Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
-                        _errorMessage.value = null
-                    }
-
-                    if (response.user.registrationComplete == false) {
-                        _registrationCompleteSuccess.value = false
-                        _loading.value = false
-                    }
-                    else {
-                        saveToken(context, response.token)
-                        saveUserId(context, response.user._id)
-                        userRepository.setUserEmail(email)
-                        _registrationCompleteSuccess.value = true
-                        Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
-                        _errorMessage.value = null
-                    }
+                    saveToken(context, response.token)
+                    saveUserId(context, response.user._id)
                 } else {
                     _errorMessage.value = "Erreur, connexion échouée"
                     _loginSuccess.value = false
                 }
-            } catch (e: IOException) {
-                _errorMessage.value = "Erreur réseau, veuillez vérifier votre connexion"
             } catch (e: Exception) {
                 _errorMessage.value = "Erreur lors de la connexion"
             } finally {
@@ -315,5 +299,18 @@ class UserViewModel(
         _updateEmailSuccess.value = null
         _updatePasswordSuccess.value = null
         _loginSuccess.value = null
+    }
+
+    fun registerFcmToken(email: String, fcmToken: String) {
+        viewModelScope.launch {
+            try {
+                val success = userRepository.registerFcmToken(email, fcmToken)
+                if (success) {
+                    Log.d("UserViewModel", "FCM token registered successfully.")
+                }
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error registering FCM token: ${e.message}")
+            }
+        }
     }
 }

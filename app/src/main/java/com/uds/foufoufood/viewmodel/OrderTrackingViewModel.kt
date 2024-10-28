@@ -57,7 +57,7 @@ class OrderTrackingViewModel(
         val clientEmail = userViewModel.user.value?.email ?: return
         Log.d("TrackingSocketSetup", clientEmail)
         try {
-            socket = IO.socket("http://192.168.1.124:3000")
+            socket = IO.socket("http://192.168.185.108:3000")
             socket?.connect()
             val data = JSONObject()
             data.put("clientEmail", clientEmail)
