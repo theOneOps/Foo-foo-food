@@ -3,13 +3,17 @@ package com.uds.foufoufood.view.client
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,8 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,19 +40,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.uds.foufoufood.R
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.data_class.model.CartItem
 import com.uds.foufoufood.data_class.model.Menu
+import com.uds.foufoufood.ui.component.BackButton
 import com.uds.foufoufood.ui.component.CounterProductBought
 import com.uds.foufoufood.ui.component.FormModifyMenu
-import com.uds.foufoufood.ui.component.HeartIconButton
-import com.uds.foufoufood.ui.component.TextLink
 import com.uds.foufoufood.viewmodel.CartViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
 
@@ -59,141 +63,162 @@ import com.uds.foufoufood.viewmodel.MenuViewModel
 fun MenuRestaurantScreen(
     menu: Menu,
     menuViewModel: MenuViewModel,
-    cartViewModel: CartViewModel // Add CartViewModel here
+    cartViewModel: CartViewModel, // Add CartViewModel here
+    navController: NavController
 ) {
     val context = LocalContext.current
     val token = getToken(context) ?: ""
     val quantity = remember { mutableIntStateOf(1) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(2.dp),
-            shape = RoundedCornerShape(10.dp),
-        ) {
-            Column {
-                // Box pour l'image en haut
-                Box(
-                    modifier = Modifier
-                        .height(250.dp)
-                        .fillMaxWidth()
-                ) {
-                    AsyncImage(
-                        model = menu.image,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp)),
-                        contentDescription = menu.description,
-                        contentScale = ContentScale.Crop,
-                    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        // Bouton de retour en haut à gauche
+        BackButton(navController = navController)
 
-                    // Icones sur l'image
-                    Box(
-                        modifier = Modifier.padding(15.dp),
-                        contentAlignment = Alignment.TopStart
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(
-                                onClick = { /* Action du bouton */ },
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(Color.White)
-                                    .size(50.dp)
-                            ) {
-                                Text(
-                                    "<",
-                                    style = TextStyle(fontSize = 30.sp),
-                                    color = Color.Gray
-                                )
-                            }
-                            HeartIconButton() // Ton bouton en forme de cœur
-                        }
-                    }
-                }
-
-                // Contenu texte sous l'image
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp)
-                        .background(Color.White),
-                ) {
-                    Text(menu.name, style = TextStyle(color = Color.Black, fontSize = 35.sp))
-                    Spacer(Modifier.height(10.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(1f),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("⭐", style = TextStyle(fontSize = 15.sp))
-                            Text("${menu.price}", style = TextStyle(fontSize = 18.sp))
-                            Spacer(Modifier.width(20.dp))
-                            //TextLink(onClick = { /* Lien pour les avis todo */ }, label = "See Review")
-                        }
-                        // todo : tester si l'user connecté est bien celui qui possède
-                        //  le restaurant, voire dans ClientRestaurantScreen
-
-                        val isConnectedRestaurateur = menuViewModel.isConnectedRestorer.value!!
-                        if (isConnectedRestaurateur)
-                            ModifyMenu(token, menuViewModel, menu)
-                    }
-
-                    Spacer(Modifier.height(10.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text("$", style = TextStyle(fontSize = 15.sp))
-                            Text("${menu.price}", style = TextStyle(fontSize = 20.sp))
-                            Spacer(Modifier.width(20.dp))
-                        }
-
-                        // Counter for quantity selection
-                        CounterProductBought(quantity)
-                    }
-
-                    Text(
-                        modifier = Modifier.padding(8.dp),
-                        text = menu.description.trimIndent()
-                    )
-                }
-            }
-        }
-
-
+        // Conteneur principal pour l'image et les informations du restaurant
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp), // Reduced vertical padding
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(Color.White)
+                .padding(8.dp)
         ) {
-            Spacer(Modifier.height(16.dp)) // Add space as needed
-            AddToCartButton(
-                menu = menu,
-                cartViewModel = cartViewModel,
-                quantity = quantity.value // Pass the selected quantity
-            )
-        }
+            // Image du restaurant avec la spécialité en bas à droite
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+            ) {
+                // Image du restaurant
+                AsyncImage(
+                    model = menu.image,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Gray.copy(alpha = 0.2f)),
+                    contentDescription = menu.name,
+                    contentScale = ContentScale.Crop
+                )
 
+                val isConnectedRestaurateur = menuViewModel.isConnectedRestorer.value!!
+                if (isConnectedRestaurateur)
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(horizontal = 16.dp, vertical = 6.dp)
+                            .offset(x = (-4).dp, y = (-4).dp), // Décalage pour être bien positionné sur le bord
+                    ) {
+                        // Bouton de modification du menu
+                        ModifyMenu(token, menuViewModel, menu, navController)
+                    }
+
+                // Box de spécialité en bas à droite de l'image
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                        .offset(x = (4).dp, y = (-4).dp), // Décalage pour être bien positionné sur le bord
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .background(
+                                color = colorResource(id = R.color.orange),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .padding(horizontal = 16.dp, vertical = 6.dp),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = menu.category.replaceFirstChar { it.uppercase() },
+                            fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                            color = colorResource(id = R.color.white),
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 2.dp)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Nom du restaurant
+            Text(
+                text = menu.name.replaceFirstChar { it.uppercase() },
+                style = TextStyle(
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(id = R.color.black),
+                    fontFamily = FontFamily(Font(R.font.sofiapro_bold))
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // Description du Menu
+            Text(
+                text = menu.description,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    color = Color.Gray,
+                    fontFamily = FontFamily(Font(R.font.sofiapro_medium))
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row {
+                    // Prix du menu
+                    Text(
+                        text = menu.price.toString(),
+                        style = TextStyle(
+                            fontSize = 35.sp,
+                            color = colorResource(id = R.color.orange),
+                            fontFamily = FontFamily(Font(R.font.sofiapro_medium))
+                        ),
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+
+                    // Text icon €
+                    Text(
+                        text = "$",
+                        style = TextStyle(
+                            fontSize = 15.sp,
+                            color = colorResource(id = R.color.orange),
+                            fontFamily = FontFamily(Font(R.font.sofiapro_medium))
+                        ),
+                        modifier = Modifier.padding(start = 5.dp)
+                    )
+                }
+
+                // Bouton d'ajout au panier
+                CounterProductBought(quantity)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // todo ajouter les ingrédients
+
+            // Bouton d'ajout au panier
+            Column (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                AddToCartButton(menu, cartViewModel, quantity.value)
+            }
+        }
     }
 }
 
@@ -252,7 +277,7 @@ fun AddToCartButton(
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(Color.White)
-                    .padding(2.dp)
+                    .padding(3.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.buy_cart_icon),
@@ -262,10 +287,11 @@ fun AddToCartButton(
             }
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "AJOUTER AU PANIER",
-                fontSize = 16.sp,
+                text = "Ajouter au panier",
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = Color.White,
+                fontFamily = FontFamily(Font(R.font.sofiapro_bold))
             )
         }
     }
@@ -303,39 +329,55 @@ fun AddToCartButton(
 }
 
 @Composable
-fun ModifyMenu(token: String, menuViewModel: MenuViewModel, menu: Menu) {
+fun ModifyMenu(token: String, menuViewModel: MenuViewModel, menu: Menu, navController: NavController) {
     val openDialog = remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        contentAlignment = Alignment.CenterEnd
-    ) {
-        TextLink(label = "Modify Menu", onClick = { openDialog.value = true })
 
-        if (openDialog.value) {
-            Dialog(onDismissRequest = { openDialog.value = false }) {
-                Surface(
-                    shape = RoundedCornerShape(16.dp),
+    Column(
+        modifier = Modifier
+            .background(
+                color = colorResource(id = R.color.white),
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Modifier",
+            fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+            color = colorResource(id = R.color.orange),
+            modifier = Modifier.align(Alignment.CenterHorizontally).clickable(onClick = {
+                openDialog.value = true
+            }).padding(top = 2.dp)
+        )
+    }
+
+    if (openDialog.value) {
+        Dialog(onDismissRequest = { openDialog.value = false }) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 700.dp)
+                    .clip(RoundedCornerShape(16.dp)),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column(
+                    modifier = Modifier.padding(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        FormModifyMenu(menuViewModel, menu, onUpdate = { menuRes ->
-                            menuViewModel.updateMenu(
-                                token,
-                                menuRes._id,
-                                menuRes.name,
-                                menuRes.description,
-                                menuRes.price,
-                                menuRes.category,
-                                menuRes.restaurantId,
-                                menuRes.image
-                            )
-                        })
-                    }
+                    FormModifyMenu(menuViewModel, menu, onUpdate = { menuRes ->
+                        menuViewModel.updateMenu(
+                            token,
+                            menuRes._id,
+                            menuRes.name,
+                            menuRes.description,
+                            menuRes.price,
+                            menuRes.category,
+                            menuRes.restaurantId,
+                            menuRes.image
+                        )
+                        openDialog.value = false
+                    }, navController = navController)
                 }
             }
         }

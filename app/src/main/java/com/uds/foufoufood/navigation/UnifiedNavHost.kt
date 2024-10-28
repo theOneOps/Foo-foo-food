@@ -384,7 +384,7 @@ fun NavGraphBuilder.addConnectedGraph(
         ) {
             val restaurant by menuViewModel.shared_restaurant.observeAsState()
             restaurant?.let { theRestaurant ->
-                FormModifyRestaurantScreen(theRestaurant, restaurantsViewModel)
+                FormModifyRestaurantScreen(theRestaurant, restaurantsViewModel, navController)
             } ?: Log.d("ConnectedNavHost", "Menu data is null")
         } else {
             Log.d("ConnectedNavHost", "Invalid role or no menu selected")
@@ -399,7 +399,7 @@ fun NavGraphBuilder.addConnectedGraph(
         ) {
             val menu by menuViewModel.shared_current_menu.observeAsState()
             menu?.let { selectMenu ->
-                MenuRestaurantScreen(selectMenu, menuViewModel, cartViewModel)
+                MenuRestaurantScreen(selectMenu, menuViewModel, cartViewModel, navController)
             } ?: Log.d("ConnectedNavHost", "Menu data is null")
         } else {
             Log.d("ConnectedNavHost", "Invalid role or no menu selected")

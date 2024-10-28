@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -105,15 +106,19 @@ fun ClientRestaurantScreen(
     if (openDialog.value) {
         Dialog(onDismissRequest = { openDialog.value = false }) {
             Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 700.dp)
+                    .clip(RoundedCornerShape(16.dp)),
                 shape = RoundedCornerShape(16.dp),
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
                     // Le texte dans le dialog
-                    FormNewMenu(restaurant, menuViewModel)
+                    FormNewMenu(restaurant, menuViewModel, navController)
                 }
             }
         }
@@ -239,7 +244,8 @@ fun RestaurantBanner(restaurant: Restaurant, navController: NavController) {
                 style = TextStyle(
                     fontSize = 16.sp,
                     color = Color.Gray,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    fontFamily = FontFamily(Font(R.font.sofiapro_medium))
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -282,7 +288,8 @@ fun FilterMenus(menuViewModel: MenuViewModel, onSortChanged: (sortOrder: Int) ->
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("Trier par : ", style = TextStyle(fontSize = 18.sp, color = Color.Gray))
+        Text("Trier par : ", style = TextStyle(fontSize = 18.sp, color = Color.Gray, fontFamily = FontFamily(Font(R.font.sofiapro_medium))))
+
         Spacer(modifier = Modifier.width(8.dp))
 
         Column(
@@ -318,14 +325,20 @@ fun FilterMenus(menuViewModel: MenuViewModel, onSortChanged: (sortOrder: Int) ->
                     )
                 }
 
-                // todo modifier le menu déroulant
                 DropdownMenu(
                     expanded = isDropDownExpanded.value,
-                    onDismissRequest = { isDropDownExpanded.value = false }
+                    onDismissRequest = { isDropDownExpanded.value = false },
+                    modifier = Modifier
+                        .background(Color.White)
                 ) {
                     sortOptions.forEachIndexed { index, option ->
                         DropdownMenuItem(
-                            text = { Text(option, color = Color.Black) },
+                            text = {
+                                Text(text = option,
+                                    fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = colorResource(id = R.color.orange)) },
                             onClick = {
                                 isDropDownExpanded.value = false
                                 menuViewModel.updateSortOrder(index)

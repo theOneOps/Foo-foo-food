@@ -71,7 +71,9 @@ fun TextFieldWithError(
     label: String,
     errorMessage: String,
     isValid: (String) -> Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    // options optionnelles
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
     var isError by remember { mutableStateOf(false) }
 
@@ -96,7 +98,7 @@ fun TextFieldWithError(
         },
         colors = TextFieldDefaults.textFieldColors(
             focusedTextColor = colorResource(id = R.color.black),
-            unfocusedTextColor = Color.Gray,
+            unfocusedTextColor = colorResource(id = R.color.black),
             focusedIndicatorColor = colorResource(id = R.color.orange),
             unfocusedIndicatorColor = Color.Gray,
             errorIndicatorColor = Color.Red,
@@ -105,6 +107,7 @@ fun TextFieldWithError(
             errorContainerColor = colorResource(id = R.color.white_grey),
         ),
         modifier = modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
     )
 }
 
@@ -130,7 +133,7 @@ fun PasswordTextField(
         },
         colors = TextFieldDefaults.textFieldColors(
             focusedTextColor = colorResource(id = R.color.black),
-            unfocusedTextColor = Color.Gray,
+            unfocusedTextColor = colorResource(id = R.color.black),
             focusedIndicatorColor = colorResource(id = R.color.orange),
             unfocusedIndicatorColor = Color.Gray,
             errorIndicatorColor = Color.Red,
@@ -168,7 +171,7 @@ fun PasswordTextField(
 }
 
 @Composable
-fun ValidateButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun ValidateButton(label: String, onClick: () -> Unit) {
     Button(
         onClick = { onClick() },
         modifier = Modifier

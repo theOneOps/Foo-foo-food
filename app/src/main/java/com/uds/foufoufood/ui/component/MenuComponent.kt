@@ -95,7 +95,8 @@ fun MenuComponent(
                 Text(
                     text = menu.description,
                     color = Color.Gray,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.sofiapro_medium))
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -118,6 +119,7 @@ fun MenuComponent(
                         Text(
                             text = "${menu.price} €",
                             color = colorResource(id = R.color.orange),
+                            fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
                         )
                     }
 
