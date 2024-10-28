@@ -78,20 +78,7 @@ fun AllOrdersScreen(
                     .padding(horizontal = 16.dp)
             ) {
                 // Header with logo and title
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 24.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.logo_only),
-                        contentDescription = "Logo",
-                        tint = colorResource(R.color.orange),
-                        modifier = Modifier.size(50.dp)
-                    )
-                }
+                Spacer(modifier = Modifier.height(100.dp))
 
                 Text(
                     text = "Historique des commandes",

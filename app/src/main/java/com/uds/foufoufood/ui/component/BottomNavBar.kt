@@ -1,7 +1,9 @@
 package com.uds.foufoufood.ui.component
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -10,6 +12,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -22,8 +25,8 @@ fun BottomNavBarClient(
     onclick: (Int) -> Unit
 ) {
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.background,
-        contentColor = MaterialTheme.colorScheme.onBackground,
+        containerColor = colorResource(id = R.color.white),
+        contentColor = colorResource(id = R.color.white),
     ) {
         // Liste des éléments avec des icônes Material et des libellés
         val items = listOf(
@@ -35,7 +38,6 @@ fun BottomNavBarClient(
 
         items.forEachIndexed { index, item ->
             val isSelected = selectedItem == index
-            Log.d("BottomNavBarClient", "Selected item: $selectedItem")
 
             NavigationBarItem(
                 icon = {
@@ -58,14 +60,12 @@ fun BottomNavBarClient(
                 alwaysShowLabel = true,
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = colorResource(id = R.color.orange),
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.0f),
                     selectedTextColor = colorResource(id = R.color.orange),
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 )
             )
         }
     }
-
-
 }
 
