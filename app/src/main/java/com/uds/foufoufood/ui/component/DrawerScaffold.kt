@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,6 +40,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -83,11 +86,21 @@ fun DrawerScaffold(
                         scope.launch { drawerState.open() }
                     },
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(end = 20.dp, top = 20.dp)
+                        .align(Alignment.TopStart)
+                        .padding(start = 20.dp, top = 20.dp)
                 ) {
                     Icon(Icons.Filled.Menu, contentDescription = "Menu")
                 }
+
+                Image(
+                    painter = painterResource(R.drawable.logo_only),
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .size(85.dp)
+                        .clip(CircleShape)
+                        .align(Alignment.TopEnd)
+                        .padding(20.dp)
+                )
             }
         }
     )
@@ -124,21 +137,26 @@ fun DrawerContent(
                 .padding(bottom = 20.dp, top = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Avatar image
-            Image(
-                painter = painterResource(R.drawable.ic_profile_avatar), // Replace with actual avatar drawable
-                contentDescription = "Profile Picture",
+            Icon(
+                painter = painterResource(R.drawable.ic_profile_avatar),
+                contentDescription = "Edit Profile",
+                tint = colorResource(R.color.orange), // Orange color
                 modifier = Modifier
                     .size(64.dp)
-                    .clip(CircleShape)
+                    .padding(start = 8.dp)
+                    .clickable {
+                        closeDrawer()
+                        navController.navigate(Screen.Profile.route)
+                    }
             )
 
             Spacer(modifier = Modifier.width(16.dp))
 
             // User information
             Column {
-                Text(text = name, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                Text(text = email, fontSize = 14.sp, color = Color.Gray)
+                Text(text = name, fontWeight = FontWeight.Bold, fontSize = 21.sp, fontFamily = FontFamily(Font(R.font.sofiapro_bold)))
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = email, fontSize = 16.sp, color = Color.Gray, fontFamily = FontFamily(Font(R.font.sofiapro_medium)))
             }
         }
 
@@ -209,7 +227,7 @@ fun DrawerContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Log out button at the bottom
+        // butuon deconnexion centré
         Button(
             onClick = {
                 closeDrawer()
@@ -220,21 +238,20 @@ fun DrawerContent(
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.orange)), // Orange color
             shape = RoundedCornerShape(36.dp),
             modifier = Modifier
-                .fillMaxWidth()
                 //.height(50.dp)
                 .padding(16.dp)
-                .align(Alignment.Start)
+                .align(Alignment.CenterHorizontally)
         ) {
             Icon(
                 ImageVector.vectorResource(R.drawable.ic_drawer_logout),
                 contentDescription = stringResource(R.string.logout),
                 tint = colorResource(R.color.white),
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(40.dp)
                     .padding(end = 12.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(stringResource(R.string.logout), color = colorResource(R.color.white))
+            Text(stringResource(R.string.logout), color = colorResource(R.color.white), fontFamily = FontFamily(Font(R.font.sofiapro_medium)), fontSize = 18.sp)
         }
     }
 }
@@ -255,6 +272,7 @@ fun DrawerMenuItem(icon: ImageVector, label: String, onClick: () -> Unit) {
             modifier = Modifier
                 .size(36.dp)
                 .padding(4.dp),
+            tint = colorResource(R.color.orange) // Orange color
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -262,8 +280,9 @@ fun DrawerMenuItem(icon: ImageVector, label: String, onClick: () -> Unit) {
         // Menu item label
         Text(
             text = label,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
         )
     }
 }

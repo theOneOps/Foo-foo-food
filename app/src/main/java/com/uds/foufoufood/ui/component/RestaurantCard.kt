@@ -24,10 +24,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.uds.foufoufood.R
 import com.uds.foufoufood.activities.main.TokenManager.getUserId
 import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.navigation.Screen
@@ -88,6 +92,7 @@ fun RestaurantCard(
 
             Column(
                 modifier = Modifier
+                    .background(colorResource(id = R.color.white))
                     .padding(16.dp)
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.SpaceBetween,
@@ -98,6 +103,7 @@ fun RestaurantCard(
                     text = restaurant.name,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface,
+                    fontFamily = FontFamily(Font(R.font.sofiapro_bold)),
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
@@ -110,15 +116,15 @@ fun RestaurantCard(
                     Box(
                         modifier = Modifier
                             .background(
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                color = colorResource(id = R.color.orange_alpha),
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .padding(horizontal = 16.dp, vertical = 6.dp)
                     ) {
                         Text(
                             text = restaurant.speciality,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.primary
+                            fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                            color = colorResource(id = R.color.orange),
                         )
                     }
 

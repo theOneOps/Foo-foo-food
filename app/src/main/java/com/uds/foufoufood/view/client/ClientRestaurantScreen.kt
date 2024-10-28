@@ -50,6 +50,7 @@ import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.activities.main.TokenManager.getUserId
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Restaurant
+import com.uds.foufoufood.ui.component.BackButton
 import com.uds.foufoufood.ui.component.FormNewMenu
 import com.uds.foufoufood.ui.component.MenuComponent
 import com.uds.foufoufood.ui.component.TextLink
@@ -77,6 +78,9 @@ fun ClientRestaurantScreen(
     }
 
     LazyColumn {
+        item {
+            BackButton(navController = navController)
+        }
         item {
             RestaurantComponent(restaurant)
         }
@@ -166,7 +170,7 @@ fun RestaurantComponent(restaurant: Restaurant) {
             )
         }
 
-        // IconButton positionné en haut à gauche
+        /*// IconButton positionné en haut à gauche
         Box(
             Modifier
                 .align(Alignment.TopStart) // Aligner en haut à gauche
@@ -174,7 +178,7 @@ fun RestaurantComponent(restaurant: Restaurant) {
                 .shadow(4.dp, shape = CircleShape)
         ) {
             IconButton(
-                onClick = { /* Action du bouton */ },
+                onClick = { *//* Action du bouton *//* },
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(Color.White)
@@ -186,7 +190,7 @@ fun RestaurantComponent(restaurant: Restaurant) {
                     color = Color.Black
                 )
             }
-        }
+        }*/
 
         Text(
             text = restaurant.name,

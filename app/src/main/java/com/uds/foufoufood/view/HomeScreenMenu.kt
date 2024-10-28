@@ -71,6 +71,8 @@ fun HomeScreenMenu(
                 .padding(16.dp)
                 .background(MaterialTheme.colorScheme.background)
         ) {
+            Spacer(modifier = Modifier.height(23.dp))
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -82,6 +84,7 @@ fun HomeScreenMenu(
                     text = textAddress,
                     style = MaterialTheme.typography.bodySmall,
                     fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                    fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
