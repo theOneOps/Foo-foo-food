@@ -9,6 +9,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -19,12 +21,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.ui.component.BottomNavBarAdmin
 import com.uds.foufoufood.ui.component.BottomNavBarClient
@@ -70,7 +74,7 @@ fun UnifiedNavHost(
     menuViewModel: MenuViewModel,
     restaurantViewModel: RestaurantViewModel,
     cartViewModel: CartViewModel,
-    showAdminBottomBar: Boolean // Nouveau paramètre pour conditionner la BottomBar
+    showAdminBottomBar: Boolean, // Nouveau paramètre pour conditionner la BottomBar
 ) {
     var selectedItem by remember { mutableStateOf(0) }
 
@@ -120,7 +124,7 @@ fun UnifiedNavHost(
         NavHost(
             navController = navController,
             startDestination = getStartDestination(connectUser, emailValidated),
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.padding(innerPadding).background(color = colorResource(id = R.color.white)),
             enterTransition = { fadeIn(animationSpec = tween(700)) + scaleIn(initialScale = 0.95f) },
             exitTransition = { fadeOut(animationSpec = tween(700)) + scaleOut(targetScale = 1.05f) }
         ) {

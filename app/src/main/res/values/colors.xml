@@ -17,4 +17,5 @@
     <color name="grey_bg">#FCFCFD</color>
     <color name="grey_bg_deactivated">#D9D9D9</color>
     <color name="green">#01F60A</color>
+    <color name="grey_bg_alpha">#2CD9D7D7</color>
 </resources>

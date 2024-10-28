@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.uds.foufoufood.R
 
@@ -27,8 +28,8 @@ fun BackButton(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
             .padding(20.dp)
+            .zIndex(1f) // Pour s'assurer qu'il est au-dessus de l'image
     ) {
         IconButton(
             onClick = { navController.popBackStack() }, // Action de retour

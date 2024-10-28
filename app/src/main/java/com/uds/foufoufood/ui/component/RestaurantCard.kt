@@ -28,7 +28,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.uds.foufoufood.R
@@ -136,10 +138,16 @@ fun RestaurantCard(
                                 navHostController.navigate(Screen.ModifyRestaurantPage.route)
                             },
                             colors = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colorScheme.secondary
+                                contentColor = colorResource(id = R.color.orange)
                             )
                         ) {
-                            Text("Modify")
+                            Text("Modifier",
+                                color = colorResource(id = R.color.orange),
+                                textDecoration = TextDecoration.Underline,
+                                fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp
+                            )
                         }
                     }
                 }

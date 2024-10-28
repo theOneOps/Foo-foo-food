@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -69,7 +70,7 @@ fun HomeScreenMenu(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .background(MaterialTheme.colorScheme.background)
+                .background(color = colorResource(id = R.color.white))
         ) {
             Spacer(modifier = Modifier.height(23.dp))
 

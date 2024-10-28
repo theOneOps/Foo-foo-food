@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -100,7 +101,7 @@ fun TextFieldWithError(
             unfocusedIndicatorColor = Color.Gray,
             errorIndicatorColor = Color.Red,
             cursorColor = colorResource(id = R.color.orange),
-            containerColor = colorResource(id = R.color.white),
+            containerColor = colorResource(id = R.color.grey_bg_alpha),
             errorContainerColor = colorResource(id = R.color.white_grey),
         ),
         modifier = modifier.fillMaxWidth(),
@@ -134,7 +135,7 @@ fun PasswordTextField(
             unfocusedIndicatorColor = Color.Gray,
             errorIndicatorColor = Color.Red,
             cursorColor = colorResource(id = R.color.orange),
-            containerColor = colorResource(id = R.color.white),
+            containerColor = colorResource(id = R.color.grey_bg_alpha),
             errorContainerColor = colorResource(id = R.color.white_grey),
         ),
         label = {
@@ -189,6 +190,11 @@ fun FacebookButton() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
+            .shadow(
+                elevation = 4.dp,  // Épaisseur de l'ombre
+                shape = RoundedCornerShape(30.dp),
+                clip = false // Garde les coins arrondis de l'ombre
+            )
             .background(Color.White, shape = RoundedCornerShape(30.dp))
             .size(140.dp, 54.dp)
             .padding(10.dp)
@@ -208,6 +214,11 @@ fun GoogleButton() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
+            .shadow(
+                elevation = 4.dp,  // Épaisseur de l'ombre
+                shape = RoundedCornerShape(30.dp),
+                clip = false // Garde les coins arrondis de l'ombre
+            )
             .background(Color.White, shape = RoundedCornerShape(30.dp))
             .size(140.dp, 54.dp)
             .padding(10.dp)

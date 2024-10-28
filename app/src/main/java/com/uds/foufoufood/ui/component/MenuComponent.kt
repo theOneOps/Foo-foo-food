@@ -7,14 +7,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +27,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -41,90 +48,105 @@ fun MenuComponent(
     menu: Menu,
     menuViewModel: MenuViewModel
 ) {
-
-    // State pour contrôler l'affichage du dialog
     val context = LocalContext.current
     val token = getToken(context) ?: ""
 
     Card(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(12.dp)
             .clickable {
                 menuViewModel.setSharedCurrentMenu(menu)
                 navController.navigate(Screen.ClientInstanceMenuPage.route)
-            }, // Ouvrir le dialog lors du clic
+            },
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(8.dp)
+        elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Column {
-            // Image en haut
+            // Image en haut avec coins arrondis
             AsyncImage(
                 model = menu.image,
                 modifier = Modifier
-                    .height(300.dp) // Hauteur de l'image définie
-                    .clip(RoundedCornerShape(16.dp)),
+                    .height(200.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
                 contentDescription = menu.description,
                 contentScale = ContentScale.Crop,
             )
 
-            // Texte en dessous de l'image
-            Box(
-                contentAlignment = Alignment.BottomStart,
+            // Contenu du menu
+            Column(
                 modifier = Modifier
+                    .background(colorResource(id = R.color.white))
                     .fillMaxWidth()
-                    .padding(
-                        start = 10.dp,
-                        top = 8.dp
-                    ) // Espacement pour que le texte soit plus espacé de l'image
+                    .padding(16.dp)
             ) {
-                Column(Modifier.padding(top = 2.dp, bottom = 2.dp)) {
-                    Text(menu.name, style = TextStyle(Color.Black, fontSize = 30.sp))
-                    Text(menu.description, style = TextStyle(Color.Gray, fontSize = 20.sp))
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    colorResource(R.color.white_grey),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .padding(horizontal = 12.dp, vertical = 8.dp)
-                        ) {
-                            Text(
-                                menu.price.toString(),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = colorResource(R.color.grey),
-                                fontSize = 12.sp,
+                Text(
+                    text = menu.name.replaceFirstChar { it.uppercase() },
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.sofiapro_bold))
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = menu.description,
+                    color = Color.Gray,
+                    fontSize = 16.sp
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Row for Price and Delete Button (if applicable)
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Price Tag
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = colorResource(id = R.color.orange_alpha),
+                                shape = RoundedCornerShape(12.dp)
                             )
-                        }
-                        val isConnectedRestaurateur = menuViewModel.isConnectedRestorer.value!!
-                        if (isConnectedRestaurateur)
-                        {
-                            Box(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                contentAlignment = Alignment.CenterEnd
-                            ) {
-                                TextLink(label = "Delete Menu", onClick = {
-                                    // suppression du menu
-                                    menuViewModel.deleteMenu(token, menu._id)
-                                    Toast.makeText(
-                                        context,
-                                        "menu bien supprimé",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                })
-                            }
+                            .padding(horizontal = 16.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = "${menu.price} €",
+                            color = colorResource(id = R.color.orange),
+                        )
+                    }
+
+                    // Delete Menu Button (if user is restaurateur)
+                    val isConnectedRestaurateur = menuViewModel.isConnectedRestorer.value == true
+                    if (isConnectedRestaurateur) {
+                        TextButton(
+                            onClick = {
+                                menuViewModel.deleteMenu(token, menu._id)
+                                Toast.makeText(
+                                    context,
+                                    "Menu supprimé avec succès",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            },
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Text("Supprimer",
+                                textDecoration = TextDecoration.Underline,
+                                fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp
+                            )
                         }
                     }
                 }
             }
         }
     }
-
 }

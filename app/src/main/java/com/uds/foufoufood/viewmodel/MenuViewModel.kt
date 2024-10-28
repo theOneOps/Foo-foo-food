@@ -19,6 +19,12 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
     private val _menus = MutableLiveData<List<Menu>?>()
     val menus: LiveData<List<Menu>?> get() = _menus
 
+    private val _sortOrder = MutableLiveData<Int?>()
+    val sortOrder: LiveData<Int?> get() = _sortOrder
+
+    private val _sortedMenus = MutableLiveData<List<Menu>>()
+    val sortedMenus: LiveData<List<Menu>> get() = _sortedMenus
+
     private val _shared_restaurant = MutableLiveData<Restaurant>()
     val shared_restaurant: LiveData<Restaurant> get() = _shared_restaurant
 
@@ -42,14 +48,33 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
     private val _filteredMenu = MutableLiveData<List<Menu>?>()
     val filteredMenu: LiveData<List<Menu>?> get() = _filteredMenu
 
+    fun updateSortOrder(sortOrder: Int) {
+        _sortOrder.value = sortOrder
+        Log.d("MenuViewModel", "Sort order updated to: $sortOrder")
+        applySort()
+    }
+
+    private fun applySort() {
+        Log.d("MenuViewModel", "applySort")
+        Log.d("MenuViewModel", "sortOrder - apply sort : ${sortOrder.value}")
+        Log.d("MenuViewModel", "menus - apply sort : ${menus.value}")
+        _menus.value?.let { menus ->
+            _sortedMenus.value = when (_sortOrder.value) {
+                0 -> menus.sortedBy { it.price }
+                1 -> menus.sortedByDescending { it.price }
+                else -> menus
+            }
+        }
+        Log.d("MenuViewModel", "sortedMenus - apply sort : ${sortedMenus.value}")
+    }
+
     suspend fun getAllMenusByRestaurant(token: String, restaurantId: String) {
         try {
             val response = repository.getAllMenusByRestaurant(token, restaurantId)
-
             // Vérifier si la réponse est réussie
             if (response != null && response.success) {
                 _menus.postValue(response.data ?: emptyList()) // Mettre à jour le LiveData
-                // Retourner la liste des menus ou une liste vide si elle est nulle
+                _sortedMenus.postValue(response.data ?: emptyList())
             } else {
                 Log.e("MenuViewModel", "Erreur d'accès aux menus : ${response?.message}")
             }
@@ -243,6 +268,7 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
             val fetchedMenu = repository.getAllMenus()?.data
             if (fetchedMenu != null) {
                 _menus.value = fetchedMenu
+                applySort()
                 _filteredMenu.value = _menus.value
                 for ((countCategory, menu) in _menus.value!!.withIndex()) {
                     if (_categories.value?.any { it.name == menu.category } != true) {
