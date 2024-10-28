@@ -17,6 +17,7 @@ import com.uds.foufoufood.data_class.response.AuthResponse
 import com.uds.foufoufood.data_class.response.AvailabilityResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -88,6 +89,15 @@ interface UserApi {
         @Header("Authorization") token: String,
         @Body request: RegisterFcmTokenRequest
     ): Response<Void>
+
+    @PUT("api/users/block-account/{id}")
+    suspend fun blockAccount(@Path("id") id:String):Response<ApiResponse>
+
+    @PUT("api/users/unlock-account/{id}")
+    suspend fun unlockAccount(@Path("id") id:String):Response<ApiResponse>
+
+    @DELETE("api/users/delete-account/{id}")
+    suspend fun deleteAccount(@Path("id") id:String):Response<ApiResponse>
 }
 
 

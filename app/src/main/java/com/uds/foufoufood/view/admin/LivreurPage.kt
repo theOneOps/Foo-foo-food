@@ -13,8 +13,11 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,14 +38,14 @@ fun LivreurPage(
     userViewModel: UserViewModel,
     onRoleChanged: (User, String) -> Unit
 ) {
-    // Trigger data fetching when the composable is first launched
+
     LaunchedEffect(Unit) {
         Log.d("LivreurPage", "Appel à fetchUsers")
         adminUsersViewModel.fetchUsers("livreur")
     }
-
+    val livreurUsersState by adminUsersViewModel.filteredUsers.observeAsState()
     // Observe livreur users
-    val livreurUsers = adminUsersViewModel.filteredUsers
+    val livreurUsers = livreurUsersState!!
 
     DrawerScaffold(
         navController = navController,
@@ -103,14 +106,20 @@ fun LivreurPage(
                                 }
                             )
                         }
+                    }else
+                    {
+                        item {
+                            Box(Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center){
+                                Text("il n'y a pas de livreurs !")
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
-
-
 
 
 

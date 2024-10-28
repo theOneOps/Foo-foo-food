@@ -59,10 +59,10 @@ class RestaurantRepository(private val restaurantApi: RestaurantApi) {
         }
 
     // Update an existing restaurant by ID
-    suspend fun updateRestaurant( id: String, restaurant: Restaurant): ApiResponse? =
+    suspend fun updateRestaurant(id: String, restaurant: Restaurant): ApiResponse? =
         withContext(Dispatchers.IO) {
             try {
-                val response = restaurantApi.updateRestaurant( id, restaurant)
+                val response = restaurantApi.updateRestaurant(id, restaurant)
                 if (response.isSuccessful) {
                     response.body()
                 } else {
@@ -90,4 +90,21 @@ class RestaurantRepository(private val restaurantApi: RestaurantApi) {
             null
         }
     }
+
+    suspend fun linkARestorer(id: String, restaurantId: String): ApiResponse? =
+        withContext(Dispatchers.IO)
+        {
+            try {
+                val response = restaurantApi.linkedARestorer(id, restaurantId)
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    Log.e("RestaurantRepository", "Error deleting restaurant: ${response.code()}")
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("RestaurantRepository", "Network error: ${e.message}")
+                null
+            }
+        }
 }

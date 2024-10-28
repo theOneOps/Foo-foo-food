@@ -6,10 +6,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.uds.foufoufood.data_class.model.Address
+import com.uds.foufoufood.data_class.model.Restaurant
+import java.util.UUID
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddRestaurantPage(navController: NavController, onRestaurantAdded: (com.uds.foufoufood.data_class.model.Restaurant) -> Unit) {
+fun AddRestaurantPage(
+    navController: NavController,
+    onRestaurantAdded: (Restaurant) -> Unit
+) {
     var restaurantName by remember { mutableStateOf("") }
 
     Scaffold(
@@ -43,19 +50,25 @@ fun AddRestaurantPage(navController: NavController, onRestaurantAdded: (com.uds.
             Button(
                 onClick = {
                     if (restaurantName.isNotEmpty()) {
+                        val newAddress = Address(
+                            street = "Street",
+                            number = 99,
+                            country = "Canada",
+                            city = "Sherbrooke"
+                        )
                         // Créer un nouvel objet restaurant et le passer à la fonction de callback
-                        val newRestaurant = com.uds.foufoufood.data_class.model.Restaurant(
+                        val newRestaurant = Restaurant(
                             name = restaurantName,
-                            address = com.uds.foufoufood.data_class.model.Address(1),
+                            newAddress,
                             speciality = "",
-                            phone = "",
-                            openingHours = "",
+                            phone = "0123456789",
+                            openingHours = "09:00",
                             items = listOf(),
                             rating = 0.0,
                             reviews = listOf(),
                             imageUrl = "",
                             userId = "",
-                            _id = ""
+                            _id = UUID.randomUUID().toString(),
                         )
                         onRestaurantAdded(newRestaurant)
                         navController.popBackStack() // Retour à la liste des restaurants après l'ajout

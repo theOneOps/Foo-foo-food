@@ -3,7 +3,6 @@ package com.uds.foufoufood.viewmodel
 import UserRepository
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -69,20 +68,52 @@ class UserViewModel(
             try {
                 val response = userRepository.login(email, password)
                 if (response != null) {
-                    _user.value = response.user
-                    _token.value = response.token
+                    if (response.user.blockedAccount == false)
+                    {
+                        _user.value = response.user
+                        _token.value = response.token
+                        _loginSuccess.value = true
 
-                    // Fetch and register FCM token with the backend
-                    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val fcmToken = task.result
-                            registerFcmToken(email, fcmToken)
+                        // Fetch and register FCM token with the backend
+                        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val fcmToken = task.result
+                                registerFcmToken(email, fcmToken)
+                            }
+                        }
+
+
+                        if (response.user.emailValidated == false) {
+                            _emailValidated.value = false
+                            _loading.value = false
+                        }
+                        else {
+                            saveToken(context, response.token)
+                            saveUserId(context, response.user._id)
+                            _emailValidated.value = true
+                            userRepository.setUserEmail(email)
+                            Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
+                            _errorMessage.value = null
+                        }
+
+                        if (response.user.registrationComplete == false) {
+                            _registrationCompleteSuccess.value = false
+                            _loading.value = false
+                        }
+                        else {
+                            saveToken(context, response.token)
+                            saveUserId(context, response.user._id)
+                            userRepository.setUserEmail(email)
+                            _registrationCompleteSuccess.value = true
+                            Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
+                            _errorMessage.value = null
                         }
                     }
-
-                    _loginSuccess.value = true
-                    saveToken(context, response.token)
-                    saveUserId(context, response.user._id)
+                    else
+                    {
+                        _errorMessage.value = "Erreur, connexion échouée car compte bloqué"
+                        _loginSuccess.value = false
+                    }
                 } else {
                     _errorMessage.value = "Erreur, connexion échouée"
                     _loginSuccess.value = false

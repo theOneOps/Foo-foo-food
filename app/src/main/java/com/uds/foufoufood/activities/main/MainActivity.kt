@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         // ADMIN
         val adminRepository = AdminRepository(userApi, this)
         adminUsersViewModel = AdminUsersViewModel(adminRepository)
-        adminRestaurantsViewModel = AdminRestaurantsViewModel()
+        adminRestaurantsViewModel = AdminRestaurantsViewModel(restaurantRepository)
 
         // DELIVERY
         val deliveryRepository = DeliveryRepository(userApi, this)

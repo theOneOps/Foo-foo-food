@@ -3,12 +3,9 @@ package com.uds.foufoufood.view.client
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,8 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -40,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.uds.foufoufood.R
-import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.ui.component.TitlePage
 import com.uds.foufoufood.ui.component.ValidateButton
@@ -50,7 +44,6 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewModel) {
     val context = LocalContext.current
     val address = userViewModel.user.value?.address
-    val hasAddress = address != null
     var number by remember { mutableStateOf(address?.number) }
     var street by remember { mutableStateOf(address?.street ?: "") }
     var zipCode by remember { mutableStateOf(address?.zipCode ?: "") }

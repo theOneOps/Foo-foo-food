@@ -22,6 +22,7 @@ sealed class Screen(val route: String) {
             return "userProfile/$userEmail"
         }
     }
+    object AdminLinkARestorerToAResto: Screen("admin_linked_restaurant_to_restorer")
 
     // Delivery
     object DeliveryAvailablePage : Screen("delivery_available_page")

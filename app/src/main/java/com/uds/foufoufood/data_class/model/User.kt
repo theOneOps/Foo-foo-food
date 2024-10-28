@@ -11,5 +11,7 @@ data class User(
     var emailValidated:Boolean?= false,
     var registrationComplete: Boolean? = false,
     val deliveryAvailability: Boolean? = null, // Nullable pour les non-livreurs
+    val restaurantId:String?,
     val _id:String,
+    val blockedAccount:Boolean? = false
 )
