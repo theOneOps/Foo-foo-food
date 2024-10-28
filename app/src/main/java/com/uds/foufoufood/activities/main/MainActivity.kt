@@ -1,13 +1,21 @@
 package com.uds.foufoufood.activities.main
 
 import UserRepository
+import android.Manifest
 import android.app.Activity
+import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.uds.foufoufood.network.MenuApi
 import com.uds.foufoufood.network.OrderApi
 import com.uds.foufoufood.network.RestaurantApi
@@ -38,10 +46,30 @@ class MainActivity : AppCompatActivity() {
     private lateinit var menuViewModel: MenuViewModel
     private lateinit var restaurantViewModel: RestaurantViewModel
     private lateinit var cartViewModel: CartViewModel
+    //private lateinit var orderTrackingViewModel: OrderTrackingViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkNotificationPermission()
+        }
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            val msg = token
+            Log.d("FBToken", msg)
+            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+        })
 
         val retrofit = RetrofitHelper.getRetrofitInstance(this)
         requestNotificationPermission(this)
@@ -66,6 +94,7 @@ class MainActivity : AppCompatActivity() {
         val orderRepository = OrderRepository(orderApi, this)
         orderViewModel = OrderViewModel(orderRepository, this)
         cartViewModel = CartViewModel(orderRepository, userViewModel)
+        //orderTrackingViewModel = OrderTrackingViewModel(orderRepository, userViewModel)
 
         val menuApi = retrofit.create(MenuApi::class.java)
         val menuRepository = MenuRepository(menuApi)
@@ -85,9 +114,39 @@ class MainActivity : AppCompatActivity() {
                 orderViewModel = orderViewModel,
                 menuViewModel = menuViewModel,
                 restaurantViewModel = restaurantViewModel,
-                cartViewModel = cartViewModel
+                cartViewModel = cartViewModel,
+                orderRepository = orderRepository
             )
 
+        }
+    }
+
+    private fun checkNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                NOTIFICATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                // Permission granted; you can now show notifications
+            } else {
+                // Permission denied; handle accordingly
+            }
         }
     }
 

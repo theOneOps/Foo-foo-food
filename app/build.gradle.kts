@@ -93,8 +93,15 @@ dependencies {
     implementation(libs.google.firebase.storage)
     implementation (libs.firebase.messaging)
 
-    // from glide
+    // Add the dependencies for the Firebase Cloud Messaging and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.analytics)
+
+
+// from glide
     implementation(libs.github.glide)
+    implementation(libs.firebase.messaging.ktx)
     annotationProcessor(libs.github.compiler)
 
     testImplementation(libs.junit)

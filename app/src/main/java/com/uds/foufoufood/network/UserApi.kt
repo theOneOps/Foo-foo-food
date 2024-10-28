@@ -7,6 +7,7 @@ import com.uds.foufoufood.data_class.request.EmailRequest
 import com.uds.foufoufood.data_class.request.LoginRequest
 import com.uds.foufoufood.data_class.request.PasswordRequest
 import com.uds.foufoufood.data_class.request.ProfileRequest
+import com.uds.foufoufood.data_class.request.RegisterFcmTokenRequest
 import com.uds.foufoufood.data_class.request.RegistrationRequest
 import com.uds.foufoufood.data_class.request.RoleUpdateRequest
 import com.uds.foufoufood.data_class.request.UpdateEmailRequest
@@ -81,6 +82,12 @@ interface UserApi {
     suspend fun getAvailability(
         @Header("Authorization") token: String
     ): Response<AvailabilityResponse>
+
+    @PUT("api/users/register-fcm-token")
+    suspend fun registerFcmToken(
+        @Header("Authorization") token: String,
+        @Body request: RegisterFcmTokenRequest
+    ): Response<Void>
 }
 
 

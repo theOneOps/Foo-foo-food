@@ -26,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.uds.foufoufood.data_class.model.Restaurant
+import com.uds.foufoufood.repository.OrderRepository
 import com.uds.foufoufood.ui.component.BottomNavBarAdmin
 import com.uds.foufoufood.ui.component.BottomNavBarClient
 import com.uds.foufoufood.view.HomeScreenMenu
@@ -43,6 +44,8 @@ import com.uds.foufoufood.view.client.AddressScreen
 import com.uds.foufoufood.view.client.CartScreen
 import com.uds.foufoufood.view.client.ClientRestaurantScreen
 import com.uds.foufoufood.view.client.MenuRestaurantScreen
+import com.uds.foufoufood.view.client.NotificationsScreen
+import com.uds.foufoufood.view.client.OrderTrackingScreen
 import com.uds.foufoufood.view.client.ProfileScreen
 import com.uds.foufoufood.view.client.UpdateAddressScreen
 import com.uds.foufoufood.view.delivery.AllOrdersScreen
@@ -53,6 +56,7 @@ import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.CartViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
+import com.uds.foufoufood.viewmodel.OrderTrackingViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.RestaurantViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
@@ -70,7 +74,8 @@ fun UnifiedNavHost(
     menuViewModel: MenuViewModel,
     restaurantViewModel: RestaurantViewModel,
     cartViewModel: CartViewModel,
-    showAdminBottomBar: Boolean // Nouveau paramètre pour conditionner la BottomBar
+    orderRepository: OrderRepository,
+    showAdminBottomBar: Boolean
 ) {
     var selectedItem by remember { mutableStateOf(0) }
 
@@ -86,6 +91,7 @@ fun UnifiedNavHost(
             }
         }
     }
+
     Scaffold(
         bottomBar = {
             if (emailValidated && connectUser.isNotEmpty()) { // Only show when connected
@@ -102,14 +108,14 @@ fun UnifiedNavHost(
                 } else if (connectUser == "client" || connectUser == "restaurateur") {
                     BottomNavBarClient(
                         selectedItem = selectedItem,
+                        userViewModel = userViewModel,
                         onclick = { index ->
                             selectedItem = index
                             when (index) {
                                 0 -> navController.navigate(Screen.HomeRestaurant.route)
                                 1 -> navController.navigate(Screen.HomeMenu.route)
                                 2 -> navController.navigate(Screen.Cart.route)
-                                3 ->
-                                    Log.d("UnifiedNavHost", "Notifications")
+                                3 -> navController.navigate(Screen.Notifications.route)
                             }
                         }
                     )
@@ -137,7 +143,8 @@ fun UnifiedNavHost(
                 restaurantViewModel,
                 menuViewModel,
                 userViewModel,
-                cartViewModel
+                cartViewModel,
+                orderRepository
             )
         }
     }
@@ -315,7 +322,8 @@ fun NavGraphBuilder.addConnectedGraph(
     restaurantsViewModel: RestaurantViewModel,
     menuViewModel: MenuViewModel,
     userViewModel: UserViewModel,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    orderRepository: OrderRepository
 ) {
     composable(Screen.HomeRestaurant.route) {
         HomeScreenRestaurant(navController, restaurantsViewModel, userViewModel, menuViewModel)
@@ -405,6 +413,24 @@ fun NavGraphBuilder.addConnectedGraph(
     composable(Screen.Cart.route) {
         CartScreen(
             cartViewModel = cartViewModel
+        )
+    }
+
+
+    composable(Screen.OrderTracking.route) {
+        val user = userViewModel.user.value
+        if (user != null) {
+            OrderTrackingScreen(
+                orderRepository = orderRepository,
+                userViewModel = userViewModel
+            )
+        }
+    }
+
+    composable(Screen.Notifications.route) {
+        NotificationsScreen(
+            userViewModel = userViewModel,
+            navController = navController
         )
     }
 }
