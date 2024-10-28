@@ -43,6 +43,7 @@ class RestaurantViewModel(private val restaurantRepository: RestaurantRepository
     }
 
     private fun getIconSpecialityResId(speciality: String): Int {
+        Log.d("RestaurantViewModel", "Speciality: $speciality")
         return when (speciality) {
             "USA" -> R.drawable.usa
             "Français" -> R.drawable.france

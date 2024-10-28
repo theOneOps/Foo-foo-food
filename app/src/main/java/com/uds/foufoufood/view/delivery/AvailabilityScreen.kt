@@ -113,7 +113,7 @@ fun AvailabilityScreen(
     ) {
         // Bouton de retour en haut à gauche
         IconButton(
-            onClick = { navController.popBackStack() }, // Action de retour
+            onClick = { navController.navigate(Screen.DeliveryAllOrdersPage.route)}, // Action de retour
             modifier = Modifier
                 .shadow(8.dp, shape = RoundedCornerShape(12.dp))
                 .background(Color.White, shape = RoundedCornerShape(12.dp))

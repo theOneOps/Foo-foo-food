@@ -1,5 +1,6 @@
 package com.uds.foufoufood.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.uds.foufoufood.data_class.model.CartItem
 import com.uds.foufoufood.data_class.model.OrderItem
 import com.uds.foufoufood.data_class.request.OrderRequest
 import com.uds.foufoufood.repository.OrderRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class CartViewModel(
@@ -77,6 +79,7 @@ class CartViewModel(
             val items = cartItems.value ?: emptyList() // Get the actual list from LiveData
 
             // Check for an active order before proceeding with checkout
+            Log.d("CartViewModel", "Token: $token, Delivery Address: $deliveryAddress")
             if (token != null && deliveryAddress != null) {
                 val hasActiveOrder = orderRepository.hasActiveOrder(token, clientEmail)
                 if (hasActiveOrder) {
@@ -93,9 +96,19 @@ class CartViewModel(
                 )
 
                 val orderResponse = orderRepository.createOrder(token, orderRequest)
+
                 if (orderResponse != null) {
                     clearCart()
                     _orderSuccessMessage.value = "Commande passée avec succès !" // Set success message
+
+                    delay(100)
+
+                    val assignResponse = orderRepository.assignOrderToDelivery(orderResponse.orderId)
+                    if (assignResponse != null) {
+                        _orderSuccessMessage.value = "Commande assignée à un livreur !"
+                    } else {
+                        _errorMessage.value = "En attende d'un livreur..."
+                    }
                 } else {
                     _errorMessage.value = "Échec de la création de la commande. Veuillez réessayer."
                 }

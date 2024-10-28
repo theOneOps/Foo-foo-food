@@ -8,6 +8,7 @@ import com.uds.foufoufood.data_class.request.OrderRequest
 import com.uds.foufoufood.data_class.response.OrderResponse
 import com.uds.foufoufood.data_class.request.OrderStatusUpdateRequest
 import com.uds.foufoufood.data_class.request.OrderUpdateRequest
+import com.uds.foufoufood.data_class.response.AssignOrderResponse
 import com.uds.foufoufood.network.OrderApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -101,6 +102,7 @@ class OrderRepository(private val api: OrderApi, private val context: Context) {
     suspend fun hasActiveOrder(token: String, clientEmail: String): Boolean {
         return try {
             val response = api.hasActiveOrder("Bearer $token", clientEmail)
+            Log.d("OrderRepository", "Has active order response: ${response.body()}")
             response.body()?.hasActiveOrder ?: false // Extract the Boolean field
         } catch (e: Exception) {
             Log.e("OrderRepository", "Error checking active order: ${e.message}")
@@ -128,6 +130,24 @@ class OrderRepository(private val api: OrderApi, private val context: Context) {
             }
         }
     }
+
+    suspend fun assignOrderToDelivery(orderId: String): AssignOrderResponse? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = api.assignOrderToDelivery(orderId)
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    Log.e("OrderRepository", "Erreur d'assignation de la commande: ${response.message()}")
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("OrderRepository", "Exception lors de l'assignation de la commande: ${e.message}")
+                null
+            }
+        }
+    }
+
 
 }
 

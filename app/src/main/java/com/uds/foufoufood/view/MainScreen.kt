@@ -42,6 +42,7 @@ fun MainScreen(
     LaunchedEffect(Unit) {
         // Au démarrage de l'application, vérifiez si un token est disponible
         val token = getToken(context)
+        Log.d("MainScreen", "Token: $token")
         if (token != null) {
             userViewModel.getUserFromToken(token)
         }

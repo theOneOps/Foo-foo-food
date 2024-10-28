@@ -1,5 +1,6 @@
 package com.uds.foufoufood.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +35,7 @@ fun BottomNavBarClient(
 
         items.forEachIndexed { index, item ->
             val isSelected = selectedItem == index
+            Log.d("BottomNavBarClient", "Selected item: $selectedItem")
 
             NavigationBarItem(
                 icon = {

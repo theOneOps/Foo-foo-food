@@ -43,6 +43,7 @@ import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Order
 import com.uds.foufoufood.data_class.model.OrderStatus
+import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
@@ -68,7 +69,7 @@ fun DeliveryOrderDetailsScreen(
     ) {
         // Bouton de retour en haut à gauche
         IconButton(
-            onClick = { navController.popBackStack() }, // Action de retour
+            onClick = { navController.navigate(Screen.DeliveryAllOrdersPage.route) }, // Action de retour
             modifier = Modifier
                 .shadow(8.dp, shape = RoundedCornerShape(12.dp))
                 .background(Color.White, shape = RoundedCornerShape(12.dp))
@@ -256,6 +257,10 @@ fun ActionButtons(
                     else -> order.status
                 }
                 orderViewModel.updateOrderStatus(nextStatus)
+                if (nextStatus == OrderStatus.DELIVERED) {
+                    deliveryViewModel.clearNewOrder()
+                    deliveryViewModel.resetAvailability()
+                }
             },
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.orange)),
             enabled = order.status != OrderStatus.DELIVERED && order.status != OrderStatus.WAITING,

@@ -77,8 +77,7 @@ fun UnifiedNavHost(
     LaunchedEffect(navController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             selectedItem = when (destination.route) {
-                Screen.Cart.route -> 0
-                //Screen.Notifications.route -> 1
+
                 Screen.AdminClient.route -> 0
                 Screen.AdminLivreur.route -> 1
                 Screen.AdminGerant.route -> 2

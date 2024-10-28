@@ -197,6 +197,7 @@ class UserViewModel(
             try {
                 val user = userRepository.getUserFromToken(token)
                 _user.value = user
+                _token.value = token
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Erreur lors de la récupération de l'utilisateur: ${e.message}")
             } finally {

@@ -4,6 +4,7 @@ import com.uds.foufoufood.data_class.model.Order
 import com.uds.foufoufood.data_class.request.OrderStatusUpdateRequest
 import com.uds.foufoufood.data_class.request.OrderUpdateRequest
 import com.uds.foufoufood.data_class.request.OrderRequest
+import com.uds.foufoufood.data_class.response.AssignOrderResponse
 import com.uds.foufoufood.data_class.response.HasActiveOrderResponse
 import com.uds.foufoufood.data_class.response.OrderResponse
 import retrofit2.Response
@@ -43,5 +44,11 @@ interface OrderApi {
     suspend fun updateOrder(
         @Body orderUpdateRequest: OrderUpdateRequest
     ): Response<Order>
+
+    @POST("api/orders/assign-order/{id}")
+    suspend fun assignOrderToDelivery(
+        @Path("id") orderId: String
+    ): Response<AssignOrderResponse>
+
 
 }
