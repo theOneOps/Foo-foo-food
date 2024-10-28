@@ -31,6 +31,8 @@ sealed class Screen(val route: String) {
     object ClientRestaurantAllMenusPage : Screen("client_restaurant_all_menu_page")
     object ClientInstanceMenuPage:Screen("menu_page")
     object Cart:Screen("cart")
+    object Notifications : Screen("notifications")
+
     // Restaurateur
     object ModifyRestaurantPage:Screen("modify_restaurant_page")
 

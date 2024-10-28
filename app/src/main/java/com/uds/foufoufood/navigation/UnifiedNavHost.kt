@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.data_class.model.Restaurant
+import com.uds.foufoufood.repository.OrderRepository
 import com.uds.foufoufood.ui.component.BottomNavBarAdmin
 import com.uds.foufoufood.ui.component.BottomNavBarClient
 import com.uds.foufoufood.view.HomeScreen
@@ -37,6 +38,7 @@ import com.uds.foufoufood.view.client.AddressScreen
 import com.uds.foufoufood.view.client.CartScreen
 import com.uds.foufoufood.view.client.ClientRestaurantScreen
 import com.uds.foufoufood.view.client.MenuRestaurantScreen
+import com.uds.foufoufood.view.client.NotificationsScreen
 import com.uds.foufoufood.view.client.OrderTrackingScreen
 import com.uds.foufoufood.view.client.ProfileScreen
 import com.uds.foufoufood.view.client.UpdateAddressScreen
@@ -67,7 +69,7 @@ fun UnifiedNavHost(
     homeViewModel: HomeViewModel,
     menuViewModel: MenuViewModel,
     cartViewModel: CartViewModel,
-    orderTrackingViewModel: OrderTrackingViewModel,
+    orderRepository: OrderRepository,
     showAdminBottomBar: Boolean
 ) {
     var selectedItem by remember { mutableStateOf(0) }
@@ -75,8 +77,8 @@ fun UnifiedNavHost(
     LaunchedEffect(navController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             selectedItem = when (destination.route) {
-                Screen.Cart.route -> 0
-                //Screen.Notifications.route -> 1
+                Screen.Cart.route -> 1
+                Screen.Notifications.route -> 2
                 Screen.AdminClient.route -> 0
                 Screen.AdminLivreur.route -> 1
                 Screen.AdminGerant.route -> 2
@@ -85,6 +87,7 @@ fun UnifiedNavHost(
             }
         }
     }
+
 
     Scaffold(
         // Show the bottom bar only if the user is connected and the role is set
@@ -104,7 +107,8 @@ fun UnifiedNavHost(
                     BottomNavBarClient(
                         selectedItem = selectedItem,
                         onItemSelected = { index -> selectedItem = index },
-                        navController = navController
+                        navController = navController,
+                        userViewModel = userViewModel
                     )
                 }
             }
@@ -129,7 +133,7 @@ fun UnifiedNavHost(
                 menuViewModel,
                 userViewModel,
                 cartViewModel,
-                orderTrackingViewModel
+                orderRepository
             )
         }
     }
@@ -307,7 +311,7 @@ fun NavGraphBuilder.addConnectedGraph(
     menuViewModel: MenuViewModel,
     userViewModel: UserViewModel,
     cartViewModel: CartViewModel,
-    orderTrackingViewModel: OrderTrackingViewModel
+    orderRepository: OrderRepository
 ) {
     // Home Screen (accessible pour 'client' et 'restaurateur')
     composable(Screen.Home.route) {
@@ -403,10 +407,19 @@ fun NavGraphBuilder.addConnectedGraph(
     composable(Screen.OrderTracking.route) {
         val user = userViewModel.user.value
         if (user != null) {
-            OrderTrackingScreen(orderTrackingViewModel = orderTrackingViewModel)
+            OrderTrackingScreen(
+                orderRepository = orderRepository,
+                userViewModel = userViewModel
+            )
         }
     }
 
+    composable(Screen.Notifications.route) {
+        NotificationsScreen(
+            userViewModel = userViewModel,
+            navController = navController
+        )
+    }
 }
 
 

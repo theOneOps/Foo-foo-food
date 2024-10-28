@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.navigation.UnifiedNavHost
+import com.uds.foufoufood.repository.OrderRepository
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.CartViewModel
@@ -33,7 +34,7 @@ fun MainScreen(
     homeViewModel: HomeViewModel,
     menuViewModel: MenuViewModel,
     cartViewModel: CartViewModel,
-    orderTrackingViewModel: OrderTrackingViewModel
+    orderRepository: OrderRepository
 ) {
     val context = LocalContext.current
     val user by userViewModel.user.observeAsState()
@@ -85,7 +86,7 @@ fun MainScreen(
         homeViewModel = homeViewModel,
         menuViewModel = menuViewModel,
         cartViewModel = cartViewModel,
-        orderTrackingViewModel = orderTrackingViewModel,
+        orderRepository = orderRepository,
         showAdminBottomBar = showAdminBottomBar
     )
 }

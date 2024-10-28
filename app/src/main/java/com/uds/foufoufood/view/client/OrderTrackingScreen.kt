@@ -14,13 +14,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.OrderItem
+import com.uds.foufoufood.repository.OrderRepository
 import com.uds.foufoufood.viewmodel.OrderTrackingViewModel
+import com.uds.foufoufood.viewmodel.factory.OrderTrackingViewModelFactory
+import com.uds.foufoufood.viewmodel.UserViewModel
 
 @Composable
 fun OrderTrackingScreen(
-    orderTrackingViewModel: OrderTrackingViewModel) {
+    orderRepository: OrderRepository,
+    userViewModel: UserViewModel
+) {
+    val orderTrackingViewModel: OrderTrackingViewModel = viewModel(
+        factory = OrderTrackingViewModelFactory(orderRepository, userViewModel)
+    )
+
     val order by orderTrackingViewModel.currentOrder.observeAsState()
     val errorMessage by orderTrackingViewModel.errorMessage.observeAsState()
     val context = LocalContext.current
@@ -43,18 +53,32 @@ fun OrderTrackingScreen(
 
     // Notifier lorsque le statut de la commande change
     LaunchedEffect(order?.status) {
-        if (order != null && previousStatus != null && order!!.status != previousStatus) {
-            Toast.makeText(context, "Statut de la commande mis à jour : ${order!!.status.displayName}", Toast.LENGTH_SHORT).show()
-            previousStatus = order!!.status
+        val currentOrder = order
+        if (currentOrder != null && previousStatus != null && currentOrder.status != previousStatus) {
+            Toast.makeText(
+                context,
+                "Statut de la commande mis à jour : ${currentOrder.status.displayName}",
+                Toast.LENGTH_SHORT
+            ).show()
+            previousStatus = currentOrder.status
+        } else if (currentOrder == null && previousStatus != null) {
+            Toast.makeText(context, "Votre commande a été livrée.", Toast.LENGTH_SHORT).show()
+            previousStatus = null
+            // Naviguer vers un autre écran si nécessaire
+            // navController.navigate("home") {
+            //     popUpTo("orderTracking") { inclusive = true }
+            // }
         }
     }
+
+    val currentOrder = order // Capturer 'order' à nouveau pour l'interface utilisateur
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        if (order != null) {
+        if (currentOrder != null) {
             // Afficher les détails de la commande
             Text(
                 text = "Détails de la commande",
@@ -64,14 +88,14 @@ fun OrderTrackingScreen(
 
             // Informations sur le restaurant
             Text(
-                text = "Restaurant : ${order!!.restaurantName ?: "N/A"}",
+                text = "Restaurant : ${currentOrder.restaurantName ?: "N/A"}",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
 
             // Adresse de livraison
-            val deliveryAddress = order!!.deliveryAddress
+            val deliveryAddress = currentOrder.deliveryAddress
             if (deliveryAddress != null) {
                 Text(
                     text = "Adresse de livraison :",
@@ -100,16 +124,9 @@ fun OrderTrackingScreen(
 
             // Statut de la commande
             Text(
-                text = "Statut : ${order!!.status.displayName}",
+                text = "Statut : ${currentOrder.status.displayName}",
                 style = MaterialTheme.typography.bodyLarge.copy(color = colorResource(R.color.orange))
             )
-
-//            if (!order!!.deliveryManEmail.isNullOrEmpty()) {
-//                Text(
-//                    text = "Livreur : ${order!!.deliveryManEmail}",
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
-//            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -124,17 +141,17 @@ fun OrderTrackingScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f), // Permet à la liste de prendre l'espace disponible
+                    .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(order!!.items) { dish ->
+                items(currentOrder.items) { dish ->
                     OrderItemRow(dish)
                     Divider()
                 }
             }
 
             // Prix total
-            val totalPrice = order!!.items.sumOf { it.menu.price * it.quantity }
+            val totalPrice = currentOrder.items.sumOf { it.menu.price * it.quantity }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Prix total : $${"%.2f".format(totalPrice)}",
@@ -147,7 +164,7 @@ fun OrderTrackingScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f), // Prend l'espace disponible
+                    .weight(1f),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

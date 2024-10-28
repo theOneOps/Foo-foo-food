@@ -13,5 +13,11 @@ enum class OrderStatus(val displayName: String) {
     DELIVERING("en cours de livraison"),
 
     @SerializedName("livrée")
-    DELIVERED("livrée")
+    DELIVERED("livrée");
+
+    companion object {
+        fun fromDisplayName(displayName: String): OrderStatus? {
+            return values().firstOrNull { it.displayName == displayName }
+        }
+    }
 }

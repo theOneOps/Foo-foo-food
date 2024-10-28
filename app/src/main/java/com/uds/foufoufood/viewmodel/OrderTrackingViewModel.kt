@@ -1,5 +1,6 @@
 package com.uds.foufoufood.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -52,9 +53,11 @@ class OrderTrackingViewModel(
     }
 
     private fun setupSocket() {
+        Log.d("TrackingSocketSetup", "Getting user email")
         val clientEmail = userViewModel.user.value?.email ?: return
+        Log.d("TrackingSocketSetup", clientEmail)
         try {
-            socket = IO.socket("http://http://192.168.1.124:3000") // Replace with your server URL
+            socket = IO.socket("http://192.168.1.124:3000")
             socket?.connect()
             val data = JSONObject()
             data.put("clientEmail", clientEmail)
@@ -76,11 +79,18 @@ class OrderTrackingViewModel(
     private fun updateOrderStatus(orderId: String, status: String) {
         _currentOrder.value?.let { order ->
             if (order.orderId == orderId) {
-                order.status = OrderStatus.valueOf(status)
-                _currentOrder.postValue(order)
+                val newStatus = OrderStatus.fromDisplayName(status)
+                if (newStatus != null) {
+                    val updatedOrder = order.copy(status = newStatus)
+                    _currentOrder.postValue(updatedOrder)
+                } else {
+                    Log.e("OrderTrackingViewModel", "Statut de commande inconnu : $status")
+                    _errorMessage.postValue("Statut de commande inconnu : $status")
+                }
             }
         }
     }
+
 
     fun refreshOrder() {
         fetchCurrentOrder()

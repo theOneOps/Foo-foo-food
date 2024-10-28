@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var menuViewModel: MenuViewModel
     private lateinit var cartViewModel: CartViewModel
-    private lateinit var orderTrackingViewModel: OrderTrackingViewModel
+    //private lateinit var orderTrackingViewModel: OrderTrackingViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         val orderRepository = OrderRepository(orderApi, this)
         orderViewModel = OrderViewModel(orderRepository, this)
         cartViewModel = CartViewModel(orderRepository, userViewModel)
-        orderTrackingViewModel = OrderTrackingViewModel(orderRepository, userViewModel)
+        //orderTrackingViewModel = OrderTrackingViewModel(orderRepository, userViewModel)
 
         homeViewModel = HomeViewModel(restaurantRepository)
 
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                 homeViewModel = homeViewModel,
                 menuViewModel = menuViewModel,
                 cartViewModel = cartViewModel,
-                orderTrackingViewModel = orderTrackingViewModel
+                orderRepository = orderRepository
             )
 
         }
