@@ -176,7 +176,7 @@ fun DrawerContent(
                 label = stringResource(R.string.my_orders),
                 onClick = {
                     closeDrawer()
-                    // Handle navigation to orders
+                    navController.navigate(Screen.OrderTracking.route)
                 },
             )
         }

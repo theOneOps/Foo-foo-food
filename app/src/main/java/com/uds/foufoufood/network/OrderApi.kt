@@ -30,4 +30,10 @@ interface OrderApi {
         @Header("Authorization") token: String,
         @Path("clientEmail") clientEmail: String
     ): Response<HasActiveOrderResponse>
+
+    @GET("api/orders/currentOrder/{clientEmail}")
+    suspend fun getCurrentOrder(
+        @Header("Authorization") token: String,
+        @Path("clientEmail") clientEmail: String
+    ): Response<Order>
 }

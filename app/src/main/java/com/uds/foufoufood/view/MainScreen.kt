@@ -18,6 +18,7 @@ import com.uds.foufoufood.viewmodel.CartViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.HomeViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
+import com.uds.foufoufood.viewmodel.OrderTrackingViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
@@ -31,7 +32,8 @@ fun MainScreen(
     orderViewModel: OrderViewModel,
     homeViewModel: HomeViewModel,
     menuViewModel: MenuViewModel,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    orderTrackingViewModel: OrderTrackingViewModel
 ) {
     val context = LocalContext.current
     val user by userViewModel.user.observeAsState()
@@ -83,6 +85,7 @@ fun MainScreen(
         homeViewModel = homeViewModel,
         menuViewModel = menuViewModel,
         cartViewModel = cartViewModel,
+        orderTrackingViewModel = orderTrackingViewModel,
         showAdminBottomBar = showAdminBottomBar
     )
 }

@@ -22,6 +22,7 @@ import com.uds.foufoufood.viewmodel.CartViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.HomeViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
+import com.uds.foufoufood.viewmodel.OrderTrackingViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var menuViewModel: MenuViewModel
     private lateinit var cartViewModel: CartViewModel
+    private lateinit var orderTrackingViewModel: OrderTrackingViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         val orderRepository = OrderRepository(orderApi, this)
         orderViewModel = OrderViewModel(orderRepository, this)
         cartViewModel = CartViewModel(orderRepository, userViewModel)
+        orderTrackingViewModel = OrderTrackingViewModel(orderRepository, userViewModel)
 
         homeViewModel = HomeViewModel(restaurantRepository)
 
@@ -89,7 +92,8 @@ class MainActivity : AppCompatActivity() {
                 orderViewModel = orderViewModel,
                 homeViewModel = homeViewModel,
                 menuViewModel = menuViewModel,
-                cartViewModel = cartViewModel
+                cartViewModel = cartViewModel,
+                orderTrackingViewModel = orderTrackingViewModel
             )
 
         }

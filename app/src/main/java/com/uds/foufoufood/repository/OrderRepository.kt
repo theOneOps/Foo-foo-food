@@ -96,5 +96,22 @@ class OrderRepository(private val api: OrderApi, private val context: Context) {
             false
         }
     }
+
+    suspend fun getCurrentOrder(token: String, clientEmail: String): Order? {
+        return try {
+            val response = api.getCurrentOrder("Bearer $token", clientEmail)
+            if (response.isSuccessful) {
+                val order = response.body()
+                Log.d("OrderRepository", "Received order: $order")
+                order
+            } else {
+                Log.e("OrderRepository", "Failed to get current order: ${response.message()}")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("OrderRepository", "Exception fetching current order: ${e.message}")
+            null
+        }
+    }
 }
 

@@ -37,6 +37,7 @@ import com.uds.foufoufood.view.client.AddressScreen
 import com.uds.foufoufood.view.client.CartScreen
 import com.uds.foufoufood.view.client.ClientRestaurantScreen
 import com.uds.foufoufood.view.client.MenuRestaurantScreen
+import com.uds.foufoufood.view.client.OrderTrackingScreen
 import com.uds.foufoufood.view.client.ProfileScreen
 import com.uds.foufoufood.view.client.UpdateAddressScreen
 import com.uds.foufoufood.view.delivery.AllOrdersScreen
@@ -49,6 +50,7 @@ import com.uds.foufoufood.viewmodel.CartViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.HomeViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
+import com.uds.foufoufood.viewmodel.OrderTrackingViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
@@ -65,6 +67,7 @@ fun UnifiedNavHost(
     homeViewModel: HomeViewModel,
     menuViewModel: MenuViewModel,
     cartViewModel: CartViewModel,
+    orderTrackingViewModel: OrderTrackingViewModel,
     showAdminBottomBar: Boolean
 ) {
     var selectedItem by remember { mutableStateOf(0) }
@@ -125,7 +128,8 @@ fun UnifiedNavHost(
                 homeViewModel,
                 menuViewModel,
                 userViewModel,
-                cartViewModel
+                cartViewModel,
+                orderTrackingViewModel
             )
         }
     }
@@ -302,7 +306,8 @@ fun NavGraphBuilder.addConnectedGraph(
     homeViewModel: HomeViewModel,
     menuViewModel: MenuViewModel,
     userViewModel: UserViewModel,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    orderTrackingViewModel: OrderTrackingViewModel
 ) {
     // Home Screen (accessible pour 'client' et 'restaurateur')
     composable(Screen.Home.route) {
@@ -392,6 +397,13 @@ fun NavGraphBuilder.addConnectedGraph(
             CartScreen(
                 cartViewModel = cartViewModel
             )
+        }
+    }
+
+    composable(Screen.OrderTracking.route) {
+        val user = userViewModel.user.value
+        if (user != null) {
+            OrderTrackingScreen(orderTrackingViewModel = orderTrackingViewModel)
         }
     }
 
