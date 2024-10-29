@@ -54,6 +54,9 @@ fun ProfileScreen(navController: NavHostController, userViewModel: UserViewModel
     val email = userViewModel.user.value?.email ?: ""
     val role = userViewModel.user.value?.role
 
+    val code = userViewModel.user.value?.code ?: ""
+    val password = userViewModel.user.value?.password ?: ""
+
     DrawerScaffold(
         navController = navController,
         userViewModel = userViewModel,
@@ -80,20 +83,29 @@ fun ProfileScreen(navController: NavHostController, userViewModel: UserViewModel
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            ProfileEmailSection(
-                initialEmail = email,
-                onSaveClick = { newEmail ->
-                    if (newEmail != email && isValidEmail(newEmail)) {
-                        userViewModel.updateEmail(email, newEmail)
+            if (password == "google" && code == "code") {
+                Text(
+                    text = "Vous êtes connecté avec Google, vous ne pouvez pas modifier votre adresse email et votre mot de passe.",
+                    fontSize = 16.sp,
+                    color = Color.Gray,
+                )
+            }
+            else {
+                ProfileEmailSection(
+                    initialEmail = email,
+                    onSaveClick = { newEmail ->
+                        if (newEmail != email && isValidEmail(newEmail)) {
+                            userViewModel.updateEmail(email, newEmail)
+                        }
                     }
-                }
-            )
+                )
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            ProfilePasswordSection { previousPassword, newPassword ->
-                if (isValidPassword(newPassword) && isValidPassword(previousPassword)) {
-                    userViewModel.updatePassword(previousPassword, newPassword)
+                ProfilePasswordSection { previousPassword, newPassword ->
+                    if (isValidPassword(newPassword) && isValidPassword(previousPassword)) {
+                        userViewModel.updatePassword(previousPassword, newPassword)
+                    }
                 }
             }
         }

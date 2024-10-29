@@ -213,7 +213,7 @@ fun FacebookButton() {
 }
 
 @Composable
-fun GoogleButton() {
+fun GoogleButton(googleSignInLauncher: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -225,6 +225,7 @@ fun GoogleButton() {
             .background(Color.White, shape = RoundedCornerShape(30.dp))
             .size(140.dp, 54.dp)
             .padding(10.dp)
+            .clickable(onClick = { googleSignInLauncher() })
     ) {
         Image(
             painter = painterResource(id = R.drawable.google_icon),
@@ -237,7 +238,7 @@ fun GoogleButton() {
 }
 
 @Composable
-fun NetworksButtons(type: String, color: Color) {
+fun NetworksButtons(type: String, color: Color, googleSignInLauncher: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -273,7 +274,7 @@ fun NetworksButtons(type: String, color: Color) {
         ) {
             FacebookButton()
             Spacer(modifier = Modifier.width(35.dp))
-            GoogleButton()
+            GoogleButton(googleSignInLauncher)
         }
     }
 }

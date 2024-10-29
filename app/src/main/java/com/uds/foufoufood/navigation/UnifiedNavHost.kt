@@ -28,6 +28,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.firebase.auth.FirebaseAuth
 import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.ui.component.BottomNavBarAdmin
@@ -75,6 +77,8 @@ fun UnifiedNavHost(
     restaurantViewModel: RestaurantViewModel,
     cartViewModel: CartViewModel,
     showAdminBottomBar: Boolean, // Nouveau paramètre pour conditionner la BottomBar
+    googleSignInClient: GoogleSignInClient,
+    auth: FirebaseAuth
 ) {
     var selectedItem by remember { mutableStateOf(0) }
 
@@ -128,7 +132,7 @@ fun UnifiedNavHost(
             enterTransition = { fadeIn(animationSpec = tween(700)) + scaleIn(initialScale = 0.95f) },
             exitTransition = { fadeOut(animationSpec = tween(700)) + scaleOut(targetScale = 1.05f) }
         ) {
-            addAuthGraph(navController, userViewModel)
+            addAuthGraph(navController, userViewModel, googleSignInClient, auth)
             addAdminGraph(
                 navController,
                 adminUsersViewModel,
@@ -162,17 +166,18 @@ fun getStartDestination(connectUser: String, emailValidated: Boolean): String {
 
 /////////////////////////////AUTH
 
-fun NavGraphBuilder.addAuthGraph(navController: NavHostController, userViewModel: UserViewModel) {
+fun NavGraphBuilder.addAuthGraph(navController: NavHostController, userViewModel: UserViewModel,
+                                 googleSignInClient: GoogleSignInClient, auth: FirebaseAuth) {
     composable(Screen.Welcome.route) {
-        WelcomeScreen(navController)
+        WelcomeScreen(navController, userViewModel, googleSignInClient, auth)
     }
 
     composable(Screen.Login.route) {
-        LoginScreen(navController, userViewModel)
+        LoginScreen(navController, userViewModel, googleSignInClient, auth)
     }
 
     composable(Screen.Register.route) {
-        RegisterFirstPartScreen(navController, userViewModel)
+        RegisterFirstPartScreen(navController, userViewModel, googleSignInClient, auth)
     }
 
     composable(
@@ -327,11 +332,6 @@ fun NavGraphBuilder.addConnectedGraph(
 
     composable(Screen.HomeMenu.route) {
         HomeScreenMenu(navController, restaurantsViewModel, userViewModel, menuViewModel)
-    }
-
-    // Welcome Screen
-    composable(Screen.Welcome.route) {
-        WelcomeScreen(navController)
     }
 
     // Profile Screen

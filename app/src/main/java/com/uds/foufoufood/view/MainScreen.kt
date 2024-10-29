@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavHostController
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.firebase.auth.FirebaseAuth
 import com.uds.foufoufood.R
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.navigation.UnifiedNavHost
@@ -36,7 +38,9 @@ fun MainScreen(
     orderViewModel: OrderViewModel,
     menuViewModel: MenuViewModel,
     cartViewModel: CartViewModel,
-    restaurantViewModel: RestaurantViewModel
+    restaurantViewModel: RestaurantViewModel,
+    googleSignInClient: GoogleSignInClient,
+    auth: FirebaseAuth
 ) {
     val context = LocalContext.current
     val user by userViewModel.user.observeAsState()
@@ -88,6 +92,8 @@ fun MainScreen(
         menuViewModel = menuViewModel,
         restaurantViewModel = restaurantViewModel,
         cartViewModel = cartViewModel,
-        showAdminBottomBar = showAdminBottomBar
+        showAdminBottomBar = showAdminBottomBar,
+        googleSignInClient = googleSignInClient,
+        auth = auth
     )
 }

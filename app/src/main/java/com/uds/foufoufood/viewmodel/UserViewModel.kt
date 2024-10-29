@@ -8,6 +8,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.uds.foufoufood.activities.main.TokenManager.deleteToken
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.activities.main.TokenManager.saveToken
@@ -60,6 +65,18 @@ class UserViewModel(
 
     private val _updateAddressSuccess = MutableLiveData<Boolean?>()
     val updateAddressSuccess: LiveData<Boolean?> get() = _updateAddressSuccess
+
+    private val _loginGoogleSuccess = MutableLiveData<Boolean?>()
+    val loginGoogleSuccess: LiveData<Boolean?> get() = _loginGoogleSuccess
+
+    private val _registerGoogleSuccess = MutableLiveData<Boolean?>()
+    val registerGoogleSuccess: LiveData<Boolean?> get() = _registerGoogleSuccess
+
+    private val _registrationCompleteStatus = MutableLiveData<Boolean?>()
+    val registrationCompleteStatus: LiveData<Boolean?> get() = _registrationCompleteStatus
+
+    lateinit var googleSignInClient: GoogleSignInClient
+    lateinit var auth: FirebaseAuth
 
     // Fonctions
     fun login(email: String, password: String) {
@@ -316,5 +333,74 @@ class UserViewModel(
         _updateEmailSuccess.value = null
         _updatePasswordSuccess.value = null
         _loginSuccess.value = null
+        _loginGoogleSuccess.value = null
+        _registerGoogleSuccess.value = null
+        _registrationCompleteStatus.value = null
+    }
+
+    fun registerWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            _loading.value = true
+            try {
+                Log.d("UserViewModel", "ID Token: $idToken")
+                val response = userRepository.registerWithGoogle(idToken)
+                Log.d("UserViewModel", "Response: $response")
+                if (response != null) {
+                    Log.d("UserViewModel", "Utilisateur enregistré avec succès")
+                    _emailValidated.value = true
+                    _loading.value = false
+                    _errorMessage.value = null
+                    _registerGoogleSuccess.value = true
+                    _user.value = response.user
+                    _registrationCompleteStatus.value = response.user.registrationComplete
+                } else {
+                    _errorMessage.value = "Erreur, connexion échouée"
+                }
+            } catch (e: IOException) {
+                _errorMessage.value = "Erreur réseau, veuillez vérifier votre connexion"
+            } catch (e: Exception) {
+                _errorMessage.value = "Erreur lors de la connexion"
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+
+    fun loginWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            _loading.value = true
+            try {
+                Log.d("UserViewModel", "ID Token: $idToken")
+                val response = userRepository.loginWithGoogle(idToken)
+                if (response != null) {
+                    _user.value = response.user
+                    _token.value = response.token
+                    _loginSuccess.value = true
+
+                    if (response.user.registrationComplete == false) {
+                        _registrationCompleteSuccess.value = false
+                        _loading.value = false
+                    }
+                    else {
+                        saveToken(context, response.token)
+                        saveUserId(context, response.user._id)
+                        userRepository.setUserEmail(response.user.email)
+                        _registrationCompleteSuccess.value = true
+                        Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
+                        _errorMessage.value = null
+                    }
+                    _errorMessage.value = null
+                } else {
+                    _errorMessage.value = "Erreur, connexion échouée"
+                }
+            } catch (e: IOException) {
+                _errorMessage.value = "Erreur réseau, veuillez vérifier votre connexion"
+            } catch (e: Exception) {
+                _errorMessage.value = "Erreur lors de la connexion"
+            } finally {
+                _loading.value = false
+            }
+        }
     }
 }

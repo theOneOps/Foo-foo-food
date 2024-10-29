@@ -9,11 +9,14 @@ import com.uds.foufoufood.data_class.request.PasswordRequest
 import com.uds.foufoufood.data_class.request.ProfileRequest
 import com.uds.foufoufood.data_class.request.RegistrationRequest
 import com.uds.foufoufood.data_class.request.RoleUpdateRequest
+import com.uds.foufoufood.data_class.request.TokenGoogleRequest
 import com.uds.foufoufood.data_class.request.UpdateEmailRequest
 import com.uds.foufoufood.data_class.request.VerificationRequest
 import com.uds.foufoufood.data_class.response.ApiResponse
+import com.uds.foufoufood.data_class.response.LoginGoogleResponse
 import com.uds.foufoufood.data_class.response.AuthResponse
 import com.uds.foufoufood.data_class.response.AvailabilityResponse
+import com.uds.foufoufood.data_class.response.RegisterGoogleResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -81,6 +84,12 @@ interface UserApi {
     suspend fun getAvailability(
         @Header("Authorization") token: String
     ): Response<AvailabilityResponse>
+
+    @POST("api/users/auth/login/google")
+    suspend fun loginWithGoogle(@Body idToken: TokenGoogleRequest): Response<LoginGoogleResponse>
+
+    @POST("api/users/auth/register/google")
+    suspend fun registerWithGoogle(@Body idToken: TokenGoogleRequest): Response<RegisterGoogleResponse>
 }
 
 

@@ -1,26 +1,44 @@
 {
   "project_info": {
-    "project_number": "8109938036",
-    "project_id": "foo-foo-food",
-    "storage_bucket": "foo-foo-food.appspot.com"
+    "project_number": "523935118542",
+    "project_id": "foo-foo-food-demo",
+    "storage_bucket": "foo-foo-food-demo.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:8109938036:android:8dec87e436cc721f198821",
+        "mobilesdk_app_id": "1:523935118542:android:ba6bee9669da3119770c9f",
         "android_client_info": {
           "package_name": "com.uds.foufoufood"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "523935118542-ucpvketipqas224inpum1ehbt5rehl4a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uds.foufoufood",
+            "certificate_hash": "351c5c41623f9ebc1a0de0d4775df8300d4c4554"
+          }
+        },
+        {
+          "client_id": "523935118542-eb728qu5ara6ijd205ju4gr7p51hpf59.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyChmQRqxYbZh2jH_HN201u1KfNtbAqtGwE"
+          "current_key": "AIzaSyDUA9MpzXcILjn0eiw9YCE-Bx5TnW-QX3E"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "523935118542-eb728qu5ara6ijd205ju4gr7p51hpf59.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

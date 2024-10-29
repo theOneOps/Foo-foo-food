@@ -8,6 +8,11 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.uds.foufoufood.R
 import com.uds.foufoufood.network.MenuApi
 import com.uds.foufoufood.network.OrderApi
 import com.uds.foufoufood.network.RestaurantApi
@@ -38,6 +43,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var menuViewModel: MenuViewModel
     private lateinit var restaurantViewModel: RestaurantViewModel
     private lateinit var cartViewModel: CartViewModel
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -73,6 +80,14 @@ class MainActivity : AppCompatActivity() {
 
         restaurantViewModel = RestaurantViewModel(restaurantRepository)
 
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+        userViewModel.googleSignInClient = googleSignInClient
+        userViewModel.auth = auth
+
         setContent {
             val navController = rememberNavController()
 
@@ -85,7 +100,9 @@ class MainActivity : AppCompatActivity() {
                 orderViewModel = orderViewModel,
                 menuViewModel = menuViewModel,
                 restaurantViewModel = restaurantViewModel,
-                cartViewModel = cartViewModel
+                cartViewModel = cartViewModel,
+                googleSignInClient = googleSignInClient,
+                auth = auth
             )
 
         }

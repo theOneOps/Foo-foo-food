@@ -1,5 +1,9 @@
 package com.uds.foufoufood.view.auth
 
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +25,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -38,14 +45,58 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.firebase.auth.FirebaseAuth
 import com.uds.foufoufood.R
+import com.uds.foufoufood.navigation.getStartDestination
 import com.uds.foufoufood.ui.component.NetworksButtons
+import com.uds.foufoufood.viewmodel.UserViewModel
 
 @Composable
 fun WelcomeScreen(
-    navController: NavController
+    navController: NavController,
+    userViewModel: UserViewModel,
+    googleSignInClient: GoogleSignInClient,
+    auth: FirebaseAuth
 ) {
-    LocalContext.current
+    val context = LocalContext.current
+
+    val user by userViewModel.user.observeAsState()
+    val emailValidated by userViewModel.emailValidated.observeAsState()
+    val registrationComplete by userViewModel.registrationCompleteSuccess.observeAsState()
+    val loginSuccess by userViewModel.loginSuccess.observeAsState()
+
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        handleSignInResult(task, auth, context, userViewModel)
+    }
+
+    LaunchedEffect(user, loginSuccess) {
+        Log.d("LoginScreen", "loginSuccess: $loginSuccess")
+        if (loginSuccess == true) {
+            if (emailValidated == true && registrationComplete == true) {
+                val startDestination = user?.role?.let { getStartDestination(it, emailValidated!!) }
+                if (startDestination != null) {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                    }
+                }
+                userViewModel.resetStatus()
+                // La navigation sera gérée par MainScreen après la mise à jour du rôle de l'utilisateur
+                Toast.makeText(context, "Connexion réussie", Toast.LENGTH_SHORT).show()
+            } else if (emailValidated == false) {
+                navController.navigate("verify_code/${user?.email}")
+            }
+            else if (registrationComplete == false) {
+                navController.navigate("define_profile/${user?.email}")
+            }
+        }
+    }
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -79,7 +130,9 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(16.dp))
             WelcomeDescription()
             Spacer(modifier = Modifier.height(70.dp))
-            NetworksButtons(stringResource(id = R.string.sign_in_with), Color.White)
+            NetworksButtons(stringResource(id = R.string.sign_in_with), Color.White){
+                googleSignInLauncher.launch(googleSignInClient.signInIntent)
+            }
             Spacer(modifier = Modifier.height(30.dp))
             EmailSignUpButton {
                 navController.navigate("register")

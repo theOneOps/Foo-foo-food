@@ -92,6 +92,8 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation(libs.google.firebase.storage)
     implementation (libs.firebase.messaging)
+    implementation(libs.google.firebase.auth)
+    implementation(libs.play.services.auth) // Google Sign-In
 
     // from glide
     implementation(libs.github.glide)

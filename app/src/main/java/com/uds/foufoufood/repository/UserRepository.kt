@@ -8,10 +8,12 @@ import com.uds.foufoufood.data_class.request.LoginRequest
 import com.uds.foufoufood.data_class.request.PasswordRequest
 import com.uds.foufoufood.data_class.request.ProfileRequest
 import com.uds.foufoufood.data_class.request.RegistrationRequest
+import com.uds.foufoufood.data_class.request.TokenGoogleRequest
 import com.uds.foufoufood.data_class.request.UpdateEmailRequest
 import com.uds.foufoufood.data_class.request.VerificationRequest
-import com.uds.foufoufood.data_class.response.ApiResponse
+import com.uds.foufoufood.data_class.response.LoginGoogleResponse
 import com.uds.foufoufood.data_class.response.AuthResponse
+import com.uds.foufoufood.data_class.response.RegisterGoogleResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -162,5 +164,25 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
         sharedPreferences.edit().putString("user_email", email).apply()
     }
 
+    suspend fun loginWithGoogle(idToken: String): LoginGoogleResponse? = withContext(Dispatchers.IO) {
+        return@withContext try {
+            Log.d("UserRepository", "ID Token: $idToken")
+            val response = userApi.loginWithGoogle(TokenGoogleRequest(idToken))
+            response.body()
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Erreur lors de l'authentification avec Google: ${e.message}")
+            null
+        }
+    }
 
+    suspend fun registerWithGoogle(idToken: String): RegisterGoogleResponse? = withContext(Dispatchers.IO) {
+        return@withContext try {
+            Log.d("UserRepository", "ID Token: $idToken")
+            val response = userApi.registerWithGoogle(TokenGoogleRequest(idToken))
+            response.body()
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Erreur lors de l'authentification avec Google: ${e.message}")
+            null
+        }
+    }
 }

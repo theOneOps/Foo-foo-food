@@ -1,7 +1,10 @@
 package com.uds.foufoufood.view.auth
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +35,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.uds.foufoufood.R
 import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.navigation.getStartDestination
@@ -46,7 +56,9 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 @Composable
 fun LoginScreen(
     navController: NavController,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    googleSignInClient: GoogleSignInClient,
+    auth: FirebaseAuth
 ) {
     val context = LocalContext.current
 
@@ -58,6 +70,13 @@ fun LoginScreen(
     val emailValidated by userViewModel.emailValidated.observeAsState()
     val registrationComplete by userViewModel.registrationCompleteSuccess.observeAsState()
     val loginSuccess by userViewModel.loginSuccess.observeAsState()
+
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        handleSignInResult(task, auth, context, userViewModel)
+    }
 
     Log.d("LoginScreen", "user: $user")
 
@@ -146,6 +165,7 @@ fun LoginScreen(
 
         // Boutons pour se connecter via des réseaux sociaux (si nécessaire)
         NetworksButtons(stringResource(id = R.string.sign_in_with), Color.Gray)
+        { googleSignInLauncher.launch(googleSignInClient.signInIntent) }
     }
 
     // Afficher les erreurs de connexion si elles existent
@@ -192,5 +212,49 @@ fun SignUpText(onNavigateToRegister: () -> Unit) {
             label = stringResource(id = R.string.sign_up_underlined),
             onClick = onNavigateToRegister
         )
+    }
+}
+
+fun handleSignInResult(
+    task: Task<GoogleSignInAccount>,
+    auth: FirebaseAuth,
+    context: Context,
+    userViewModel: UserViewModel
+) {
+    try {
+        // Obtenir l'objet GoogleSignInAccount à partir de la tâche
+        val account = task.getResult(ApiException::class.java)
+        val idToken = account?.idToken
+
+        if (idToken != null) {
+            Log.d("Google Sign-In", "ID Token: $idToken")
+            // Authentification Firebase avec le token Google
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            Log.d("Google Sign-In", "Credential: $credential")
+            auth.signInWithCredential(credential)
+                .addOnCompleteListener { signInTask ->
+                    if (signInTask.isSuccessful) {
+                        // Si l'authentification est réussie, obtenir un nouveau token Firebase
+                        auth.currentUser?.getIdToken(false)?.addOnCompleteListener { tokenTask ->
+                            if (tokenTask.isSuccessful) {
+                                val newIdToken = tokenTask.result?.token
+                                newIdToken?.let { token ->
+                                    Log.d("Token", "Token Firebase: $token")
+                                    decodeFirebaseToken(token)
+                                    userViewModel.loginWithGoogle(token) // Utilisez le token pour l'authentification
+                                }
+                            } else {
+                                Log.e("Token", "Erreur lors de la mise à jour du token")
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, "Échec de l'authentification Google", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        } else {
+            Toast.makeText(context, "ID Token introuvable", Toast.LENGTH_SHORT).show()
+        }
+    } catch (e: ApiException) {
+        Log.e("Google Sign-In", "Erreur : ${e.message}")
     }
 }

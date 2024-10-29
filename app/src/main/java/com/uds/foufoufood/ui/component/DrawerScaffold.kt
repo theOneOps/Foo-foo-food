@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.navigation.Screen
@@ -239,6 +240,8 @@ fun DrawerContent(
             onClick = {
                 closeDrawer()
                 logout()
+                userViewModel.auth.signOut()
+                userViewModel.googleSignInClient.signOut()
                 Toast.makeText(context, R.string.logout_success, Toast.LENGTH_SHORT).show()
                 navController.navigate(Screen.Welcome.route)
             },
