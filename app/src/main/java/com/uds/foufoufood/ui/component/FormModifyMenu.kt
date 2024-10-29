@@ -14,23 +14,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -46,6 +44,7 @@ import com.uds.foufoufood.Firebase_management.FirebaseInstance
 import com.uds.foufoufood.Firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
 import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Menu
+import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.viewmodel.MenuViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,13 +52,17 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormModifyMenu(menuViewModel: MenuViewModel,menu: Menu, onUpdate: (Menu) -> Unit, navController: NavController) {
+fun FormModifyMenu(menuViewModel: MenuViewModel, menu: Menu, onUpdate: (Menu) -> Unit, navController: NavController) {
     // State pour les champs du formulaire
     val nameState = remember { mutableStateOf(menu.name) }
     val descriptorState = remember { mutableStateOf(menu.description) }
     val priceState = remember { mutableStateOf(menu.price.toString()) }
     val categoryState = remember { mutableStateOf(menu.category) }
     val imageState = remember { mutableStateOf(menu.image) }
+    val ingredientsState = remember { mutableStateOf(menu.ingredients) }
+
+    val allIngredientsFilled = ingredientsState.value.all { it.isNotEmpty() }
+
 
     val context = LocalContext.current
     val scrollState = rememberLazyListState()
@@ -158,6 +161,63 @@ fun FormModifyMenu(menuViewModel: MenuViewModel,menu: Menu, onUpdate: (Menu) -> 
                 )
             }
 
+            // Gestion dynamique des ingrédients
+            item {
+                Text(
+                    text = "Ingrédients : ",
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
+                    modifier = Modifier.padding(vertical = 8.dp))
+                ingredientsState.value.forEachIndexed { index, ingredient ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        TextField(
+                            value = ingredient,
+                            onValueChange = { newIngredient ->
+                                val ingredients = ingredientsState.value.toMutableList()
+                                ingredients[index] = newIngredient
+                                ingredientsState.value = ingredients
+                            },
+                            label = {
+                                Text(
+                                    text = "Ingrédient ${index + 1}",
+                                    color = Color.Gray,
+                                    fontFamily = FontFamily(Font(R.font.sofiapro_regular))
+                                )
+                            },
+                            colors = TextFieldDefaults.textFieldColors(
+                                focusedTextColor = colorResource(id = R.color.black),
+                                unfocusedTextColor = colorResource(id = R.color.black),
+                                focusedIndicatorColor = colorResource(id = R.color.orange),
+                                unfocusedIndicatorColor = Color.Gray,
+                                errorIndicatorColor = Color.Red,
+                                cursorColor = colorResource(id = R.color.orange),
+                                containerColor = colorResource(id = R.color.grey_bg_alpha),
+                                errorContainerColor = colorResource(id = R.color.white_grey),
+                            ),
+                            modifier = Modifier.weight(1f)
+                        )
+                        IconButton(
+                            onClick = {
+                                ingredientsState.value = ingredientsState.value.toMutableList().apply { removeAt(index) }
+                            }
+                        ) {
+                            Icon(imageVector = Icons.Default.Remove, contentDescription = "Supprimer")
+                        }
+                    }
+                }
+                IconButton(
+                    onClick = {
+                        ingredientsState.value = ingredientsState.value.toMutableList().apply { add("") }
+                    },
+                    enabled = allIngredientsFilled
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Ajouter un ingrédient")
+                }
+            }
+
             item {
                 TextFieldWithError(
                     value = categoryState.value,
@@ -230,6 +290,11 @@ fun FormModifyMenu(menuViewModel: MenuViewModel,menu: Menu, onUpdate: (Menu) -> 
                                 return@Button
                             }
 
+                            if (!allIngredientsFilled) {
+                                Toast.makeText(context, "Veuillez remplir tous les champs d'ingrédients", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+
                             // Créer un nouvel objet Menu avec les valeurs mises à jour
                             val updatedMenu = Menu(
                                 menu._id,
@@ -238,10 +303,12 @@ fun FormModifyMenu(menuViewModel: MenuViewModel,menu: Menu, onUpdate: (Menu) -> 
                                 price = priceState.value.toDoubleOrNull() ?: menu.price,
                                 category = categoryState.value,
                                 menu.restaurantId,
-                                image = imageState.value
+                                image = imageState.value,
+                                ingredients = ingredientsState.value
                             )
                             onUpdate(updatedMenu) // Appeler la fonction de mise à jour
                             Toast.makeText(context, "menu bien modifié", Toast.LENGTH_SHORT).show()
+                            navController.navigate(Screen.ClientRestaurantAllMenusPage.route)
                         },
 
                         modifier = Modifier

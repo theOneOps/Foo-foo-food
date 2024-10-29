@@ -18,7 +18,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,6 +67,9 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel, navControl
     val priceState = remember { mutableStateOf("") }
     val categoryState = remember { mutableStateOf("") }
     val imageState = remember { mutableStateOf("") }
+    val ingredientsState = remember { mutableStateOf(listOf("")) }
+
+    val allIngredientsFilled = ingredientsState.value.all { it.isNotEmpty() }
 
     val context = LocalContext.current
     val token = getToken(context) ?: return
@@ -133,7 +138,7 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel, navControl
                 TextFieldWithError(
                     value = nameState.value,
                     onValueChange = { nameState.value = it },
-                    label = "Nom du menu",
+                    label = "Nom",
                     errorMessage = "Le nom du menu ne peut pas être vide",
                     isValid = { it.isNotEmpty() }
                 )
@@ -170,6 +175,62 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel, navControl
                     errorMessage = "",
                     isValid = { true }
                 )
+            }
+
+            // Gestion dynamique des ingrédients
+            item {
+                Text(
+                    text = "Ingrédients : ",
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
+                    modifier = Modifier.padding(vertical = 8.dp))
+                ingredientsState.value.forEachIndexed { index, ingredient ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        TextField(
+                            value = ingredient,
+                            onValueChange = { newIngredient ->
+                                val ingredients = ingredientsState.value.toMutableList()
+                                ingredients[index] = newIngredient
+                                ingredientsState.value = ingredients
+                            },
+                            label = {
+                                Text(
+                                    text = "Ingrédient ${index + 1}",
+                                    color = Color.Gray,
+                                    fontFamily = FontFamily(Font(R.font.sofiapro_regular))
+                                )
+                            },
+                            colors = TextFieldDefaults.textFieldColors(
+                                focusedTextColor = colorResource(id = R.color.black),
+                                unfocusedTextColor = colorResource(id = R.color.black),
+                                focusedIndicatorColor = colorResource(id = R.color.orange),
+                                unfocusedIndicatorColor = Color.Gray,
+                                errorIndicatorColor = Color.Red,
+                                cursorColor = colorResource(id = R.color.orange),
+                                containerColor = colorResource(id = R.color.grey_bg_alpha),
+                                errorContainerColor = colorResource(id = R.color.white_grey),
+                            ),
+                            modifier = Modifier.weight(1f)
+                        )
+                        IconButton(
+                            onClick = {
+                                ingredientsState.value = ingredientsState.value.toMutableList().apply { removeAt(index) }
+                            },
+                            enabled = ingredientsState.value.size > 1 // Désactivez le bouton "-" si un seul champ reste
+                        ) {
+                            Icon(imageVector = Icons.Default.Remove, contentDescription = "Supprimer")
+                        }
+                    }
+                }
+                IconButton(
+                    onClick = { ingredientsState.value = ingredientsState.value.toMutableList().apply { add("") } },
+                    enabled = allIngredientsFilled
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Ajouter un ingrédient")
+                }
             }
 
             item {
@@ -245,6 +306,15 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel, navControl
                                 return@Button
                             }
 
+                            if (!allIngredientsFilled) {
+                                Toast.makeText(
+                                    context,
+                                    "Veuillez remplir tous les champs d'ingrédients",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                return@Button
+                            }
+
                             // Conversion du prix en Double avant la soumission
                             val price = priceState.value.toDoubleOrNull() ?: 0.0
 
@@ -254,7 +324,7 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel, navControl
                                 // Appel au ViewModel pour créer le menu avec l'URL de l'image déjà uploadée
                                 menuViewModel.createMenu(
                                     token, nameState.value, descriptorState.value,
-                                    price, restaurant._id, categoryState.value, imageUri
+                                    price, restaurant._id, categoryState.value, imageUri, ingredientsState.value
                                 )
                                 Toast.makeText(
                                     context,
@@ -266,7 +336,7 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel, navControl
                                 // Si aucune image n'a été uploadée, appeler directement createMenu sans l'URL
                                 menuViewModel.createMenu(
                                     token, nameState.value, descriptorState.value,
-                                    price, restaurant._id, categoryState.value, ""
+                                    price, restaurant._id, categoryState.value, "", ingredientsState.value
                                 )
                                 Toast.makeText(
                                     context,

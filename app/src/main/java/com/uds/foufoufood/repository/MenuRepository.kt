@@ -81,7 +81,8 @@ class MenuRepository(private val menuApi: MenuApi) {
         price: Double,
         restaurantId: String,
         category: String,
-        image: String
+        image: String,
+        ingredients: List<String>
     ): MenuResponse? = withContext(Dispatchers.IO) {
         try {
             // Création de l'objet MenuRequest
@@ -91,7 +92,8 @@ class MenuRepository(private val menuApi: MenuApi) {
                 price = price,
                 restaurantId = restaurantId,
                 category = category,
-                image = image
+                image = image,
+                ingredients = ingredients
             )
 
             // Appel à l'API
@@ -133,7 +135,8 @@ class MenuRepository(private val menuApi: MenuApi) {
         price: Double,
         category: String,
         restaurantId: String,
-        image: String
+        image: String,
+        ingredients: List<String>
     ): MenuResponse? = withContext(Dispatchers.IO) {
         try {
             // Création de l'objet MenuRequest
@@ -144,7 +147,8 @@ class MenuRepository(private val menuApi: MenuApi) {
                 description = description,
                 category = category,
                 restaurantId = restaurantId,
-                image = image
+                image = image,
+                ingredients = ingredients
             )
             val response = menuApi.updateMenu(token, menuId, request)
 

@@ -7,4 +7,5 @@ data class MenuRequest(
    val restaurantId:String,
    val category: String,
    val image: String,
+   val ingredients: List<String>
 )

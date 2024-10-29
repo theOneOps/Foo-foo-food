@@ -94,7 +94,8 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
         price: Double,
         restaurantId: String,
         category: String,
-        image: String
+        image: String,
+        ingredients: List<String>
     ) {
         viewModelScope.launch {
             try {
@@ -106,7 +107,8 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                         price,
                         restaurantId,
                         category,
-                        image
+                        image,
+                        ingredients
                     )
                 if (response != null) {
                     if (response.success) {
@@ -184,7 +186,8 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
         price: Double,
         category: String,
         restaurantId: String,
-        image: String
+        image: String,
+        ingredients: List<String>
     ) {
         viewModelScope.launch {
             try {
@@ -196,7 +199,8 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                     price,
                     category,
                     restaurantId,
-                    image
+                    image,
+                    ingredients
                 )
                 if (response != null) {
                     if (response.success) {

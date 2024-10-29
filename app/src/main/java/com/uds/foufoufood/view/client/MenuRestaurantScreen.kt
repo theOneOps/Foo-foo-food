@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -70,153 +71,201 @@ fun MenuRestaurantScreen(
     val token = getToken(context) ?: ""
     val quantity = remember { mutableIntStateOf(1) }
 
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        // Bouton de retour en haut à gauche
         BackButton(navController = navController)
 
-        // Conteneur principal pour l'image et les informations du restaurant
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(8.dp)
-        ) {
-            // Image du restaurant avec la spécialité en bas à droite
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-            ) {
-                // Image du restaurant
-                AsyncImage(
-                    model = menu.image,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Gray.copy(alpha = 0.2f)),
-                    contentDescription = menu.name,
-                    contentScale = ContentScale.Crop
-                )
-
-                val isConnectedRestaurateur = menuViewModel.isConnectedRestorer.value!!
-                if (isConnectedRestaurateur)
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(horizontal = 16.dp, vertical = 6.dp)
-                            .offset(x = (-4).dp, y = (-4).dp), // Décalage pour être bien positionné sur le bord
-                    ) {
-                        // Bouton de modification du menu
-                        ModifyMenu(token, menuViewModel, menu, navController)
-                    }
-
-                // Box de spécialité en bas à droite de l'image
+        LazyColumn (
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top
+        ){
+            item {
+                // Image du restaurant avec la spécialité en bas à droite
                 Box(
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(horizontal = 16.dp, vertical = 6.dp)
-                        .offset(x = (4).dp, y = (-4).dp), // Décalage pour être bien positionné sur le bord
+                        .fillMaxWidth()
+                        .height(300.dp)
                 ) {
-                    Column(
+                    // Image du restaurant
+                    AsyncImage(
+                        model = menu.image,
                         modifier = Modifier
-                            .background(
-                                color = colorResource(id = R.color.orange),
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .padding(horizontal = 16.dp, vertical = 6.dp),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = menu.category.replaceFirstChar { it.uppercase() },
-                            fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
-                            color = colorResource(id = R.color.white),
+                            .fillMaxSize()
+                            .background(Color.Gray.copy(alpha = 0.2f)),
+                        contentDescription = menu.name,
+                        contentScale = ContentScale.Crop
+                    )
+
+                    val isConnectedRestaurateur = menuViewModel.isConnectedRestorer.value!!
+                    if (isConnectedRestaurateur)
+                        Box(
                             modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(top = 2.dp)
-                        )
+                                .align(Alignment.BottomStart)
+                                .padding(horizontal = 16.dp, vertical = 6.dp)
+                                .offset(x = (-4).dp, y = (-4).dp), // Décalage pour être bien positionné sur le bord
+                        ) {
+                            // Bouton de modification du menu
+                            ModifyMenu(token, menuViewModel, menu, navController)
+                        }
+
+                    // Box de spécialité en bas à droite de l'image
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(horizontal = 16.dp, vertical = 6.dp)
+                            .offset(x = (4).dp, y = (-4).dp), // Décalage pour être bien positionné sur le bord
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .background(
+                                    color = colorResource(id = R.color.orange),
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                                .padding(horizontal = 16.dp, vertical = 6.dp),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = menu.category.replaceFirstChar { it.uppercase() },
+                                fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                                color = colorResource(id = R.color.white),
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(top = 2.dp)
+                            )
+                        }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Nom du restaurant
-            Text(
-                text = menu.name.replaceFirstChar { it.uppercase() },
-                style = TextStyle(
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.black),
-                    fontFamily = FontFamily(Font(R.font.sofiapro_bold))
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // Description du Menu
-            Text(
-                text = menu.description,
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    color = Color.Gray,
-                    fontFamily = FontFamily(Font(R.font.sofiapro_medium))
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row {
-                    // Prix du menu
-                    Text(
-                        text = menu.price.toString(),
-                        style = TextStyle(
-                            fontSize = 35.sp,
-                            color = colorResource(id = R.color.orange),
-                            fontFamily = FontFamily(Font(R.font.sofiapro_medium))
-                        ),
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-
-                    // Text icon €
-                    Text(
-                        text = "$",
-                        style = TextStyle(
-                            fontSize = 15.sp,
-                            color = colorResource(id = R.color.orange),
-                            fontFamily = FontFamily(Font(R.font.sofiapro_medium))
-                        ),
-                        modifier = Modifier.padding(start = 5.dp)
-                    )
-                }
-
-                // Bouton d'ajout au panier
-                CounterProductBought(quantity)
+            item {
+                Spacer(modifier = Modifier.height(12.dp))
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            item {
+                Text(
+                    text = menu.name.replaceFirstChar { it.uppercase() },
+                    style = TextStyle(
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = R.color.black),
+                        fontFamily = FontFamily(Font(R.font.sofiapro_bold))
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                )
+            }
 
-            // todo ajouter les ingrédients
+            item {
+                Spacer(modifier = Modifier.height(4.dp))
+            }
 
-            // Bouton d'ajout au panier
-            Column (
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                AddToCartButton(menu, cartViewModel, quantity.value)
+            item {
+                // Description du Menu
+                Text(
+                    text = menu.description,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        color = Color.Gray,
+                        fontFamily = FontFamily(Font(R.font.sofiapro_medium))
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row {
+                        // Prix du menu
+                        Text(
+                            text = menu.price.toString(),
+                            style = TextStyle(
+                                fontSize = 35.sp,
+                                color = colorResource(id = R.color.orange),
+                                fontFamily = FontFamily(Font(R.font.sofiapro_medium))
+                            ),
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+
+                        // Text icon €
+                        Text(
+                            text = "$",
+                            style = TextStyle(
+                                fontSize = 15.sp,
+                                color = colorResource(id = R.color.orange),
+                                fontFamily = FontFamily(Font(R.font.sofiapro_medium))
+                            ),
+                            modifier = Modifier.padding(start = 5.dp)
+                        )
+                    }
+
+                    // Bouton d'ajout au panier
+                    CounterProductBought(quantity)
+                }
+            }
+
+            item {
+                // Ingrédients
+                for (ingredient in menu.ingredients) {
+                    Text(
+                        text = "- ${ingredient.replaceFirstChar { it.uppercase() }}",
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            color = Color.Gray,
+                            fontFamily = FontFamily(Font(R.font.sofiapro_medium))
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 6.dp, start = 10.dp)
+                    )
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            item {
+                // Divider
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .height(1.dp)
+                            .background(color = Color.Gray.copy(alpha = 0.3f))
+                    )
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            item {
+                // Bouton d'ajout au panier
+                Column (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    AddToCartButton(menu, cartViewModel, quantity.value)
+                }
             }
         }
     }
@@ -374,10 +423,11 @@ fun ModifyMenu(token: String, menuViewModel: MenuViewModel, menu: Menu, navContr
                             menuRes.price,
                             menuRes.category,
                             menuRes.restaurantId,
-                            menuRes.image
+                            menuRes.image,
+                            menuRes.ingredients
                         )
                         openDialog.value = false
-                    }, navController = navController)
+                    }, navController)
                 }
             }
         }

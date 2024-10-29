@@ -8,4 +8,5 @@ data class Menu(
     val category: String,
     val restaurantId:String,
     val image:String,
+    val ingredients: List<String>
 )
