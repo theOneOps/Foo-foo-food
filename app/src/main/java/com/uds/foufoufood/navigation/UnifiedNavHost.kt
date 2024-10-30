@@ -133,7 +133,7 @@ fun UnifiedNavHost(
         NavHost(
             navController = navController,
             startDestination = getStartDestination(connectUser, emailValidated),
-            modifier = Modifier.padding(innerPadding).background(color = colorResource(id = R.color.white)),
+            modifier = Modifier.background(color = colorResource(id = R.color.white)).padding(innerPadding),
             enterTransition = { fadeIn(animationSpec = tween(700)) + scaleIn(initialScale = 0.95f) },
             exitTransition = { fadeOut(animationSpec = tween(700)) + scaleOut(targetScale = 1.05f) }
         ) {
@@ -434,7 +434,9 @@ fun NavGraphBuilder.addConnectedGraph(
 
     composable(Screen.Cart.route) {
         CartScreen(
-            cartViewModel = cartViewModel
+            cartViewModel = cartViewModel,
+            navController = navController,
+            userViewModel = userViewModel
         )
     }
 

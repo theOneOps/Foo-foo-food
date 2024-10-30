@@ -4,42 +4,44 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.uds.foufoufood.data_class.model.Notification
+import com.uds.foufoufood.navigation.Screen
+import com.uds.foufoufood.ui.component.DrawerScaffold
+import com.uds.foufoufood.ui.component.TitlePage
 import com.uds.foufoufood.viewmodel.NotificationViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 import com.uds.foufoufood.viewmodel.factory.NotificationViewModelFactory
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsScreen(
     userViewModel: UserViewModel,
-    navController: NavController
+    navController: NavHostController
 ) {
     val activity = LocalContext.current as ComponentActivity
     val notificationViewModel: NotificationViewModel = viewModel(
@@ -65,26 +67,36 @@ fun NotificationsScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Notifications") })
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            contentPadding = paddingValues,
-            modifier = Modifier.fillMaxSize()
+    DrawerScaffold(
+        navController = navController,
+        userViewModel = userViewModel,
+        currentScreen = Screen.Notifications.route
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(top = 60.dp, start = 20.dp, end = 20.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(notifications) { notification ->
-                NotificationItem(
-                    notification = notification,
-                    onClick = {
-                        // Handle notification click
-                        notificationViewModel.markNotificationAsRead(notification.id)
-                        // Navigate to order details or appropriate screen
-                        navController.navigate("orderTracking")
-                    }
-                )
-                Divider()
+            Spacer(modifier = Modifier.height(30.dp))
+
+            TitlePage(label = "Notifications")
+
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(notifications) { notification ->
+                    NotificationItem(
+                        notification = notification,
+                        onClick = {
+                            // Handle notification click
+                            notificationViewModel.markNotificationAsRead(notification.id)
+                            // Navigate to order details or appropriate screen
+                            navController.navigate("orderTracking")
+                        }
+                    )
+                }
             }
         }
     }

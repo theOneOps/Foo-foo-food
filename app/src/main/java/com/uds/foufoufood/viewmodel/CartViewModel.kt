@@ -46,7 +46,7 @@ class CartViewModel(
         }
     }
 
-    fun removeItem(item: CartItem) {
+    /*fun removeItem(item: CartItem) {
         val updatedList = _cartItems.value.orEmpty().toMutableList()
         val currentItem = updatedList.find { it.menu._id == item.menu._id }
 
@@ -62,6 +62,36 @@ class CartViewModel(
             // Update _cartItems with a new list to trigger recomposition
             _cartItems.value = updatedList.toList()  // Ensuring a new reference is created
         }
+    }*/
+
+    // Méthode pour incrémenter la quantité d'un article
+    fun incrementQuantity(item: CartItem) {
+        val updatedList = (_cartItems.value ?: emptyList()).map {
+            if (it.menu._id == item.menu._id) {
+                it.copy(quantity = it.quantity + 1)
+            } else {
+                it
+            }
+        }
+        _cartItems.value = updatedList
+    }
+
+    // Méthode pour décrémenter la quantité d'un article
+    fun decrementQuantity(item: CartItem) {
+        val updatedList = (_cartItems.value ?: emptyList()).mapNotNull {
+            when {
+                it.menu._id == item.menu._id && it.quantity > 1 -> it.copy(quantity = it.quantity - 1)
+                it.menu._id == item.menu._id && it.quantity == 1 -> null
+                else -> it
+            }
+        }
+        _cartItems.value = updatedList
+    }
+
+    // Méthode pour supprimer complètement un article du panier
+    fun removeItem(item: CartItem) {
+        val updatedList = (_cartItems.value ?: emptyList()).filterNot { it.menu._id == item.menu._id }
+        _cartItems.value = updatedList
     }
 
     fun clearCart() {

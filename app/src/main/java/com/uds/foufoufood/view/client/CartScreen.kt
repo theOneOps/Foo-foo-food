@@ -9,8 +9,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -25,18 +34,35 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.CartItem
+import com.uds.foufoufood.navigation.Screen
+import com.uds.foufoufood.ui.component.DrawerScaffold
+import com.uds.foufoufood.ui.component.TitlePage
+import com.uds.foufoufood.ui.component.ValidateButton
 import com.uds.foufoufood.viewmodel.CartViewModel
+import com.uds.foufoufood.viewmodel.UserViewModel
 
 @Composable
-fun CartScreen(cartViewModel: CartViewModel) {
+fun CartScreen(
+    cartViewModel: CartViewModel,
+    navController: NavHostController,
+    userViewModel: UserViewModel
+) {
     val cartItems by cartViewModel.cartItems.observeAsState(emptyList())
     val errorMessage by cartViewModel.errorMessage.observeAsState()
     val orderSuccessMessage by cartViewModel.orderSuccessMessage.observeAsState()
@@ -57,77 +83,121 @@ fun CartScreen(cartViewModel: CartViewModel) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+    DrawerScaffold(
+        navController = navController,
+        userViewModel = userViewModel,
+        currentScreen = Screen.Profile.route
     ) {
-        Text(
-            text = "Votre Panier",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
 
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        Column(
+            modifier = Modifier
+                .padding(top = 60.dp, start = 20.dp, end = 20.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(cartItems) { item ->
-                CartItemRow(
-                    item = item,
-                    onRemove = { cartViewModel.removeItem(item) }
-                )
+            Spacer(modifier = Modifier.height(30.dp))
+
+            TitlePage(label = "Mon panier")
+
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(cartItems) { item ->
+                    CartItemRow(
+                        item = item,
+                        onIncrement = { cartViewModel.incrementQuantity(item) },
+                        onDecrement = { cartViewModel.decrementQuantity(item) },
+                        onDelete = { cartViewModel.removeItem(item) }
+                    )
+                }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            CheckoutButton(
+                totalPrice = cartItems.sumOf { it.menu.price * it.quantity },
+                onClick = { cartViewModel.checkout() },
+                enabled = cartItems.isNotEmpty()
+            )
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        CheckoutButton(
-            totalPrice = cartItems.sumOf { it.menu.price * it.quantity },
-            onClick = { cartViewModel.checkout() },
-            enabled = cartItems.isNotEmpty()
-        )
     }
 }
 
 @Composable
-fun CartItemRow(item: CartItem, onRemove: () -> Unit) {
+fun CartItemRow(
+    item: CartItem,
+    onIncrement: () -> Unit,
+    onDecrement: () -> Unit,
+    onDelete: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Image miniature du menu
+        AsyncImage(
+            model = item.menu.image, // Assurez-vous que 'imageUrl' est une propriété valide
+            contentDescription = item.menu.name,
+            modifier = Modifier
+                .size(80.dp)
+                .clip(RoundedCornerShape(10.dp))
+        )
+        Spacer(modifier = Modifier.width(15.dp))
+
         Column(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = item.menu.name,
-                style = MaterialTheme.typography.bodyLarge,
+                text = item.menu.name.replaceFirstChar { it.uppercase() },
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    fontFamily = FontFamily(Font(R.font.sofiapro_medium))
+                ),
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 8.dp)
             )
             Text(
-                text = "Quantité: ${item.quantity}",
-                style = MaterialTheme.typography.bodySmall
+                text = "Prix total : $${"%.2f".format(item.menu.price * item.quantity)}",
+                style = MaterialTheme.typography.bodyMedium,
+                fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
+                fontSize = 15.sp
             )
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = "$${"%.2f".format(item.menu.price * item.quantity)}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            IconButton(onClick = onRemove) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_delete),
-                    contentDescription = "Retirer un",
-                    tint = Color.Red
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onDecrement) {
+                    Icon(
+                        imageVector = Icons.Default.Remove,
+                        contentDescription = "Diminuer la quantité",
+                        tint = colorResource(id = R.color.orange)
+                    )
+                }
+                Text(
+                    text = item.quantity.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 )
+                IconButton(onClick = onIncrement) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Augmenter la quantité",
+                        tint = colorResource(id = R.color.orange)
+                    )
+                }
             }
+        }
+        // Bouton pour supprimer l'ensemble des quantités de ce menu
+        IconButton(onClick = onDelete) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Supprimer l'article",
+                tint = Color.Red
+            )
         }
     }
 }
@@ -141,17 +211,14 @@ fun CheckoutButton(totalPrice: Double, onClick: () -> Unit, enabled: Boolean) {
         Text(
             text = "Total: $${"%.2f".format(totalPrice)}",
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(bottom = 8.dp)
+            fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+            fontSize = 20.sp,
+            modifier = Modifier.padding(bottom = 10.dp)
         )
-        Button(
-            onClick = onClick,
-            enabled = enabled,
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.orange)),
-            modifier = Modifier
-                .fillMaxWidth(0.8f) // Centered and not too wide
-        ) {
-            Text("Passer la commande")
-        }
+        ValidateButton(
+            label = "Valider la commande",
+            onClick = onClick
+        )
     }
 }
 
