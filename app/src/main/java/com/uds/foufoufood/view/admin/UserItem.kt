@@ -27,25 +27,19 @@ import com.uds.foufoufood.data_class.model.User
 
 @Composable
 fun UserItem(
-    user: User,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    onRoleChanged: (String) -> Unit
+    user: User, modifier: Modifier = Modifier, onClick: () -> Unit, onRoleChanged: (String) -> Unit
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth() // Prendre toute la largeur disponible
-            .padding(6.dp) // Ajouter un padding autour de chaque utilisateur
-            .shadow(4.dp, RoundedCornerShape(15.dp)) // Ombre avec coins arrondis
-            .background(
-                Color.White,
-                shape = RoundedCornerShape(15.dp)
-            ) // Fond blanc avec coins arrondis
-            .clickable { onClick() }
-            .padding(16.dp), // Padding interne au composant
+    Row(modifier = modifier
+        .fillMaxWidth() // Prendre toute la largeur disponible
+        .padding(6.dp) // Ajouter un padding autour de chaque utilisateur
+        .shadow(4.dp, RoundedCornerShape(15.dp)) // Ombre avec coins arrondis
+        .background(
+            Color.White, shape = RoundedCornerShape(15.dp)
+        ) // Fond blanc avec coins arrondis
+        .clickable { onClick() }
+        .padding(16.dp), // Padding interne au composant
 
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+        verticalAlignment = Alignment.CenterVertically) {
         // Image de l'utilisateur
         AsyncImage(
             model = user.avatarUrl, // Charger l'image à partir de l'URL
@@ -64,8 +58,7 @@ fun UserItem(
         }
         Spacer(modifier = Modifier.weight(1f))
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = "Next"
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next"
         )
     }
 }

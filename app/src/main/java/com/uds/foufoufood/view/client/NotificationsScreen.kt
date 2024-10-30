@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,13 +39,11 @@ import com.uds.foufoufood.viewmodel.factory.NotificationViewModelFactory
 
 @Composable
 fun NotificationsScreen(
-    userViewModel: UserViewModel,
-    navController: NavHostController
+    userViewModel: UserViewModel, navController: NavHostController
 ) {
     val activity = LocalContext.current as ComponentActivity
     val notificationViewModel: NotificationViewModel = viewModel(
-        activity,
-        factory = NotificationViewModelFactory(userViewModel)
+        activity, factory = NotificationViewModelFactory(userViewModel)
     )
 
     val notifications by notificationViewModel.notifications.observeAsState(emptyList())
@@ -83,19 +80,15 @@ fun NotificationsScreen(
             TitlePage(label = "Notifications")
 
             LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(notifications) { notification ->
-                    NotificationItem(
-                        notification = notification,
-                        onClick = {
-                            // Handle notification click
-                            notificationViewModel.markNotificationAsRead(notification.id)
-                            // Navigate to order details or appropriate screen
-                            navController.navigate("orderTracking")
-                        }
-                    )
+                    NotificationItem(notification = notification, onClick = {
+                        // Handle notification click
+                        notificationViewModel.markNotificationAsRead(notification.id)
+                        // Navigate to order details or appropriate screen
+                        navController.navigate("orderTracking")
+                    })
                 }
             }
         }
@@ -104,27 +97,23 @@ fun NotificationsScreen(
 
 @Composable
 fun NotificationItem(
-    notification: Notification,
-    onClick: () -> Unit
+    notification: Notification, onClick: () -> Unit
 ) {
     val backgroundColor =
         if (notification.isRead) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary.copy(
             alpha = 0.1f
         )
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .background(backgroundColor)
-            .padding(16.dp)
-    ) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .clickable { onClick() }
+        .background(backgroundColor)
+        .padding(16.dp)) {
         Column(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = notification.message,
-                style = MaterialTheme.typography.bodyLarge
+                text = notification.message, style = MaterialTheme.typography.bodyLarge
             )
             Text(
                 text = formatTimestamp(notification.timestamp),

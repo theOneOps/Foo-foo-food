@@ -1,6 +1,7 @@
 package com.uds.foufoufood.view.auth
 
 import android.content.Context
+import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -50,7 +51,6 @@ import com.uds.foufoufood.ui.component.TitlePage
 import com.uds.foufoufood.ui.component.ValidateButton
 import com.uds.foufoufood.viewmodel.UserViewModel
 import org.json.JSONObject
-import android.util.Base64
 
 @Composable
 fun RegisterFirstPartScreen(
@@ -89,8 +89,7 @@ fun RegisterFirstPartScreen(
             ).show()
             userViewModel.resetStatus()
             navController.navigate("verify_code/${email}")
-        }
-        else if (registrationInitSuccess == false) {
+        } else if (registrationInitSuccess == false) {
             Toast.makeText(
                 context,
                 "Erreur lors de l'inscription, il se peut que l'adresse email soit déjà utilisée",
@@ -104,22 +103,16 @@ fun RegisterFirstPartScreen(
         if (registrationGoogleSuccess == true && registrationCompleteStatus == true) {
             Log.d("RegisterFirstPartScreen", "Inscription réussie avec Google")
             Toast.makeText(
-                context,
-                "Inscription réussie avec Google",
-                Toast.LENGTH_SHORT
+                context, "Inscription réussie avec Google", Toast.LENGTH_SHORT
             ).show()
             userViewModel.resetStatus()
             navController.navigate(Screen.HomeRestaurant.route)
-        }
-        else if (registrationGoogleSuccess == false && registrationCompleteStatus == false) {
+        } else if (registrationGoogleSuccess == false && registrationCompleteStatus == false) {
             Log.d("RegisterFirstPartScreen", "Erreur lors de l'inscription avec Google")
             Toast.makeText(
-                context,
-                "Erreur lors de l'inscription avec Google",
-                Toast.LENGTH_SHORT
+                context, "Erreur lors de l'inscription avec Google", Toast.LENGTH_SHORT
             ).show()
-        }
-        else if (registrationGoogleSuccess == true && registrationCompleteStatus == false) {
+        } else if (registrationGoogleSuccess == true && registrationCompleteStatus == false) {
             email = userViewModel.user.value?.email ?: ""
             Log.d("RegisterFirstPartScreen", "Email: $email")
             navController.navigate("define_profile/${email}")
@@ -140,33 +133,27 @@ fun RegisterFirstPartScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        TextFieldWithError(
-            value = name,
+        TextFieldWithError(value = name,
             onValueChange = { name = it },
             label = stringResource(id = R.string.full_name),
             errorMessage = "Veuillez entrer votre prénom",
-            isValid = { it.isNotEmpty() }
-        )
+            isValid = { it.isNotEmpty() })
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        TextFieldWithError(
-            value = email,
+        TextFieldWithError(value = email,
             onValueChange = { email = it },
             label = stringResource(id = R.string.email),
             errorMessage = stringResource(id = R.string.enter_valid_email),
-            isValid = { isValidEmail(it) }
-        )
+            isValid = { isValidEmail(it) })
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        PasswordTextField(
-            value = password,
+        PasswordTextField(value = password,
             onValueChange = { password = it },
             label = stringResource(id = R.string.password),
             errorMessage = "Le mot de passe doit contenir au moins 6 caractères",
-            isValid = { isValidPassword(it) }
-        )
+            isValid = { isValidPassword(it) })
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -175,9 +162,7 @@ fun RegisterFirstPartScreen(
                 userViewModel.initiateRegistration(name, email, password)
             } else {
                 Toast.makeText(
-                    context,
-                    "Veuillez entrer des informations valides",
-                    Toast.LENGTH_SHORT
+                    context, "Veuillez entrer des informations valides", Toast.LENGTH_SHORT
                 ).show()
             }
         })
@@ -190,7 +175,8 @@ fun RegisterFirstPartScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        NetworksButtons(stringResource(id = R.string.sign_up_with), Color.Gray
+        NetworksButtons(
+            stringResource(id = R.string.sign_up_with), Color.Gray
         ) { googleSignInLauncher.launch(googleSignInClient.signInIntent) }
     }
 }
@@ -211,8 +197,7 @@ fun handleSignUpResult(
             // Authentification Firebase avec le token Google
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             Log.d("Google Sign-In", "Credential: $credential")
-            auth.signInWithCredential(credential)
-                .addOnCompleteListener { signInTask ->
+            auth.signInWithCredential(credential).addOnCompleteListener { signInTask ->
                     if (signInTask.isSuccessful) {
                         // Si l'authentification est réussie, obtenir un nouveau token Firebase
                         auth.currentUser?.getIdToken(false)?.addOnCompleteListener { tokenTask ->
@@ -228,7 +213,11 @@ fun handleSignUpResult(
                             }
                         }
                     } else {
-                        Toast.makeText(context, "Échec de l'authentification Google", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Échec de l'authentification Google",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
         } else {
@@ -283,8 +272,7 @@ fun isValidEmail(email: String): Boolean {
 @Composable
 fun SignInText(onNavigateToLogin: () -> Unit) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(20.dp)
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(20.dp)
     ) {
         Text(
             text = stringResource(id = R.string.already_account),
@@ -295,8 +283,7 @@ fun SignInText(onNavigateToLogin: () -> Unit) {
         Spacer(modifier = Modifier.width(10.dp))
 
         TextLink(
-            label = stringResource(id = R.string.sign_in_underlined),
-            onClick = onNavigateToLogin
+            label = stringResource(id = R.string.sign_in_underlined), onClick = onNavigateToLogin
         )
     }
 }

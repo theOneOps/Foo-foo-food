@@ -45,7 +45,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.navigation.Screen
@@ -62,56 +61,52 @@ fun DrawerScaffold(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            DrawerContent(
-                navController = navController,
-                closeDrawer = { scope.launch { drawerState.close() } },
-                logout = userViewModel::logout,
-                userViewModel = userViewModel,
-                currentScreen = currentScreen
-            )
-        },
-        content = {
-            Box(
+    ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
+        DrawerContent(
+            navController = navController,
+            closeDrawer = { scope.launch { drawerState.close() } },
+            logout = userViewModel::logout,
+            userViewModel = userViewModel,
+            currentScreen = currentScreen
+        )
+    }, content = {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Main content displayed in the background
+            screenContent()
+
+            // Menu button overlayed at the top-right corner
+            IconButton(
+                onClick = {
+                    scope.launch { drawerState.open() }
+                },
                 modifier = Modifier
-                    .fillMaxSize()
+                    .align(Alignment.TopStart)
+                    .padding(start = 20.dp, top = 20.dp)
             ) {
-                // Main content displayed in the background
-                screenContent()
-
-                // Menu button overlayed at the top-right corner
-                IconButton(
-                    onClick = {
-                        scope.launch { drawerState.open() }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(start = 20.dp, top = 20.dp)
-                ) {
-                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                }
-
-                Image(
-                    painter = painterResource(R.drawable.logo_only),
-                    contentDescription = "Logo",
-                    modifier = Modifier
-                        .size(85.dp)
-                        .clip(CircleShape)
-                        .align(Alignment.TopEnd)
-                        .padding(20.dp)
-                )
+                Icon(Icons.Filled.Menu, contentDescription = "Menu")
             }
+
+            Image(
+                painter = painterResource(R.drawable.logo_only),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .size(85.dp)
+                    .clip(CircleShape)
+                    .align(Alignment.TopEnd)
+                    .padding(20.dp)
+            )
         }
-    )
+    })
 }
 
 
 @Composable
 fun DrawerContent(
     navController: NavHostController,
-    closeDrawer: () -> Unit, logout: () -> Unit,
+    closeDrawer: () -> Unit,
+    logout: () -> Unit,
     userViewModel: UserViewModel,
     currentScreen: String
 ) {
@@ -138,8 +133,7 @@ fun DrawerContent(
                 .padding(bottom = 20.dp, top = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_profile_avatar),
+            Icon(painter = painterResource(R.drawable.ic_profile_avatar),
                 contentDescription = "Edit Profile",
                 tint = colorResource(R.color.orange), // Orange color
                 modifier = Modifier
@@ -148,16 +142,25 @@ fun DrawerContent(
                     .clickable {
                         closeDrawer()
                         navController.navigate(Screen.Profile.route)
-                    }
-            )
+                    })
 
             Spacer(modifier = Modifier.width(16.dp))
 
             // User information
             Column {
-                Text(text = name, fontWeight = FontWeight.Bold, fontSize = 21.sp, fontFamily = FontFamily(Font(R.font.sofiapro_bold)))
+                Text(
+                    text = name,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 21.sp,
+                    fontFamily = FontFamily(Font(R.font.sofiapro_bold))
+                )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = email, fontSize = 16.sp, color = Color.Gray, fontFamily = FontFamily(Font(R.font.sofiapro_medium)))
+                Text(
+                    text = email,
+                    fontSize = 16.sp,
+                    color = Color.Gray,
+                    fontFamily = FontFamily(Font(R.font.sofiapro_medium))
+                )
             }
         }
 
@@ -181,8 +184,7 @@ fun DrawerContent(
                 )
             }
         }
-        if (userViewModel.user.value?.role == "client")
-        DrawerMenuItem(
+        if (userViewModel.user.value?.role == "client") DrawerMenuItem(
             icon = ImageVector.vectorResource(R.drawable.ic_drawer_orders),
             label = stringResource(R.string.my_orders),
             onClick = {
@@ -210,15 +212,13 @@ fun DrawerContent(
             }
         }
 
-        DrawerMenuItem(
-            icon = ImageVector.vectorResource(R.drawable.ic_profile_avatar),
+        DrawerMenuItem(icon = ImageVector.vectorResource(R.drawable.ic_profile_avatar),
             label = stringResource(R.string.my_profile),
             onClick = {
                 closeDrawer()
                 // Handle navigation to profile
                 navController.navigate(Screen.Profile.route)
-            }
-        )
+            })
 
         if (currentScreen !in listOf(
                 Screen.AdminClient.route,
@@ -271,7 +271,12 @@ fun DrawerContent(
                     .padding(end = 12.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(stringResource(R.string.logout), color = colorResource(R.color.white), fontFamily = FontFamily(Font(R.font.sofiapro_medium)), fontSize = 18.sp)
+            Text(
+                stringResource(R.string.logout),
+                color = colorResource(R.color.white),
+                fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                fontSize = 18.sp
+            )
         }
     }
 }

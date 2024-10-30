@@ -6,29 +6,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -43,7 +36,6 @@ import com.uds.foufoufood.ui.component.DrawerScaffold
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun AllOrdersScreen(
@@ -138,14 +130,14 @@ fun AllOrdersScreen(
 
 @Composable
 fun OrderItemRow(
-    order: Order,
-    navController: NavHostController,
-    orderViewModel: OrderViewModel
+    order: Order, navController: NavHostController, orderViewModel: OrderViewModel
 ) {
     val isDelivered = order.status == OrderStatus.DELIVERED
-    val backgroundColor = if (isDelivered) colorResource(R.color.grey_bg_deactivated) else Color.White
+    val backgroundColor =
+        if (isDelivered) colorResource(R.color.grey_bg_deactivated) else Color.White
     val borderColor = if (isDelivered) Color.Gray else colorResource(R.color.orange)
-    val iconTintColor = if (isDelivered) colorResource(R.color.grey_bg_deactivated) else colorResource(R.color.orange)
+    val iconTintColor =
+        if (isDelivered) colorResource(R.color.grey_bg_deactivated) else colorResource(R.color.orange)
 
     Row(
         modifier = Modifier
@@ -165,18 +157,25 @@ fun OrderItemRow(
                 color = colorResource(R.color.orange_pale)
             )
             Spacer(modifier = Modifier.height(15.dp))
-            val displayStatus = order.status?.displayName ?: "Statut inconnu"
-            Text(text = "Statut : $displayStatus", color = Color.Gray, fontFamily = FontFamily(Font(R.font.sofiapro_regular)),)
+            val displayStatus = order.status.displayName
+            Text(
+                text = "Statut : $displayStatus",
+                color = Color.Gray,
+                fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
+            )
         }
 
         IconButton(
             onClick = {
                 orderViewModel.setCurrentOrder(order)
                 navController.navigate(Screen.DeliveryOrderDetailsPage.route)
-            },
-            enabled = !isDelivered
+            }, enabled = !isDelivered
         ) {
-            Icon(Icons.Filled.ArrowForward, contentDescription = "Voir détails", tint = iconTintColor)
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Voir détails",
+                tint = iconTintColor
+            )
         }
     }
 }

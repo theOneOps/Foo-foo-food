@@ -1,5 +1,12 @@
+package com.uds.foufoufood.view.admin
+
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -25,8 +32,6 @@ import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.ui.component.DrawerScaffold
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 
-data class Restaurant(val id: String, val name: String)
-
 @Composable
 fun RestaurantPage(
     navController: NavHostController,
@@ -39,37 +44,30 @@ fun RestaurantPage(
         userViewModel = userViewModel,
         currentScreen = Screen.AdminRestaurant.route
     ) {
-        Scaffold(
-            topBar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 20.dp, top = 20.dp)
-                ) {
-                    IconButton(
-                        onClick = {
-                            navController.navigate(Screen.AdminRestaurant.route)
-                        },
-                        modifier = Modifier.align(Alignment.TopEnd)
-                    ) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                    }
-                }
-
-
-            },
-            floatingActionButton = {
-                FloatingActionButton(
+        Scaffold(topBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 20.dp, top = 20.dp)
+            ) {
+                IconButton(
                     onClick = {
-                        // Navigation vers la page pour ajouter un nouveau restaurant
-                        navController.navigate("addRestaurant")
-                    },
-                    content = {
-                        Icon(Icons.Default.Add, contentDescription = "Ajouter un restaurant")
-                    }
-                )
+                        navController.navigate(Screen.AdminRestaurant.route)
+                    }, modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                }
             }
-        ) { paddingValues ->
+
+
+        }, floatingActionButton = {
+            FloatingActionButton(onClick = {
+                // Navigation vers la page pour ajouter un nouveau restaurant
+                navController.navigate("addRestaurant")
+            }, content = {
+                Icon(Icons.Default.Add, contentDescription = "Ajouter un restaurant")
+            })
+        }) { paddingValues ->
             LazyColumn(
                 modifier = Modifier
                     .padding(paddingValues)
@@ -79,9 +77,7 @@ fun RestaurantPage(
                 items(restaurants.size) { index ->
                     val restaurant = restaurants[index]
                     RestaurantItem(
-                        navController,
-                        adminRestaurantsViewModel,
-                        restaurant = restaurant
+                        navController, adminRestaurantsViewModel, restaurant = restaurant
                     )
                 }
             }
@@ -96,22 +92,19 @@ fun RestaurantItem(
     restaurant: Restaurant
 ) {
     val context = LocalContext.current
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 8.dp),
         shape = RoundedCornerShape(8.dp),
         onClick = {
             // todo : navigate to the (linked restorer and restaurant screen)
 
-            if (restaurant.userId.isNullOrEmpty()) {
+            if (restaurant.userId.isEmpty()) {
                 adminRestaurantsViewModel.setSelectedRestaurant(restaurant)
                 navController.navigate(Screen.AdminLinkARestorerToAResto.route)
-            } else
-                Toast.makeText(context, "Restaurant déjà lié", Toast.LENGTH_SHORT).show()
+            } else Toast.makeText(context, "Restaurant déjà lié", Toast.LENGTH_SHORT).show()
 
-        }
-    ) {
+        }) {
         Row(
             modifier = Modifier
                 .padding(16.dp)

@@ -50,24 +50,21 @@ fun GerantPage(
         userViewModel = userViewModel,
         currentScreen = Screen.AdminGerant.route
     ) {
-        Scaffold(
-            topBar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 20.dp, top = 20.dp)
+        Scaffold(topBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 20.dp, top = 20.dp)
+            ) {
+                IconButton(
+                    onClick = {
+                        navController.navigate(Screen.AdminGerant.route)
+                    }, modifier = Modifier.align(Alignment.TopEnd)
                 ) {
-                    IconButton(
-                        onClick = {
-                            navController.navigate(Screen.AdminGerant.route)
-                        },
-                        modifier = Modifier.align(Alignment.TopEnd)
-                    ) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                    }
+                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
                 }
             }
-        ) { paddingValues ->
+        }) { paddingValues ->
             // Main content area for displaying users
             Column(
                 modifier = Modifier
@@ -87,23 +84,17 @@ fun GerantPage(
                         .padding(16.dp)
                         .fillMaxSize()
                 ) {
-                    if (restaurateurUsers != null) {
-                        items(restaurateurUsers.size) { index ->
-                            val user = restaurateurUsers[index]
-                            UserItem(
-                                user = user,
-                                onClick = {
-                                    if (user.email.isNotEmpty()) {
-                                        navController.navigate("userProfile/${user.email}")
-                                    } else {
-                                        Log.e("GerantPage", "L'utilisateur n'a pas d'email valide")
-                                    }
-                                },
-                                onRoleChanged = { newRole ->
-                                    onRoleChanged(user, newRole)
-                                }
-                            )
-                        }
+                    items(restaurateurUsers.size) { index ->
+                        val user = restaurateurUsers[index]
+                        UserItem(user = user, onClick = {
+                            if (user.email.isNotEmpty()) {
+                                navController.navigate("userProfile/${user.email}")
+                            } else {
+                                Log.e("GerantPage", "L'utilisateur n'a pas d'email valide")
+                            }
+                        }, onRoleChanged = { newRole ->
+                            onRoleChanged(user, newRole)
+                        })
                     }
                 }
             }

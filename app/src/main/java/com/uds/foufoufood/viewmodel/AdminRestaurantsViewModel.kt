@@ -1,16 +1,10 @@
 package com.uds.foufoufood.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uds.foufoufood.data_class.model.Address
-import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.repository.RestaurantRepository
 import kotlinx.coroutines.launch
@@ -76,16 +70,14 @@ class AdminRestaurantsViewModel(private val restaurantRepository: RestaurantRepo
 //                        _menus.value = newMenusList
                         currentRestaurants.removeIf { it._id == restaurantId }
                         _restaurants.value = currentRestaurants
-                    } else
-                        Log.e(
-                            "AdminRestaurantsViewModel",
-                            "response from deleteRestaurant null, problem to fix !"
-                        )
+                    } else Log.e(
+                        "AdminRestaurantsViewModel",
+                        "response from deleteRestaurant null, problem to fix !"
+                    )
                 }
             } catch (e: Exception) {
                 Log.e(
-                    "AdminRestaurantsViewModel",
-                    "Exception during deleteRestaurant: ${e.message}"
+                    "AdminRestaurantsViewModel", "Exception during deleteRestaurant: ${e.message}"
                 )
 
             }
@@ -100,21 +92,18 @@ class AdminRestaurantsViewModel(private val restaurantRepository: RestaurantRepo
                     if (response.success) {
                         response.message?.let {
                             Log.e(
-                                "linkRestorer from AdminRestaurantsViewModel sucess message :",
-                                it
+                                "linkRestorer from AdminRestaurantsViewModel sucess message :", it
                             )
                         }
-                    } else
-                        Log.e(
-                            "AdminRestaurantsViewModel",
-                            "response from linkARestorer null, problem to fix !"
-                        )
+                    } else Log.e(
+                        "AdminRestaurantsViewModel",
+                        "response from linkARestorer null, problem to fix !"
+                    )
 
                 }
             } catch (e: Exception) {
                 Log.e(
-                    "AdminRestaurantsViewModel",
-                    "Exception during linkARestorer: ${e.message}"
+                    "AdminRestaurantsViewModel", "Exception during linkARestorer: ${e.message}"
                 )
             }
         }

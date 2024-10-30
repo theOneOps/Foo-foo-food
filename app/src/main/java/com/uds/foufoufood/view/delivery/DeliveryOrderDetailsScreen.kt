@@ -15,7 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -37,10 +37,8 @@ import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Order
 import com.uds.foufoufood.data_class.model.OrderStatus
 import com.uds.foufoufood.ui.component.BackButton
-import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
-import com.uds.foufoufood.viewmodel.UserViewModel
 
 val sofiaproBold = FontFamily(Font(R.font.sofiapro_bold))
 val sofiaproMedium = FontFamily(Font(R.font.sofiapro_medium))
@@ -50,8 +48,7 @@ val sofiaproRegular = FontFamily(Font(R.font.sofiapro_regular))
 fun DeliveryOrderDetailsScreen(
     navController: NavHostController,
     orderViewModel: OrderViewModel,
-    deliveryViewModel: DeliveryViewModel,
-    userViewModel: UserViewModel
+    deliveryViewModel: DeliveryViewModel
 ) {
     val order by orderViewModel.currentOrder.collectAsState()
 
@@ -81,7 +78,7 @@ fun DeliveryOrderDetailsScreen(
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
-                Divider(color = Color.Gray, thickness = 1.dp)
+                HorizontalDivider(thickness = 1.dp, color = Color.Gray)
                 Spacer(modifier = Modifier.height(30.dp))
 
                 // Restaurant et client
@@ -96,7 +93,7 @@ fun DeliveryOrderDetailsScreen(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-                Divider(color = Color.Gray, thickness = 1.dp)
+                HorizontalDivider(thickness = 1.dp, color = Color.Gray)
                 Spacer(modifier = Modifier.height(30.dp))
 
                 // Plats commandés
@@ -117,7 +114,11 @@ fun DeliveryOrderDetailsScreen(
                 ) {
                     items(it.items) { (menu, quantity) ->
                         MenuItemRow(menu = menu, quantity = quantity)
-                        Divider(color = Color.Gray, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 4.dp))
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            thickness = 0.5.dp,
+                            color = Color.Gray
+                        )
                     }
                 }
 

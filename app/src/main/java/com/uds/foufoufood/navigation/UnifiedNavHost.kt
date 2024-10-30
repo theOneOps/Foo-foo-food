@@ -1,8 +1,5 @@
 package com.uds.foufoufood.navigation
 
-import AddRestaurantPage
-import AvailabilityScreen
-import RestaurantPage
 import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -10,14 +7,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -37,10 +33,12 @@ import com.uds.foufoufood.ui.component.BottomNavBarAdmin
 import com.uds.foufoufood.ui.component.BottomNavBarClient
 import com.uds.foufoufood.view.HomeScreenMenu
 import com.uds.foufoufood.view.HomeScreenRestaurant
+import com.uds.foufoufood.view.admin.AddRestaurantPage
 import com.uds.foufoufood.view.admin.ClientScreen
 import com.uds.foufoufood.view.admin.GerantPage
 import com.uds.foufoufood.view.admin.LinkRestorerRestoAndRestoPage
 import com.uds.foufoufood.view.admin.LivreurPage
+import com.uds.foufoufood.view.admin.RestaurantPage
 import com.uds.foufoufood.view.admin.UserProfileAdminPage
 import com.uds.foufoufood.view.auth.DefineProfileScreen
 import com.uds.foufoufood.view.auth.LoginScreen
@@ -56,6 +54,7 @@ import com.uds.foufoufood.view.client.OrderTrackingScreen
 import com.uds.foufoufood.view.client.ProfileScreen
 import com.uds.foufoufood.view.client.UpdateAddressScreen
 import com.uds.foufoufood.view.delivery.AllOrdersScreen
+import com.uds.foufoufood.view.delivery.AvailabilityScreen
 import com.uds.foufoufood.view.delivery.DeliveryOrderDetailsScreen
 import com.uds.foufoufood.view.restorer.FormModifyRestaurantScreen
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
@@ -85,7 +84,7 @@ fun UnifiedNavHost(
     googleSignInClient: GoogleSignInClient,
     auth: FirebaseAuth
 ) {
-    var selectedItem by remember { mutableStateOf(0) }
+    var selectedItem by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(navController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -99,50 +98,43 @@ fun UnifiedNavHost(
             }
         }
     }
-    Scaffold(
-        bottomBar = {
-            if (emailValidated && connectUser.isNotEmpty()) { // Only show when connected
-                if (connectUser == "admin" && showAdminBottomBar) {
-                    BottomNavBarAdmin(selectedItem = selectedItem) { index ->
+    Scaffold(bottomBar = {
+        if (emailValidated && connectUser.isNotEmpty()) { // Only show when connected
+            if (connectUser == "admin" && showAdminBottomBar) {
+                BottomNavBarAdmin(selectedItem = selectedItem) { index ->
+                    selectedItem = index
+                    when (index) {
+                        0 -> navController.navigate(Screen.AdminClient.route)
+                        1 -> navController.navigate(Screen.AdminLivreur.route)
+                        2 -> navController.navigate(Screen.AdminGerant.route)
+                        3 -> navController.navigate(Screen.AdminRestaurant.route)
+                    }
+                }
+            } else if (connectUser == "client" || connectUser == "restaurateur") {
+                BottomNavBarClient(selectedItem = selectedItem,
+                    userViewModel = userViewModel,
+                    onclick = { index ->
                         selectedItem = index
                         when (index) {
-                            0 -> navController.navigate(Screen.AdminClient.route)
-                            1 -> navController.navigate(Screen.AdminLivreur.route)
-                            2 -> navController.navigate(Screen.AdminGerant.route)
-                            3 -> navController.navigate(Screen.AdminRestaurant.route)
+                            0 -> navController.navigate(Screen.HomeRestaurant.route)
+                            1 -> navController.navigate(Screen.HomeMenu.route)
+                            2 -> navController.navigate(Screen.Cart.route)
+                            3 -> navController.navigate(Screen.Notifications.route)
                         }
-                    }
-                } else if (connectUser == "client" || connectUser == "restaurateur") {
-                    BottomNavBarClient(
-                        selectedItem = selectedItem,
-                        userViewModel = userViewModel,
-                        onclick = { index ->
-                            selectedItem = index
-                            when (index) {
-                                0 -> navController.navigate(Screen.HomeRestaurant.route)
-                                1 -> navController.navigate(Screen.HomeMenu.route)
-                                2 -> navController.navigate(Screen.Cart.route)
-                                3 -> navController.navigate(Screen.Notifications.route)
-                            }
-                        }
-                    )
-                }
+                    })
             }
         }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
+    }) { innerPadding ->
+        NavHost(navController = navController,
             startDestination = getStartDestination(connectUser, emailValidated),
-            modifier = Modifier.background(color = colorResource(id = R.color.white)).padding(innerPadding),
+            modifier = Modifier
+                .background(color = colorResource(id = R.color.white))
+                .padding(innerPadding),
             enterTransition = { fadeIn(animationSpec = tween(700)) + scaleIn(initialScale = 0.95f) },
-            exitTransition = { fadeOut(animationSpec = tween(700)) + scaleOut(targetScale = 1.05f) }
-        ) {
+            exitTransition = { fadeOut(animationSpec = tween(700)) + scaleOut(targetScale = 1.05f) }) {
             addAuthGraph(navController, userViewModel, googleSignInClient, auth)
             addAdminGraph(
-                navController,
-                adminUsersViewModel,
-                adminRestaurantsViewModel,
-                userViewModel
+                navController, adminUsersViewModel, adminRestaurantsViewModel, userViewModel
             )
             addDeliveryGraph(navController, deliveryViewModel, orderViewModel, userViewModel)
             addConnectedGraph(
@@ -171,8 +163,12 @@ fun getStartDestination(connectUser: String, emailValidated: Boolean): String {
 
 /////////////////////////////AUTH
 
-fun NavGraphBuilder.addAuthGraph(navController: NavHostController, userViewModel: UserViewModel,
-                                 googleSignInClient: GoogleSignInClient, auth: FirebaseAuth) {
+fun NavGraphBuilder.addAuthGraph(
+    navController: NavHostController,
+    userViewModel: UserViewModel,
+    googleSignInClient: GoogleSignInClient,
+    auth: FirebaseAuth
+) {
     composable(Screen.Welcome.route) {
         WelcomeScreen(navController, userViewModel, googleSignInClient, auth)
     }
@@ -191,9 +187,7 @@ fun NavGraphBuilder.addAuthGraph(navController: NavHostController, userViewModel
     ) { backStackEntry ->
         val email = backStackEntry.arguments?.getString("email")
         VerifyCodeScreen(
-            navController = navController,
-            userViewModel = userViewModel,
-            email = email ?: ""
+            navController = navController, userViewModel = userViewModel, email = email ?: ""
         )
     }
 
@@ -203,9 +197,7 @@ fun NavGraphBuilder.addAuthGraph(navController: NavHostController, userViewModel
     ) { backStackEntry ->
         val email = backStackEntry.arguments?.getString("email")
         DefineProfileScreen(
-            navController = navController,
-            userViewModel = userViewModel,
-            email = email ?: ""
+            navController = navController, userViewModel = userViewModel, email = email ?: ""
         )
     }
 }
@@ -220,34 +212,28 @@ fun NavGraphBuilder.addAdminGraph(
     userViewModel: UserViewModel
 ) {
     composable(Screen.AdminClient.route) {
-        ClientScreen(
-            navController = navController,
+        ClientScreen(navController = navController,
             adminUsersViewModel = adminUsersViewModel,
             userViewModel = userViewModel,
             onRoleChanged = { user, newRole ->
                 adminUsersViewModel.updateUserRole(user, newRole)
-            }
-        )
+            })
     }
     composable(Screen.AdminLivreur.route) {
-        LivreurPage(
-            navController = navController,
+        LivreurPage(navController = navController,
             adminUsersViewModel = adminUsersViewModel,
             userViewModel = userViewModel,
             onRoleChanged = { user, newRole ->
                 adminUsersViewModel.updateUserRole(user, newRole)
-            }
-        )
+            })
     }
     composable(Screen.AdminGerant.route) {
-        GerantPage(
-            navController = navController,
+        GerantPage(navController = navController,
             adminUsersViewModel = adminUsersViewModel,
             userViewModel = userViewModel,
             onRoleChanged = { user, newRole ->
                 adminUsersViewModel.updateUserRole(user, newRole)
-            }
-        )
+            })
     }
 
     // Page de profil utilisateur
@@ -256,15 +242,13 @@ fun NavGraphBuilder.addAdminGraph(
         arguments = listOf(navArgument("userEmail") { type = NavType.StringType })
     ) { backStackEntry ->
         val userEmail = backStackEntry.arguments?.getString("userEmail")
-        UserProfileAdminPage(
-            adminUsersViewModel=adminUsersViewModel,
+        UserProfileAdminPage(adminUsersViewModel = adminUsersViewModel,
             navController = navController,
             userEmail = userEmail,
             users = adminUsersViewModel.getAll(),
             onRoleChanged = { user, newRole ->
                 adminUsersViewModel.updateUserRole(user, newRole)
-            }
-        )
+            })
     }
 
     // Page de gestion des restaurants
@@ -283,24 +267,18 @@ fun NavGraphBuilder.addAdminGraph(
 
     // Page pour ajouter un restaurant
     composable("addRestaurant") {
-        AddRestaurantPage(
-            navController = navController,
+        AddRestaurantPage(navController = navController,
             onRestaurantAdded = { newRestaurant: Restaurant ->
                 adminRestaurantsViewModel.addRestaurant(newRestaurant)
-            }
-        )
+            })
     }
 
     // page pour linker un restaurateur à un restaurant
-    composable(Screen.AdminLinkARestorerToAResto.route)
-    {
+    composable(Screen.AdminLinkARestorerToAResto.route) {
         val selectAdRestaurant by adminRestaurantsViewModel.selected_Restorer.observeAsState()
         selectAdRestaurant?.let { it1 ->
             LinkRestorerRestoAndRestoPage(
-                navController,
-                adminRestaurantsViewModel,
-                adminUsersViewModel,
-                it1
+                navController, adminRestaurantsViewModel, adminUsersViewModel, it1
             )
         }
     }
@@ -315,11 +293,10 @@ fun NavGraphBuilder.addDeliveryGraph(
     userViewModel: UserViewModel
 ) {
     composable(Screen.DeliveryAvailablePage.route) {
-        AvailabilityScreen (
+        AvailabilityScreen(
             navController = navController,
             deliveryViewModel = deliveryViewModel,
-            orderViewModel = orderViewModel,
-            userViewModel = userViewModel
+            orderViewModel = orderViewModel
         )
     }
 
@@ -327,7 +304,6 @@ fun NavGraphBuilder.addDeliveryGraph(
         DeliveryOrderDetailsScreen(
             navController = navController,
             orderViewModel = orderViewModel,
-            userViewModel = userViewModel,
             deliveryViewModel = deliveryViewModel
         )
     }
@@ -363,8 +339,7 @@ fun NavGraphBuilder.addConnectedGraph(
     // Profile Screen
     composable(Screen.Profile.route) {
         ProfileScreen(
-            navController = navController,
-            userViewModel = userViewModel
+            navController = navController, userViewModel = userViewModel
         )
     }
 
@@ -375,9 +350,7 @@ fun NavGraphBuilder.addConnectedGraph(
     ) { backStackEntry ->
         val email = backStackEntry.arguments?.getString("email")
         VerifyCodeScreen(
-            navController = navController,
-            userViewModel = userViewModel,
-            email = email ?: ""
+            navController = navController, userViewModel = userViewModel, email = email ?: ""
         )
     }
 
@@ -394,21 +367,18 @@ fun NavGraphBuilder.addConnectedGraph(
     // Client Restaurant All Menus Page (accessible pour 'client' et 'restaurateur')
     composable(Screen.ClientRestaurantAllMenusPage.route) {
         Log.d("ConnectedNavHost", "ClientRestaurantAllMenusPage")
-        val restaurant by menuViewModel.shared_restaurant.observeAsState()
+        val restaurant by menuViewModel.sharedRestaurant.observeAsState()
         restaurant?.let { theRestaurant ->
             ClientRestaurantScreen(
-                navController,
-                menuViewModel,
-                theRestaurant
+                navController, menuViewModel, theRestaurant
             )
         } ?: Log.d("ConnectedNavHost", "Restaurant data is null")
     }
 
     composable(Screen.ModifyRestaurantPage.route) {
         Log.d("ConnectedNavHost", Screen.ModifyRestaurantPage.route)
-        if (userViewModel.user.value?.role == "restaurateur"
-        ) {
-            val restaurant by menuViewModel.shared_restaurant.observeAsState()
+        if (userViewModel.user.value?.role == "restaurateur") {
+            val restaurant by menuViewModel.sharedRestaurant.observeAsState()
             restaurant?.let { theRestaurant ->
                 FormModifyRestaurantScreen(theRestaurant, restaurantsViewModel, navController)
             } ?: Log.d("ConnectedNavHost", "Menu data is null")
@@ -417,13 +387,10 @@ fun NavGraphBuilder.addConnectedGraph(
         }
     }
 
-    composable(Screen.ClientInstanceMenuPage.route)
-    {
+    composable(Screen.ClientInstanceMenuPage.route) {
         Log.d("ConnectedNavHost", Screen.ClientInstanceMenuPage.route)
-        if (userViewModel.user.value?.role == "client" ||
-            userViewModel.user.value?.role == "restaurateur"
-        ) {
-            val menu by menuViewModel.shared_current_menu.observeAsState()
+        if (userViewModel.user.value?.role == "client" || userViewModel.user.value?.role == "restaurateur") {
+            val menu by menuViewModel.sharedCurrentMenu.observeAsState()
             menu?.let { selectMenu ->
                 MenuRestaurantScreen(selectMenu, menuViewModel, cartViewModel, navController)
             } ?: Log.d("ConnectedNavHost", "Menu data is null")
@@ -444,16 +411,14 @@ fun NavGraphBuilder.addConnectedGraph(
         val user = userViewModel.user.value
         if (user != null) {
             OrderTrackingScreen(
-                orderRepository = orderRepository,
-                userViewModel = userViewModel
+                orderRepository = orderRepository, userViewModel = userViewModel
             )
         }
     }
 
     composable(Screen.Notifications.route) {
         NotificationsScreen(
-            userViewModel = userViewModel,
-            navController = navController
+            userViewModel = userViewModel, navController = navController
         )
     }
 }

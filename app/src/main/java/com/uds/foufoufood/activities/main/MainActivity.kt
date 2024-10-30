@@ -1,6 +1,5 @@
 package com.uds.foufoufood.activities.main
 
-import UserRepository
 import android.Manifest
 import android.app.Activity
 import android.content.ContentValues.TAG
@@ -17,10 +16,10 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
-import com.uds.foufoufood.R
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
+import com.uds.foufoufood.R
 import com.uds.foufoufood.network.MenuApi
 import com.uds.foufoufood.network.OrderApi
 import com.uds.foufoufood.network.RestaurantApi
@@ -31,6 +30,7 @@ import com.uds.foufoufood.repository.DeliveryRepository
 import com.uds.foufoufood.repository.MenuRepository
 import com.uds.foufoufood.repository.OrderRepository
 import com.uds.foufoufood.repository.RestaurantRepository
+import com.uds.foufoufood.repository.UserRepository
 import com.uds.foufoufood.view.MainScreen
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
@@ -47,7 +47,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adminRestaurantsViewModel: AdminRestaurantsViewModel
     private lateinit var deliveryViewModel: DeliveryViewModel
     private lateinit var orderViewModel: OrderViewModel
-//    private lateinit var homeViewModel: HomeViewModel
+
+    //    private lateinit var homeViewModel: HomeViewModel
     private lateinit var menuViewModel: MenuViewModel
     private lateinit var restaurantViewModel: RestaurantViewModel
     private lateinit var cartViewModel: CartViewModel
@@ -95,11 +96,11 @@ class MainActivity : AppCompatActivity() {
         adminRestaurantsViewModel = AdminRestaurantsViewModel(restaurantRepository)
 
         // DELIVERY
-        val deliveryRepository = DeliveryRepository(userApi, this)
+        val deliveryRepository = DeliveryRepository(userApi)
         deliveryViewModel = DeliveryViewModel(deliveryRepository, userRepository, this)
         val orderApi = retrofit.create(OrderApi::class.java)
-        val orderRepository = OrderRepository(orderApi, this)
-        orderViewModel = OrderViewModel(orderRepository, this)
+        val orderRepository = OrderRepository(orderApi)
+        orderViewModel = OrderViewModel(orderRepository)
         cartViewModel = CartViewModel(orderRepository, userViewModel)
         //orderTrackingViewModel = OrderTrackingViewModel(orderRepository, userViewModel)
 
@@ -110,9 +111,7 @@ class MainActivity : AppCompatActivity() {
         restaurantViewModel = RestaurantViewModel(restaurantRepository)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
+            .requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
         userViewModel.googleSignInClient = googleSignInClient
         userViewModel.auth = auth
@@ -140,8 +139,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkNotificationPermission() {
         if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
+                this, Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
@@ -153,9 +151,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
@@ -167,21 +163,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun requestNotificationPermission(activity: Activity) {
+    private fun requestNotificationPermission(activity: Activity) {
         if (ActivityCompat.checkSelfPermission(
-                activity,
-                android.Manifest.permission.POST_NOTIFICATIONS
+                activity, Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 activity,
-                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                 NOTIFICATION_PERMISSION_REQUEST_CODE
             )
         }
     }
 
     private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
-
-
 }

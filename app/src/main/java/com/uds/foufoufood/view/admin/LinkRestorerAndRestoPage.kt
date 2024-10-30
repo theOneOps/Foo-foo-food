@@ -1,4 +1,5 @@
 package com.uds.foufoufood.view.admin
+
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
@@ -47,7 +48,8 @@ fun LinkRestorerRestoAndRestoPage(
         adminUsersViewModel.fetchUsers("restaurateur") // AdminViewModel get all users
     }
     val anyFreeRestorers by adminUsersViewModel.filteredUsers.observeAsState()
-    val freeRestorers = anyFreeRestorers!!.filter { it.restaurantId == null || it.restaurantId == "" }
+    val freeRestorers =
+        anyFreeRestorers!!.filter { it.restaurantId == null || it.restaurantId == "" }
 
     LazyColumn(
         modifier = Modifier
@@ -66,18 +68,17 @@ fun LinkRestorerRestoAndRestoPage(
         }
 
         // DropdownMenu pour sélectionner un restaurateur
-        if (freeRestorers.isEmpty())
-        {
+        if (freeRestorers.isEmpty()) {
             item {
                 Text("il n'y a pas de restaurateur à lier à un restaurant")
             }
-        }
-        else
-        {
+        } else {
             item {
                 Box(modifier = Modifier.fillMaxWidth()) {
-                    OutlinedButton(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) {
-                        Text(text = if (selectedRestorerName.isNotEmpty()) selectedRestorerName else "Sélectionnez un restaurateur")
+                    OutlinedButton(
+                        onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = selectedRestorerName.ifEmpty { "Sélectionnez un restaurateur" })
                     }
 
                     DropdownMenu(
@@ -88,12 +89,10 @@ fun LinkRestorerRestoAndRestoPage(
                         freeRestorers.forEach { restorer ->
                             DropdownMenuItem(text = {
                                 Text(text = restorer.name)
-                            },
-                                onClick = {
-                                    selectedRestorerName = restorer.name
-                                    expanded = false
-                                }
-                            )
+                            }, onClick = {
+                                selectedRestorerName = restorer.name
+                                expanded = false
+                            })
                         }
                     }
                 }
@@ -114,22 +113,18 @@ fun LinkRestorerRestoAndRestoPage(
                         // Action pour lier le restaurateur au restaurant
                         // adminUsersViewModel.linkRestorerToRestaurant(restaurant.id, selectedRestorerId)
                         val restorerSelectedId =
-                            freeRestorers?.filter { it.name == selectedRestorerName }
-                        restorerSelectedId?.get(0)?.let {
+                            freeRestorers.filter { it.name == selectedRestorerName }
+                        restorerSelectedId[0].let {
                             adminRestaurantsViewModel.linkARestorer(
-                                it._id,
-                                restaurant._id
+                                it._id, restaurant._id
                             )
                         }
-                        Toast.makeText(context, "restaurateur bien lié", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(context, "restaurateur bien lié", Toast.LENGTH_SHORT).show()
 
                         navController.popBackStack()
 
                     }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = selectedRestorerName.isNotEmpty()
+                }, modifier = Modifier.fillMaxWidth(), enabled = selectedRestorerName.isNotEmpty()
             ) {
                 Text("Lier le restaurateur")
             }

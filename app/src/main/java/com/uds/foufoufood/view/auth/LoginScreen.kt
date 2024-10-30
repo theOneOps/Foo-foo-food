@@ -99,8 +99,7 @@ fun LoginScreen(
                 Toast.makeText(context, "Connexion réussie", Toast.LENGTH_SHORT).show()
             } else if (emailValidated == false) {
                 navController.navigate("verify_code/$email")
-            }
-            else if (registrationComplete == false) {
+            } else if (registrationComplete == false) {
                 navController.navigate("define_profile/$email")
             }
         }
@@ -120,23 +119,19 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        TextFieldWithError(
-            value = email,
+        TextFieldWithError(value = email,
             onValueChange = { email = it },
             label = "Email",
             errorMessage = "Veuillez entrer une adresse email valide",
-            isValid = { isEmailValid(it) }
-        )
+            isValid = { isEmailValid(it) })
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        PasswordTextField(
-            value = password,
+        PasswordTextField(value = password,
             onValueChange = { password = it },
             label = "Password",
             errorMessage = "Le mot de passe doit contenir au moins 6 caractères",
-            isValid = { isValidPassword(it) }
-        )
+            isValid = { isValidPassword(it) })
 
         Spacer(modifier = Modifier.height(20.dp))
         ForgotPasswordText()
@@ -148,9 +143,7 @@ fun LoginScreen(
                 userViewModel.login(email, password)
             } else {
                 Toast.makeText(
-                    context,
-                    "Veuillez entrer des informations valides",
-                    Toast.LENGTH_SHORT
+                    context, "Veuillez entrer des informations valides", Toast.LENGTH_SHORT
                 ).show()
             }
         })
@@ -164,13 +157,15 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         // Boutons pour se connecter via des réseaux sociaux (si nécessaire)
-        NetworksButtons(stringResource(id = R.string.sign_in_with), Color.Gray)
-        { googleSignInLauncher.launch(googleSignInClient.signInIntent) }
+        NetworksButtons(
+            stringResource(id = R.string.sign_in_with),
+            Color.Gray
+        ) { googleSignInLauncher.launch(googleSignInClient.signInIntent) }
     }
 
     // Afficher les erreurs de connexion si elles existent
     errorMessage?.let {
-        Text(text = "$it", color = Color.Red, modifier = Modifier.padding(16.dp))
+        Text(text = it, color = Color.Red, modifier = Modifier.padding(16.dp))
     }
 }
 
@@ -197,8 +192,7 @@ fun ForgotPasswordText() {
 @Composable
 fun SignUpText(onNavigateToRegister: () -> Unit) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(20.dp)
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(20.dp)
     ) {
         Text(
             text = stringResource(id = R.string.no_account),
@@ -209,8 +203,7 @@ fun SignUpText(onNavigateToRegister: () -> Unit) {
         Spacer(modifier = Modifier.width(10.dp))
 
         TextLink(
-            label = stringResource(id = R.string.sign_up_underlined),
-            onClick = onNavigateToRegister
+            label = stringResource(id = R.string.sign_up_underlined), onClick = onNavigateToRegister
         )
     }
 }
@@ -231,8 +224,7 @@ fun handleSignInResult(
             // Authentification Firebase avec le token Google
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             Log.d("Google Sign-In", "Credential: $credential")
-            auth.signInWithCredential(credential)
-                .addOnCompleteListener { signInTask ->
+            auth.signInWithCredential(credential).addOnCompleteListener { signInTask ->
                     if (signInTask.isSuccessful) {
                         // Si l'authentification est réussie, obtenir un nouveau token Firebase
                         auth.currentUser?.getIdToken(false)?.addOnCompleteListener { tokenTask ->
@@ -248,7 +240,11 @@ fun handleSignInResult(
                             }
                         }
                     } else {
-                        Toast.makeText(context, "Échec de l'authentification Google", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Échec de l'authentification Google",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
         } else {

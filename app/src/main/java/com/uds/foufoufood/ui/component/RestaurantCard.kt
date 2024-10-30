@@ -136,12 +136,12 @@ fun RestaurantCard(
                             onClick = {
                                 menuViewModel.setSharedRestaurant(restaurant)
                                 navHostController.navigate(Screen.ModifyRestaurantPage.route)
-                            },
-                            colors = ButtonDefaults.textButtonColors(
+                            }, colors = ButtonDefaults.textButtonColors(
                                 contentColor = colorResource(id = R.color.orange)
                             )
                         ) {
-                            Text("Modifier",
+                            Text(
+                                "Modifier",
                                 color = colorResource(id = R.color.orange),
                                 textDecoration = TextDecoration.Underline,
                                 fontFamily = FontFamily(Font(R.font.sofiapro_medium)),

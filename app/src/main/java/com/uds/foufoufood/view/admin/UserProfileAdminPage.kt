@@ -1,30 +1,47 @@
 package com.uds.foufoufood.view.admin
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.uds.foufoufood.data_class.model.User
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.uds.foufoufood.data_class.model.User
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
-import com.uds.foufoufood.viewmodel.UserViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,21 +64,16 @@ fun UserProfileAdminPage(
 
 
         if (user != null) {
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = { Text(text = "Profil Utilisateur") },
-                        navigationIcon = {
-                            IconButton(onClick = { navController.popBackStack() }) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Retour"
-                                )
-                            }
-                        }
-                    )
-                }
-            ) { innerPadding ->
+            Scaffold(topBar = {
+                TopAppBar(title = { Text(text = "Profil Utilisateur") }, navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Retour"
+                        )
+                    }
+                })
+            }) { innerPadding ->
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -90,47 +102,33 @@ fun UserProfileAdminPage(
 
                     // Sélecteur de rôle
                     Text(
-                        text = "Changer le rôle",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold
+                        text = "Changer le rôle", fontSize = 18.sp, fontWeight = FontWeight.SemiBold
                     )
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Button(
-                            onClick = { showDropdown = true },
-                            modifier = Modifier.fillMaxWidth()
+                            onClick = { showDropdown = true }, modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(text = selectedRole)
                             Icon(Icons.Filled.ArrowDropDown, contentDescription = "Changer le rôle")
                         }
 
-                        DropdownMenu(
-                            expanded = showDropdown,
-                            onDismissRequest = { showDropdown = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text("Client") },
-                                onClick = {
-                                    selectedRole = "client"
-                                    onRoleChanged(user, "client")
-                                    showDropdown = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Livreur") },
-                                onClick = {
-                                    selectedRole = "livreur"
-                                    onRoleChanged(user, "livreur")
-                                    showDropdown = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Restaurateur") },
-                                onClick = {
-                                    selectedRole = "restaurateur"
-                                    onRoleChanged(user, "restaurateur")
-                                    showDropdown = false
-                                }
-                            )
+                        DropdownMenu(expanded = showDropdown,
+                            onDismissRequest = { showDropdown = false }) {
+                            DropdownMenuItem(text = { Text("Client") }, onClick = {
+                                selectedRole = "client"
+                                onRoleChanged(user, "client")
+                                showDropdown = false
+                            })
+                            DropdownMenuItem(text = { Text("Livreur") }, onClick = {
+                                selectedRole = "livreur"
+                                onRoleChanged(user, "livreur")
+                                showDropdown = false
+                            })
+                            DropdownMenuItem(text = { Text("Restaurateur") }, onClick = {
+                                selectedRole = "restaurateur"
+                                onRoleChanged(user, "restaurateur")
+                                showDropdown = false
+                            })
                         }
                     }
 

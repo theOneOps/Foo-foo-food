@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,24 +51,21 @@ fun LivreurPage(
         userViewModel = userViewModel,
         currentScreen = Screen.AdminLivreur.route
     ) {
-        Scaffold(
-            topBar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 20.dp, top = 20.dp)
+        Scaffold(topBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 20.dp, top = 20.dp)
+            ) {
+                IconButton(
+                    onClick = {
+                        navController.navigate(Screen.AdminLivreur.route)
+                    }, modifier = Modifier.align(Alignment.TopEnd)
                 ) {
-                    IconButton(
-                        onClick = {
-                            navController.navigate(Screen.AdminLivreur.route)
-                        },
-                        modifier = Modifier.align(Alignment.TopEnd)
-                    ) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                    }
+                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
                 }
             }
-        ) { paddingValues ->
+        }) { paddingValues ->
             // Main content area for displaying users
             Column(
                 modifier = Modifier
@@ -89,31 +85,17 @@ fun LivreurPage(
                         .padding(16.dp)
                         .fillMaxSize()
                 ) {
-                    if (livreurUsers != null) {
-                        items(livreurUsers.size) { index ->
-                            val user = livreurUsers[index]
-                            UserItem(
-                                user = user,
-                                onClick = {
-                                    if (user.email.isNotEmpty()) {
-                                        navController.navigate("userProfile/${user.email}")
-                                    } else {
-                                        Log.e("LivreurPage", "L'utilisateur n'a pas d'email valide")
-                                    }
-                                },
-                                onRoleChanged = { newRole ->
-                                    onRoleChanged(user, newRole)
-                                }
-                            )
-                        }
-                    }else
-                    {
-                        item {
-                            Box(Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center){
-                                Text("il n'y a pas de livreurs !")
+                    items(livreurUsers.size) { index ->
+                        val user = livreurUsers[index]
+                        UserItem(user = user, onClick = {
+                            if (user.email.isNotEmpty()) {
+                                navController.navigate("userProfile/${user.email}")
+                            } else {
+                                Log.e("LivreurPage", "L'utilisateur n'a pas d'email valide")
                             }
-                        }
+                        }, onRoleChanged = { newRole ->
+                            onRoleChanged(user, newRole)
+                        })
                     }
                 }
             }

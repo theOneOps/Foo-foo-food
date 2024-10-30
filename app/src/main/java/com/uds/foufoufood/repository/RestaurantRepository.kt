@@ -25,22 +25,6 @@ class RestaurantRepository(private val restaurantApi: RestaurantApi) {
         }
     }
 
-    // Fetch a restaurant by ID
-    suspend fun getRestaurantById(id: String): Restaurant? = withContext(Dispatchers.IO) {
-        try {
-            val response = restaurantApi.getRestaurantById(id)
-            if (response.isSuccessful) {
-                response.body()  // Return the restaurant details
-            } else {
-                Log.e("RestaurantRepository", "Error fetching restaurant: ${response.code()}")
-                null
-            }
-        } catch (e: Exception) {
-            Log.e("RestaurantRepository", "Network error: ${e.message}")
-            null
-        }
-    }
-
     // Create a new restaurant
     suspend fun createRestaurant(restaurant: Restaurant): ApiResponse? =
         withContext(Dispatchers.IO) {
@@ -92,8 +76,7 @@ class RestaurantRepository(private val restaurantApi: RestaurantApi) {
     }
 
     suspend fun linkARestorer(id: String, restaurantId: String): ApiResponse? =
-        withContext(Dispatchers.IO)
-        {
+        withContext(Dispatchers.IO) {
             try {
                 val response = restaurantApi.linkedARestorer(id, restaurantId)
                 if (response.isSuccessful) {

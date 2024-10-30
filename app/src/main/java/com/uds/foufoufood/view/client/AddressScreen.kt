@@ -57,10 +57,8 @@ fun AddressScreen(navController: NavHostController, userViewModel: UserViewModel
                     modifier = Modifier.padding(bottom = 20.dp)
                 )
 
-                ValidateButton(
-                    label = stringResource(id = R.string.update_address),
-                    onClick = { navController.navigate(Screen.UpdateAddress.route) }
-                )
+                ValidateButton(label = stringResource(id = R.string.update_address),
+                    onClick = { navController.navigate(Screen.UpdateAddress.route) })
             } else {
                 NoAddressSection { navController.navigate(Screen.UpdateAddress.route) }
             }
@@ -72,8 +70,7 @@ fun AddressScreen(navController: NavHostController, userViewModel: UserViewModel
 @Composable
 fun NoAddressSection(onAddAddressClick: () -> Unit) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = stringResource(id = R.string.no_address),

@@ -1,12 +1,28 @@
 package com.uds.foufoufood.view.client
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,13 +35,12 @@ import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.OrderItem
 import com.uds.foufoufood.repository.OrderRepository
 import com.uds.foufoufood.viewmodel.OrderTrackingViewModel
-import com.uds.foufoufood.viewmodel.factory.OrderTrackingViewModelFactory
 import com.uds.foufoufood.viewmodel.UserViewModel
+import com.uds.foufoufood.viewmodel.factory.OrderTrackingViewModelFactory
 
 @Composable
 fun OrderTrackingScreen(
-    orderRepository: OrderRepository,
-    userViewModel: UserViewModel
+    orderRepository: OrderRepository, userViewModel: UserViewModel
 ) {
     val orderTrackingViewModel: OrderTrackingViewModel = viewModel(
         factory = OrderTrackingViewModelFactory(orderRepository, userViewModel)
@@ -88,7 +103,7 @@ fun OrderTrackingScreen(
 
             // Informations sur le restaurant
             Text(
-                text = "Restaurant : ${currentOrder.restaurantName ?: "N/A"}",
+                text = "Restaurant : ${currentOrder.restaurantName}",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -96,6 +111,7 @@ fun OrderTrackingScreen(
 
             // Adresse de livraison
             val deliveryAddress = currentOrder.deliveryAddress
+            // todo à check
             if (deliveryAddress != null) {
                 Text(
                     text = "Adresse de livraison :",
@@ -146,7 +162,7 @@ fun OrderTrackingScreen(
             ) {
                 items(currentOrder.items) { dish ->
                     OrderItemRow(dish)
-                    Divider()
+                    HorizontalDivider()
                 }
             }
 
@@ -204,8 +220,7 @@ fun OrderItemRow(dish: OrderItem) {
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = "Quantité : ${dish.quantity}",
-                style = MaterialTheme.typography.bodyMedium
+                text = "Quantité : ${dish.quantity}", style = MaterialTheme.typography.bodyMedium
             )
             Text(
                 text = "Prix unitaire : $${"%.2f".format(dish.menu.price)}",

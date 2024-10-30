@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
     private val _menus = MutableLiveData<List<Menu>?>()
-    val menus: LiveData<List<Menu>?> get() = _menus
+    private val menus: LiveData<List<Menu>?> get() = _menus
 
     private val _sortOrder = MutableLiveData<Int?>()
     val sortOrder: LiveData<Int?> get() = _sortOrder
@@ -25,11 +25,11 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
     private val _sortedMenus = MutableLiveData<List<Menu>>()
     val sortedMenus: LiveData<List<Menu>> get() = _sortedMenus
 
-    private val _shared_restaurant = MutableLiveData<Restaurant>()
-    val shared_restaurant: LiveData<Restaurant> get() = _shared_restaurant
+    private val _sharedRestaurant = MutableLiveData<Restaurant>()
+    val sharedRestaurant: LiveData<Restaurant> get() = _sharedRestaurant
 
-    private val _shared_current_menu = MutableLiveData<Menu>()
-    val shared_current_menu: LiveData<Menu> get() = _shared_current_menu
+    private val _sharedCurrentMenu = MutableLiveData<Menu>()
+    val sharedCurrentMenu: LiveData<Menu> get() = _sharedCurrentMenu
 
     private val _isConnectedRestorer = MutableLiveData<Boolean>()
     val isConnectedRestorer: LiveData<Boolean> get() = _isConnectedRestorer
@@ -99,17 +99,9 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
     ) {
         viewModelScope.launch {
             try {
-                val response =
-                    repository.createMenu(
-                        token,
-                        name,
-                        description,
-                        price,
-                        restaurantId,
-                        category,
-                        image,
-                        ingredients
-                    )
+                val response = repository.createMenu(
+                    token, name, description, price, restaurantId, category, image, ingredients
+                )
                 if (response != null) {
                     if (response.success) {
                         val currentMenus = _menus.value?.toMutableList() ?: mutableListOf()
@@ -119,15 +111,12 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                         _errorMessage.value = response.message
                     }
                 } else {
-                    _errorMessage.value =
-                        "Erreur lors de la creation de menu: ${response?.message}"
+                    _errorMessage.value = "Erreur lors de la creation de menu"
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "Exception: ${e.message}"
                 Log.e(
-                    "MenuViewModel",
-                    "Exception lors de la creation de menu : ${e.message}",
-                    e
+                    "MenuViewModel", "Exception lors de la creation de menu : ${e.message}", e
                 )
             }
         }
@@ -135,17 +124,15 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
 
 
     fun setSharedRestaurant(restaurant: Restaurant) {
-        _shared_restaurant.value = restaurant
+        _sharedRestaurant.value = restaurant
     }
 
-    fun setIsConnectedRestorer(value:Boolean)
-    {
+    fun setIsConnectedRestorer(value: Boolean) {
         _isConnectedRestorer.value = value
     }
 
-    fun setSharedCurrentMenu(menu:Menu)
-    {
-        _shared_current_menu.value = menu
+    fun setSharedCurrentMenu(menu: Menu) {
+        _sharedCurrentMenu.value = menu
     }
 
     fun deleteMenu(token: String, menuId: String) {
@@ -164,15 +151,13 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                     }
                 } else {
                     _errorMessage.value =
-                        "Erreur lors de la suppression du menu: ${response?.message}"
+                        "Erreur lors de la suppression du menu"
 
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "Exception: ${e.message}" // Loguer l'exception
                 Log.e(
-                    "MenuViewModel",
-                    "Exception lors de la suppresion du menu: ${e.message}",
-                    e
+                    "MenuViewModel", "Exception lors de la suppresion du menu: ${e.message}", e
                 )
             }
         }
@@ -220,8 +205,9 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                             )
                             // Remplacer l'ancien menu par le nouveau
                             currentMenus[menuIndex] = updatedMenu
-                            if (_shared_current_menu.value?._id == updatedMenu._id)
-                                setSharedCurrentMenu(updatedMenu)
+                            if (_sharedCurrentMenu.value?._id == updatedMenu._id) setSharedCurrentMenu(
+                                updatedMenu
+                            )
 
                             // Mettre à jour la liste des menus
                             _menus.value = currentMenus
@@ -240,9 +226,7 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
             } catch (e: Exception) {
                 _errorMessage.value = "Exception: ${e.message}" // Loguer l'exception
                 Log.e(
-                    "MenuViewModel",
-                    "Exception lors de la modification du menu: ${e.message}",
-                    e
+                    "MenuViewModel", "Exception lors de la modification du menu: ${e.message}", e
                 )
             }
         }
@@ -277,9 +261,7 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                 for ((countCategory, menu) in _menus.value!!.withIndex()) {
                     if (_categories.value?.any { it.name == menu.category } != true) {
                         _categories.value = (_categories.value ?: emptyList()) + Speciality(
-                            countCategory,
-                            menu.category,
-                            getIconCategoryResId(menu.category)
+                            countCategory, menu.category, getIconCategoryResId(menu.category)
                         )
                     }
                 }

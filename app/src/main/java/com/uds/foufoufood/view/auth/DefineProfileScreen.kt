@@ -39,9 +39,7 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 
 @Composable
 fun DefineProfileScreen(
-    navController: NavController,
-    userViewModel: UserViewModel,
-    email: String
+    navController: NavController, userViewModel: UserViewModel, email: String
 ) {
     val registrationCompleteSuccess by userViewModel.registrationCompleteSuccess.observeAsState()
 
@@ -54,10 +52,8 @@ fun DefineProfileScreen(
             Toast.makeText(context, "Inscription réussie", Toast.LENGTH_SHORT).show()
             userViewModel.resetStatus()
             val startDestination = getStartDestination(selectedProfile.lowercase(), true)
-            if (startDestination != null) {
-                navController.navigate(startDestination) {
-                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                }
+            navController.navigate(startDestination) {
+                popUpTo(navController.graph.startDestinationId) { inclusive = true }
             }
         } else if (registrationCompleteSuccess == false) {
             Toast.makeText(context, "Échec de l'inscription", Toast.LENGTH_SHORT).show()
@@ -78,10 +74,8 @@ fun DefineProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ProfileChoiceSection(
-            selectedProfile = selectedProfile,
-            onProfileSelected = { selectedProfile = it }
-        )
+        ProfileChoiceSection(selectedProfile = selectedProfile,
+            onProfileSelected = { selectedProfile = it })
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -99,8 +93,7 @@ fun DefineProfileScreen(
 
 @Composable
 fun ProfileChoiceSection(
-    selectedProfile: String,
-    onProfileSelected: (String) -> Unit
+    selectedProfile: String, onProfileSelected: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -117,36 +110,28 @@ fun ProfileChoiceSection(
         Spacer(modifier = Modifier.height(16.dp))
 
         ProfileRadioButtons(
-            selectedProfile = selectedProfile,
-            onProfileSelected = onProfileSelected
+            selectedProfile = selectedProfile, onProfileSelected = onProfileSelected
         )
     }
 }
 
 @Composable
 fun ProfileRadioButtons(
-    selectedProfile: String,
-    onProfileSelected: (String) -> Unit
+    selectedProfile: String, onProfileSelected: (String) -> Unit
 ) {
     val customerLabel = stringResource(id = R.string.customer)
     val ownerLabel = stringResource(id = R.string.owner_restau)
     val deliveryManLabel = stringResource(id = R.string.delivery_man)
 
     Column {
-        RadioButtonWithLabel(
-            label = customerLabel,
+        RadioButtonWithLabel(label = customerLabel,
             selected = selectedProfile == customerLabel,
-            onSelect = { onProfileSelected(customerLabel) }
-        )
-        RadioButtonWithLabel(
-            label = ownerLabel,
+            onSelect = { onProfileSelected(customerLabel) })
+        RadioButtonWithLabel(label = ownerLabel,
             selected = selectedProfile == ownerLabel,
-            onSelect = { onProfileSelected(ownerLabel) }
-        )
-        RadioButtonWithLabel(
-            label = deliveryManLabel,
+            onSelect = { onProfileSelected(ownerLabel) })
+        RadioButtonWithLabel(label = deliveryManLabel,
             selected = selectedProfile == deliveryManLabel,
-            onSelect = { onProfileSelected(deliveryManLabel) }
-        )
+            onSelect = { onProfileSelected(deliveryManLabel) })
     }
 }

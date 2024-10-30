@@ -9,8 +9,7 @@ import kotlinx.coroutines.withContext
 
 class MenuRepository(private val menuApi: MenuApi) {
     suspend fun getAllMenusByRestaurant(token: String, restaurantId: String): MenuResponse? =
-        withContext(Dispatchers.IO)
-        {
+        withContext(Dispatchers.IO) {
             try {
                 Log.e("MenuRepository", restaurantId)
                 val response = menuApi.getAllMenusByRestaurant(token, restaurantId)
@@ -28,16 +27,14 @@ class MenuRepository(private val menuApi: MenuApi) {
                     // Si la réponse n'est pas réussie
                     Log.e(
                         "MenuRepository",
-                        "Erreur d'accès aux menus : ${response.message()} " +
-                                "(Code: ${response.code()})"
+                        "Erreur d'accès aux menus : ${response.message()} " + "(Code: ${response.code()})"
                     )
                     null
                 }
             } catch (e: Exception) {
                 // En cas d'exception
                 Log.e(
-                    "MenuRepository", "Exception lors de l'accès aux menus :" +
-                            " ${e.message}", e
+                    "MenuRepository", "Exception lors de l'accès aux menus :" + " ${e.message}", e
                 )
                 null
             }
@@ -59,16 +56,14 @@ class MenuRepository(private val menuApi: MenuApi) {
                 // Si la réponse n'est pas réussie
                 Log.e(
                     "MenuRepository",
-                    "Erreur d'accès aux menus : ${response.message()} " +
-                            "(Code: ${response.code()})"
+                    "Erreur d'accès aux menus : ${response.message()} " + "(Code: ${response.code()})"
                 )
                 null
             }
         } catch (e: Exception) {
             // En cas d'exception
             Log.e(
-                "MenuRepository", "Exception lors de l'accès aux menus :" +
-                        " ${e.message}", e
+                "MenuRepository", "Exception lors de l'accès aux menus :" + " ${e.message}", e
             )
             null
         }
@@ -112,16 +107,14 @@ class MenuRepository(private val menuApi: MenuApi) {
                 // Si la réponse n'est pas réussie, loguer l'erreur avec plus de détails
                 Log.e(
                     "MenuRepository",
-                    "Erreur lors de la création du menu : ${response.message()}" +
-                            " (Code: ${response.code()})"
+                    "Erreur lors de la création du menu : ${response.message()}" + " (Code: ${response.code()})"
                 )
                 null
             }
         } catch (e: Exception) {
             // Gestion des exceptions et log d'erreur détaillé
             Log.e(
-                "MenuRepository", "Exception lors de la création du menu :" +
-                        " ${e.message}", e
+                "MenuRepository", "Exception lors de la création du menu :" + " ${e.message}", e
             )
             null
         }
@@ -159,8 +152,7 @@ class MenuRepository(private val menuApi: MenuApi) {
                     return@withContext responseBody
                 } else {
                     Log.e(
-                        "MenuRepository", "Réponse vide " +
-                                "lors de la modification du menu"
+                        "MenuRepository", "Réponse vide " + "lors de la modification du menu"
                     )
                     null
                 }
@@ -168,16 +160,14 @@ class MenuRepository(private val menuApi: MenuApi) {
                 // Si la réponse n'est pas réussie, loguer l'erreur avec plus de détails
                 Log.e(
                     "MenuRepository",
-                    "Erreur lors de la modification du menu : ${response.message()}" +
-                            " (Code: ${response.code()})"
+                    "Erreur lors de la modification du menu : ${response.message()}" + " (Code: ${response.code()})"
                 )
                 null
             }
         } catch (e: Exception) {
             // Gestion des exceptions et log d'erreur détaillé
             Log.e(
-                "MenuRepository", "Exception lors " +
-                        "de la modification du menu : ${e.message}", e
+                "MenuRepository", "Exception lors " + "de la modification du menu : ${e.message}", e
             )
             null
         }
@@ -185,8 +175,7 @@ class MenuRepository(private val menuApi: MenuApi) {
 
 
     suspend fun deleteMenu(
-        token: String,
-        menuId: String
+        token: String, menuId: String
     ): MenuResponse? = withContext(Dispatchers.IO) {
         try {
             // Création de l'objet MenuRequest
@@ -199,8 +188,7 @@ class MenuRepository(private val menuApi: MenuApi) {
                     return@withContext responseBody
                 } else {
                     Log.e(
-                        "MenuRepository", "Réponse vide " +
-                                "lors de la suppression du menu"
+                        "MenuRepository", "Réponse vide " + "lors de la suppression du menu"
                     )
                     null
                 }
@@ -208,16 +196,14 @@ class MenuRepository(private val menuApi: MenuApi) {
                 // Si la réponse n'est pas réussie, loguer l'erreur avec plus de détails
                 Log.e(
                     "MenuRepository",
-                    "Erreur lors de la suppression du menu : ${response.message()}" +
-                            " (Code: ${response.code()})"
+                    "Erreur lors de la suppression du menu : ${response.message()}" + " (Code: ${response.code()})"
                 )
                 null
             }
         } catch (e: Exception) {
             // Gestion des exceptions et log d'erreur détaillé
             Log.e(
-                "MenuRepository", "Exception lors " +
-                        "de la suppression du menu : ${e.message}", e
+                "MenuRepository", "Exception lors " + "de la suppression du menu : ${e.message}", e
             )
             null
         }

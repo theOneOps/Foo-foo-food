@@ -52,9 +52,7 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 
 @Composable
 fun VerifyCodeScreen(
-    navController: NavController,
-    userViewModel: UserViewModel,
-    email: String
+    navController: NavController, userViewModel: UserViewModel, email: String
 ) {
     var code by remember { mutableStateOf(List(6) { "" }) }
 
@@ -71,18 +69,23 @@ fun VerifyCodeScreen(
         if (codeVerificationSuccess == true) {
             Log.d("VerifyCodeScreen", "Code verification success")
             Log.d("VerifyCodeScreen", "Registration complete: ${user?.registrationComplete}")
-            if (user?.registrationComplete == true) {
-                Toast.makeText(context, R.string.email_update_success, Toast.LENGTH_SHORT).show()
-                userViewModel.resetStatus()
-                navController.navigate(Screen.Profile.route)
-            }
-            else if (user?.registrationComplete == false) {
-                Toast.makeText(context, "Code vérifié avec succès", Toast.LENGTH_SHORT).show()
-                userViewModel.resetStatus()
-                navController.navigate("define_profile/${email}")
-            }
-            else {
-                Log.d("VerifyCodeScreen", "${user?.registrationComplete}")
+            when (user?.registrationComplete) {
+                true -> {
+                    Toast.makeText(context, R.string.email_update_success, Toast.LENGTH_SHORT)
+                        .show()
+                    userViewModel.resetStatus()
+                    navController.navigate(Screen.Profile.route)
+                }
+
+                false -> {
+                    Toast.makeText(context, "Code vérifié avec succès", Toast.LENGTH_SHORT).show()
+                    userViewModel.resetStatus()
+                    navController.navigate("define_profile/${email}")
+                }
+
+                else -> {
+                    Log.d("VerifyCodeScreen", "${user?.registrationComplete}")
+                }
             }
         } else if (codeVerificationSuccess == false) {
             Toast.makeText(context, "Le code est incorrect", Toast.LENGTH_SHORT).show()
@@ -100,14 +103,11 @@ fun VerifyCodeScreen(
         TitlePage(label = stringResource(id = R.string.verification_code))
 
         // Champ de saisie du code
-        VerificationCodeInput(
-            code = code,
-            onCodeChanged = { index, value ->
-                if (value.length <= 1) {
-                    code = code.toMutableList().also { it[index] = value }
-                }
+        VerificationCodeInput(code = code, onCodeChanged = { index, value ->
+            if (value.length <= 1) {
+                code = code.toMutableList().also { it[index] = value }
             }
-        )
+        })
 
         // Section "Pas reçu de code"
         NoCodeReceivedSection {
@@ -115,18 +115,15 @@ fun VerifyCodeScreen(
         }
 
         // Bouton de validation
-        ValidateButton(
-            label = stringResource(id = R.string.verify),
-            onClick = {
-                val enteredCode = code.joinToString("")
-                if (enteredCode.length == 6) {
-                    userViewModel.verifyCode(email, enteredCode)
-                } else {
-                    Toast.makeText(context, "Veuillez entrer le code complet", Toast.LENGTH_SHORT)
-                        .show()
-                }
+        ValidateButton(label = stringResource(id = R.string.verify), onClick = {
+            val enteredCode = code.joinToString("")
+            if (enteredCode.length == 6) {
+                userViewModel.verifyCode(email, enteredCode)
+            } else {
+                Toast.makeText(context, "Veuillez entrer le code complet", Toast.LENGTH_SHORT)
+                    .show()
             }
-        )
+        })
     }
 }
 
@@ -154,25 +151,21 @@ fun VerificationCodeInput(code: List<String>, onCodeChanged: (Int, String) -> Un
             horizontalArrangement = Arrangement.Center
         ) {
             for (i in 0..5) {
-                VerificationCodeEditText(
-                    value = code[i],
-                    onValueChange = { value ->
-                        if (value.length <= 1) {
-                            onCodeChanged(i, value)
-                            if (value.isNotEmpty() && i < 5) {
-                                // Passer au champ suivant
-                                focusRequesters[i + 1].requestFocus()
-                            }
+                VerificationCodeEditText(value = code[i], onValueChange = { value ->
+                    if (value.length <= 1) {
+                        onCodeChanged(i, value)
+                        if (value.isNotEmpty() && i < 5) {
+                            // Passer au champ suivant
+                            focusRequesters[i + 1].requestFocus()
                         }
-                    },
-                    onBackspace = {
-                        if (code[i].isEmpty() && i > 0) {
-                            // Revenir au champ précédent si on appuie sur backspace et le champ est vide
-                            onCodeChanged(i - 1, "") // Vider le champ précédent
-                            focusRequesters[i - 1].requestFocus()
-                        }
-                    },
-                    focusRequester = focusRequesters[i]
+                    }
+                }, onBackspace = {
+                    if (code[i].isEmpty() && i > 0) {
+                        // Revenir au champ précédent si on appuie sur backspace et le champ est vide
+                        onCodeChanged(i - 1, "") // Vider le champ précédent
+                        focusRequesters[i - 1].requestFocus()
+                    }
+                }, focusRequester = focusRequesters[i]
                 )
                 Spacer(modifier = Modifier.width(8.dp))
             }
@@ -187,31 +180,23 @@ fun VerificationCodeEditText(
     onBackspace: () -> Unit,
     focusRequester: FocusRequester
 ) {
-    TextField(
-        value = value,
-        onValueChange = { newValue ->
-            if (newValue.length <= 1) {
-                onValueChange(newValue)
+    TextField(value = value, onValueChange = { newValue ->
+        if (newValue.length <= 1) {
+            onValueChange(newValue)
+        }
+    }, modifier = Modifier
+        .width(45.dp)
+        .focusRequester(focusRequester)
+        .onKeyEvent { keyEvent ->
+            if (keyEvent.key == Key.Backspace && keyEvent.type == KeyEventType.KeyDown && value.isEmpty()) {
+                onBackspace() // Appeler onBackspace() quand le champ est vide
+                true
+            } else {
+                false
             }
-        },
-        modifier = Modifier
-            .width(45.dp)
-            .focusRequester(focusRequester)
-            .onKeyEvent { keyEvent ->
-                if (keyEvent.key == Key.Backspace && keyEvent.type == KeyEventType.KeyDown && value.isEmpty()) {
-                    onBackspace() // Appeler onBackspace() quand le champ est vide
-                    true
-                } else {
-                    false
-                }
-            },
-        singleLine = true,
-        maxLines = 1,
-        textStyle = TextStyle(
-            fontSize = 18.sp,
-            textAlign = TextAlign.Center
-        ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        }, singleLine = true, maxLines = 1, textStyle = TextStyle(
+        fontSize = 18.sp, textAlign = TextAlign.Center
+    ), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
 }
 

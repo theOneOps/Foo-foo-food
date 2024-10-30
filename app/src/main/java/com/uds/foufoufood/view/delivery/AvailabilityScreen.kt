@@ -1,3 +1,6 @@
+package com.uds.foufoufood.view.delivery
+
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
@@ -45,23 +48,20 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.uds.foufoufood.R
 import com.uds.foufoufood.navigation.Screen
-import com.uds.foufoufood.ui.component.BackButton
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
-import com.uds.foufoufood.viewmodel.UserViewModel
 import kotlinx.coroutines.delay
 import org.json.JSONObject
 
+@SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun AvailabilityScreen(
     navController: NavHostController,
     deliveryViewModel: DeliveryViewModel,
-    orderViewModel: OrderViewModel,
-    userViewModel: UserViewModel
+    orderViewModel: OrderViewModel
 ) {
     val isAvailable by deliveryViewModel.isAvailable.collectAsState()
     val newOrder by deliveryViewModel.newOrderAssigned.collectAsState()
-    val currentOrder by orderViewModel.currentOrder.collectAsState()
     var showTick by remember { mutableStateOf(false) }
 
     // Vérifiez s'il y a déjà une commande en cours à l'arrivée sur l'écran
@@ -72,7 +72,8 @@ fun AvailabilityScreen(
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.2f,
-        animationSpec = infiniteRepeatable(tween(1000), RepeatMode.Reverse), label = ""
+        animationSpec = infiniteRepeatable(tween(1000), RepeatMode.Reverse),
+        label = ""
     )
 
     LaunchedEffect(email) {
@@ -108,7 +109,7 @@ fun AvailabilityScreen(
             .padding(20.dp)
     ) {
         IconButton(
-            onClick = { navController.navigate(Screen.DeliveryAllOrdersPage.route)}, // Action de retour
+            onClick = { navController.navigate(Screen.DeliveryAllOrdersPage.route) }, // Action de retour
             modifier = Modifier
                 .shadow(8.dp, shape = RoundedCornerShape(12.dp))
                 .background(Color.White, shape = RoundedCornerShape(12.dp))
@@ -145,8 +146,7 @@ fun AvailabilityScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
+                .padding(16.dp), contentAlignment = Alignment.Center
         ) {
             if (showTick) {
                 Icon(
@@ -166,8 +166,7 @@ fun AvailabilityScreen(
                         fontSize = 18.sp,
                         fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
                         color = colorResource(id = R.color.orange),
-                        modifier = Modifier
-                            .scale(if (isAvailable) scale else 1f)
+                        modifier = Modifier.scale(if (isAvailable) scale else 1f)
 
                     )
 
@@ -196,7 +195,9 @@ fun AvailabilityScreen(
         }
     }
     // Logo en bas de page avec animation de montée
-    val logoOffset by animateDpAsState(targetValue = if (isAvailable) 380.dp else 1000.dp)
+    val logoOffset by animateDpAsState(targetValue = if (isAvailable) 380.dp else 1000.dp,
+        label = ""
+    )
 
     // Logo centré en bas avec animation
     Column(
@@ -207,8 +208,7 @@ fun AvailabilityScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier
-                .offset(y = logoOffset) // Applique l'animation d'offset vertical
+            modifier = Modifier.offset(y = logoOffset) // Applique l'animation d'offset vertical
         ) {
             Image(
                 painter = painterResource(id = R.drawable.logo_only),

@@ -4,12 +4,9 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uds.foufoufood.data_class.model.Menu
-import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.data_class.model.User
 import com.uds.foufoufood.repository.AdminRepository
 import kotlinx.coroutines.launch
@@ -19,18 +16,15 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
     private val _users = MutableLiveData<List<User>?>()
     val users: MutableLiveData<List<User>?> get() = _users
 
-    var selectedRole by mutableStateOf("")
-        private set
+    private var selectedRole by mutableStateOf("")
 
     private val _apiError = MutableLiveData<String>()
-    val apiError: LiveData<String> get() = _apiError
 
     var searchText by mutableStateOf("")
 
     // Filtered list of restaurants based on the selected category and search query
     private var _filteredUsers = MutableLiveData<List<User>?>()
     val filteredUsers: MutableLiveData<List<User>?> get() = _filteredUsers
-
 
 
     fun fetchUsers(role: String) {
@@ -40,13 +34,12 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
                 if (response != null && response.isSuccessful) {
                     val usersList = response.body()
                     Log.d("AdminViewModel", "Réponse API: $usersList")
-                    if (usersList != null && usersList.isNotEmpty()) {
+                    if (!usersList.isNullOrEmpty()) {
                         _users.value = usersList
                         selectedRole = role
                         filterUsers(selectedRole)
                         Log.d(
-                            "AdminViewModel",
-                            "Nombre d'utilisateurs récupérés: ${usersList.size}"
+                            "AdminViewModel", "Nombre d'utilisateurs récupérés: ${usersList.size}"
                         )
                     } else {
                         Log.e("AdminViewModel", "Aucun utilisateur trouvé dans la réponse.")
@@ -93,53 +86,43 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
         return _users.value ?: emptyList()
     }
 
-    fun filterUsers(role: String){
+    private fun filterUsers(role: String) {
         _filteredUsers.value = _users.value?.filter { user ->
             user.role == role && user.email.contains(searchText, ignoreCase = true)
         } ?: emptyList()
     }
 
-    fun blockAccount(id:String)
-    {
+    fun blockAccount(id: String) {
         viewModelScope.launch {
             try {
                 val response = repository.blockAccount(id)
-                if (response != null)
-                {
-                    if (response.success)
-                        Log.d("blockAccount from AdminUsersViewModel","account blocked successfully")
-                }
-                else
-                    Log.e(
-                        "AdminUsersViewModel",
-                        "response from blockAccount null, problem to fix !"
+                if (response != null) {
+                    if (response.success) Log.d(
+                        "blockAccount from AdminUsersViewModel",
+                        "account blocked successfully"
                     )
-            }
-            catch (e:Exception)
-            {
+                } else Log.e(
+                    "AdminUsersViewModel", "response from blockAccount null, problem to fix !"
+                )
+            } catch (e: Exception) {
                 e.message?.let { Log.e("AdminUsersViewModel", it) }
             }
         }
     }
 
-    fun unlockAccount(id:String)
-    {
+    fun unlockAccount(id: String) {
         viewModelScope.launch {
             try {
                 val response = repository.unlockAccount(id)
-                if (response != null)
-                {
-                    if (response.success)
-                        Log.d("unlockAccount from AdminUsersViewModel","account unlocked successfully")
-                }
-                else
-                    Log.e(
-                        "AdminUsersViewModel",
-                        "response from unlockAccount null, problem to fix !"
+                if (response != null) {
+                    if (response.success) Log.d(
+                        "unlockAccount from AdminUsersViewModel",
+                        "account unlocked successfully"
                     )
-            }
-            catch (e:Exception)
-            {
+                } else Log.e(
+                    "AdminUsersViewModel", "response from unlockAccount null, problem to fix !"
+                )
+            } catch (e: Exception) {
                 e.message?.let { Log.e("AdminUsersViewModel", it) }
             }
         }
@@ -150,24 +133,17 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
             try {
                 val response = repository.deleteAccount(id)
                 if (response != null) {
-                    if (response.success)
-                        Log.d(
-                            "deleteAccount from AdminUsersViewModel",
-                            "account deleted successfully"
-                        )
-                } else
-                    Log.e(
-                        "AdminUsersViewModel",
-                        "response from deleteAccount null, problem to fix !"
+                    if (response.success) Log.d(
+                        "deleteAccount from AdminUsersViewModel", "account deleted successfully"
                     )
+                } else Log.e(
+                    "AdminUsersViewModel", "response from deleteAccount null, problem to fix !"
+                )
             } catch (e: Exception) {
                 e.message?.let { Log.e("AdminUsersViewModel", it) }
             }
         }
     }
-
-
-
 
 
 }

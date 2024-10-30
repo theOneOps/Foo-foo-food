@@ -40,19 +40,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.uds.foufoufood.Firebase_management.FirebaseInstance
-import com.uds.foufoufood.Firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
+import com.uds.foufoufood.firebase_management.FirebaseInstance
+import com.uds.foufoufood.firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
 import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.navigation.Screen
-import com.uds.foufoufood.viewmodel.MenuViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormModifyMenu(menuViewModel: MenuViewModel, menu: Menu, onUpdate: (Menu) -> Unit, navController: NavController) {
+fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit, navController: NavController) {
     // State pour les champs du formulaire
     val nameState = remember { mutableStateOf(menu.name) }
     val descriptorState = remember { mutableStateOf(menu.description) }

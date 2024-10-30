@@ -5,7 +5,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,15 +38,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.uds.foufoufood.Firebase_management.FirebaseInstance
-import com.uds.foufoufood.Firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
+import com.uds.foufoufood.firebase_management.FirebaseInstance
+import com.uds.foufoufood.firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
 import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.ui.component.BackButton
 import com.uds.foufoufood.ui.component.TextFieldWithError
 import com.uds.foufoufood.ui.component.TitlePage
-import com.uds.foufoufood.ui.component.ValidateButton
 import com.uds.foufoufood.viewmodel.RestaurantViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,9 +54,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormModifyRestaurantScreen(
-    restaurant: Restaurant,
-    restaurantViewModel: RestaurantViewModel,
-    navController: NavController
+    restaurant: Restaurant, restaurantViewModel: RestaurantViewModel, navController: NavController
 ) {
     // Récupération du restaurant à modifier et états des champs (identique à la définition précédente)
     val nameState = remember { mutableStateOf(restaurant.name) }
@@ -87,16 +83,13 @@ fun FormModifyRestaurantScreen(
 
             // Appeler la fonction pour télécharger et compresser l'image
             CoroutineScope(Dispatchers.Main).launch {
-                val compressedImage =
-                    downloadAndCompressImageFromUrl(imageUrl, context)
+                val compressedImage = downloadAndCompressImageFromUrl(imageUrl, context)
 
                 if (compressedImage != null) {
                     // Référence Firebase où l'image sera stockée
-                    val storageRef =
-                        FirebaseInstance.storageRef.child(
-                            "images/${restaurant.userId}/${restaurant._id}" +
-                                    "${System.currentTimeMillis()}.webp"
-                        )
+                    val storageRef = FirebaseInstance.storageRef.child(
+                        "images/${restaurant.userId}/${restaurant._id}" + "${System.currentTimeMillis()}.webp"
+                    )
 
                     // Envoie l'image compressée sur Firebase
                     val uploadTask = storageRef.putBytes(compressedImage)
@@ -115,20 +108,18 @@ fun FormModifyRestaurantScreen(
                     }
                 } else {
                     Log.e(
-                        "Image",
-                        "Erreur lors du téléchargement ou de la compression de l'image."
+                        "Image", "Erreur lors du téléchargement ou de la compression de l'image."
                     )
                 }
             }
         }
     }
 
-    Column (modifier = Modifier
-        .fillMaxSize()
+    Column(
+        modifier = Modifier.fillMaxSize()
     ) {
         LazyColumn(
-            state = scrollState,
-            modifier = Modifier
+            state = scrollState, modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
@@ -183,8 +174,7 @@ fun FormModifyRestaurantScreen(
             }
 
             item {
-                TextField(
-                    value = imageUrlState.value,
+                TextField(value = imageUrlState.value,
                     onValueChange = { imageUrlState.value = it },
                     label = {
                         Text(
@@ -211,8 +201,7 @@ fun FormModifyRestaurantScreen(
                                 contentDescription = "Sélectionner une image"
                             )
                         }
-                    }
-                )
+                    })
             }
 
             item {
@@ -296,33 +285,46 @@ fun FormModifyRestaurantScreen(
             }
 
             item {
-                Row (
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                Row(
+                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
                 ) {
                     Button(
                         onClick = {
                             // véfier si tous les champs sont valides
 
-                            if (nameState.value == "" || phoneState.value == "" ||
-                                openingHoursState.value == "" || numberState.value == "" || streetState.value == "" ||
-                                cityState.value == "" || countryState.value == "") {
-                                Toast.makeText(context, "Veuillez remplir tous les champs obligatoires", Toast.LENGTH_SHORT).show()
+                            if (nameState.value == "" || phoneState.value == "" || openingHoursState.value == "" || numberState.value == "" || streetState.value == "" || cityState.value == "" || countryState.value == "") {
+                                Toast.makeText(
+                                    context,
+                                    "Veuillez remplir tous les champs obligatoires",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 return@Button
                             }
 
                             if (!isValidPhoneNumber(phoneState.value)) {
-                                Toast.makeText(context, "Le numéro de téléphone doit être au format +33XXXXXXXXX", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Le numéro de téléphone doit être au format +33XXXXXXXXX",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 return@Button
                             }
 
                             if (!isValidHours(openingHoursState.value)) {
-                                Toast.makeText(context, "Les horaires d'ouverture doivent être au format HH:MM - HH:MM", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Les horaires d'ouverture doivent être au format HH:MM - HH:MM",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 return@Button
                             }
 
                             if (numberState.value.toIntOrNull() == null) {
-                                Toast.makeText(context, "Le numéro de rue doit être un nombre", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Le numéro de rue doit être un nombre",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 return@Button
                             }
 
@@ -350,7 +352,11 @@ fun FormModifyRestaurantScreen(
                             )
 
                             restaurantViewModel.updateRestaurant(restaurant._id, updatedRestaurant)
-                            Toast.makeText(context, "Restaurant modifié avec succès", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Restaurant modifié avec succès",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             navController.popBackStack()
                         },
                         modifier = Modifier
@@ -379,6 +385,7 @@ fun isValidHours(hours: String): Boolean {
 
 fun isValidPhoneNumber(phone: String): Boolean {
     // regex pour vérifier si le numéro de téléphone est valide
-    val regex = Regex("^\\+?(\\d{1,3})?[-.\\s]?(\\(?\\d{1,4}\\)?)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}\$")
+    val regex =
+        Regex("^\\+?(\\d{1,3})?[-.\\s]?(\\(?\\d{1,4}\\)?)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}\$")
     return phone.isNotEmpty() && regex.matches(phone)
 }

@@ -89,8 +89,7 @@ fun WelcomeScreen(
                 Toast.makeText(context, "Connexion réussie", Toast.LENGTH_SHORT).show()
             } else if (emailValidated == false) {
                 navController.navigate("verify_code/${user?.email}")
-            }
-            else if (registrationComplete == false) {
+            } else if (registrationComplete == false) {
                 navController.navigate("define_profile/${user?.email}")
             }
         }
@@ -130,7 +129,7 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(16.dp))
             WelcomeDescription()
             Spacer(modifier = Modifier.height(70.dp))
-            NetworksButtons(stringResource(id = R.string.sign_in_with), Color.White){
+            NetworksButtons(stringResource(id = R.string.sign_in_with), Color.White) {
                 googleSignInLauncher.launch(googleSignInClient.signInIntent)
             }
             Spacer(modifier = Modifier.height(30.dp))
@@ -200,8 +199,7 @@ fun EmailSignUpButton(onNavigateToRegister: () -> Unit) {
 @Composable
 fun SignInLink(onNavigateToLogin: () -> Unit) {
     Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()
+        horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
     ) {
         Text(
             text = stringResource(id = R.string.already_account),
@@ -210,13 +208,11 @@ fun SignInLink(onNavigateToLogin: () -> Unit) {
             color = Color.White
         )
         Spacer(modifier = Modifier.width(6.dp))
-        Text(
-            text = stringResource(id = R.string.sign_in_underlined),
+        Text(text = stringResource(id = R.string.sign_in_underlined),
             fontSize = 16.sp,
             fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
             color = Color.White,
             textDecoration = TextDecoration.Underline,
-            modifier = Modifier.clickable { onNavigateToLogin() }
-        )
+            modifier = Modifier.clickable { onNavigateToLogin() })
     }
 }

@@ -37,8 +37,7 @@ fun SpecialityPills(
 ) {
     LazyRow {
         items(specialities) { category ->
-            SpecialityPill(
-                speciality = category,
+            SpecialityPill(speciality = category,
                 isSelected = selectedSpeciality == category,
                 onClick = {
                     if (selectedSpeciality == category) {
@@ -46,8 +45,7 @@ fun SpecialityPills(
                     } else {
                         onSpecialitySelected(category)
                     }
-                }
-            )
+                })
         }
     }
 }
@@ -89,7 +87,8 @@ fun SpecialityPill(speciality: Speciality, isSelected: Boolean, onClick: () -> U
                 text = speciality.name,
                 color = if (isSelected) colorResource(id = R.color.white)
                 else colorResource(id = R.color.black), // Text color based on selection
-                style = MaterialTheme.typography.bodySmall)
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }

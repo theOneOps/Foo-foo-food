@@ -51,25 +51,22 @@ fun ClientScreen(
         userViewModel = userViewModel,
         currentScreen = Screen.AdminClient.route
     ) {
-        Scaffold(
-            topBar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 20.dp, top = 20.dp)
+        Scaffold(topBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 20.dp, top = 20.dp)
+            ) {
+                IconButton(
+                    onClick = {
+                        // Open drawer when clicked
+                        navController.navigate(Screen.AdminClient.route)
+                    }, modifier = Modifier.align(Alignment.TopEnd)
                 ) {
-                    IconButton(
-                        onClick = {
-                            // Open drawer when clicked
-                            navController.navigate(Screen.AdminClient.route)
-                        },
-                        modifier = Modifier.align(Alignment.TopEnd)
-                    ) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                    }
+                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
                 }
             }
-        ) { paddingValues ->
+        }) { paddingValues ->
             // Main content of the page (list of users)
             Column(
                 modifier = Modifier
@@ -84,32 +81,28 @@ fun ClientScreen(
                 )
 
                 // Display client users
-                if (clientUsers != null) {
-                    if (clientUsers.isEmpty()) {
-                        Text("Aucun client trouvé.")
-                        Log.d("ClientPage", "Aucun utilisateur trouvé.")
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxSize()
-                        ) {
-                            items(clientUsers.size) { index ->
-                                val user = clientUsers[index]
-                                UserItem(
-                                    user = user,
-                                    onClick = {
-                                        if (user.email.isNotEmpty()) {
-                                            navController.navigate("userProfile/${user.email}")
-                                        } else {
-                                            Log.e("ClientPage", "L'utilisateur n'a pas d'email valide")
-                                        }
-                                    },
-                                    onRoleChanged = { newRole ->
-                                        onRoleChanged(user, newRole)
-                                    }
-                                )
-                            }
+                if (clientUsers.isEmpty()) {
+                    Text("Aucun client trouvé.")
+                    Log.d("ClientPage", "Aucun utilisateur trouvé.")
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxSize()
+                    ) {
+                        items(clientUsers.size) { index ->
+                            val user = clientUsers[index]
+                            UserItem(user = user, onClick = {
+                                if (user.email.isNotEmpty()) {
+                                    navController.navigate("userProfile/${user.email}")
+                                } else {
+                                    Log.e(
+                                        "ClientPage", "L'utilisateur n'a pas d'email valide"
+                                    )
+                                }
+                            }, onRoleChanged = { newRole ->
+                                onRoleChanged(user, newRole)
+                            })
                         }
                     }
                 }

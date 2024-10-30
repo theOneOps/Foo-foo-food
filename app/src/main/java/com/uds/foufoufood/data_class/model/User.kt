@@ -8,10 +8,10 @@ data class User(
     val avatarUrl: String?,
     var role: String? = null,
     var address: Address? = null,
-    var emailValidated:Boolean?= false,
+    var emailValidated: Boolean? = false,
     var registrationComplete: Boolean? = false,
     val deliveryAvailability: Boolean? = null, // Nullable pour les non-livreurs
-    val restaurantId:String?,
-    val _id:String,
-    val blockedAccount:Boolean? = false
+    val restaurantId: String?,
+    val _id: String,
+    val blockedAccount: Boolean? = false
 )

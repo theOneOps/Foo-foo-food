@@ -90,7 +90,8 @@ class CartViewModel(
 
     // Méthode pour supprimer complètement un article du panier
     fun removeItem(item: CartItem) {
-        val updatedList = (_cartItems.value ?: emptyList()).filterNot { it.menu._id == item.menu._id }
+        val updatedList =
+            (_cartItems.value ?: emptyList()).filterNot { it.menu._id == item.menu._id }
         _cartItems.value = updatedList
     }
 
@@ -117,23 +118,29 @@ class CartViewModel(
                     return@launch
                 }
 
-                val orderRequest = OrderRequest(
-                    clientEmail = clientEmail,
+                val orderRequest = OrderRequest(clientEmail = clientEmail,
                     clientName = clientName,
                     restaurantId = restaurantId,
                     deliveryAddress = deliveryAddress,
-                    dishes = items.map { OrderItem(menu = it.menu, quantity = it.quantity) } // Map items to OrderItem list
+                    dishes = items.map {
+                        OrderItem(
+                            menu = it.menu,
+                            quantity = it.quantity
+                        )
+                    } // Map items to OrderItem list
                 )
 
                 val orderResponse = orderRepository.createOrder(token, orderRequest)
 
                 if (orderResponse != null) {
                     clearCart()
-                    _orderSuccessMessage.value = "Commande passée avec succès !" // Set success message
+                    _orderSuccessMessage.value =
+                        "Commande passée avec succès !" // Set success message
 
                     delay(100)
 
-                    val assignResponse = orderRepository.assignOrderToDelivery(orderResponse.orderId)
+                    val assignResponse =
+                        orderRepository.assignOrderToDelivery(orderResponse.orderId)
                     if (assignResponse != null) {
                         _orderSuccessMessage.value = "Commande assignée à un livreur !"
                     } else {

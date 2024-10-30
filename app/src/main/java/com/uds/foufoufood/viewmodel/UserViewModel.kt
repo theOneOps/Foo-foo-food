@@ -1,6 +1,5 @@
 package com.uds.foufoufood.viewmodel
 
-import UserRepository
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -19,10 +18,10 @@ import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.data_class.model.User
 import kotlinx.coroutines.launch
 import java.io.IOException
+import com.uds.foufoufood.repository.UserRepository
 
 class UserViewModel(
-    private val userRepository: UserRepository,
-    private val context: Context
+    private val userRepository: UserRepository, private val context: Context
 ) : ViewModel() {
 
     private val _user = MutableLiveData<User?>()
@@ -71,8 +70,7 @@ class UserViewModel(
             try {
                 val response = userRepository.login(email, password)
                 if (response != null) {
-                    if (response.user.blockedAccount == false)
-                    {
+                    if (response.user.blockedAccount == false) {
                         _user.value = response.user
                         _token.value = response.token
                         _loginSuccess.value = true
@@ -88,8 +86,7 @@ class UserViewModel(
                         if (response.user.emailValidated == false) {
                             _emailValidated.value = false
                             _loading.value = false
-                        }
-                        else {
+                        } else {
                             saveToken(context, response.token)
                             saveUserId(context, response.user._id)
                             _emailValidated.value = true
@@ -101,8 +98,7 @@ class UserViewModel(
                         if (response.user.registrationComplete == false) {
                             _registrationCompleteSuccess.value = false
                             _loading.value = false
-                        }
-                        else {
+                        } else {
                             saveToken(context, response.token)
                             saveUserId(context, response.user._id)
                             userRepository.setUserEmail(email)
@@ -110,9 +106,7 @@ class UserViewModel(
                             Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
                             _errorMessage.value = null
                         }
-                    }
-                    else
-                    {
+                    } else {
                         _errorMessage.value = "Erreur, connexion échouée car compte bloqué"
                         _loginSuccess.value = false
                     }
@@ -193,7 +187,7 @@ class UserViewModel(
         viewModelScope.launch {
             _loading.value = true
             try {
-                val success = userRepository.resendVerificationCode(email)
+                userRepository.resendVerificationCode(email)
                 // _resendCodeEvent.value = success
             } catch (e: Exception) {
                 // _resendCodeEvent.value = false
@@ -210,7 +204,10 @@ class UserViewModel(
                 val user = userRepository.getUser(email)
                 _user.value = user.body()
             } catch (e: Exception) {
-                Log.e("UserViewModel", "Erreur lors de la récupération de l'utilisateur: ${e.message}")
+                Log.e(
+                    "UserViewModel",
+                    "Erreur lors de la récupération de l'utilisateur: ${e.message}"
+                )
             } finally {
                 _loading.value = false
             }
@@ -225,7 +222,10 @@ class UserViewModel(
                 _user.value = user
                 _token.value = token
             } catch (e: Exception) {
-                Log.e("UserViewModel", "Erreur lors de la récupération de l'utilisateur: ${e.message}")
+                Log.e(
+                    "UserViewModel",
+                    "Erreur lors de la récupération de l'utilisateur: ${e.message}"
+                )
             } finally {
                 _loading.value = false
             }
@@ -270,7 +270,8 @@ class UserViewModel(
                     updateToken(context, response.token)
                     userRepository.setUserEmail(email)
                 } else {
-                    _errorMessage.value = "Erreur lors de la modification de l'email, veuillez réessayer"
+                    _errorMessage.value =
+                        "Erreur lors de la modification de l'email, veuillez réessayer"
                 }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Erreur lors de l'édition de l'email: ${e.message}")
@@ -294,7 +295,8 @@ class UserViewModel(
                 if (success) {
                     _errorMessage.value = null
                 } else {
-                    _errorMessage.value = "Erreur lors de la modification du mot de passe, veuillez réessayer"
+                    _errorMessage.value =
+                        "Erreur lors de la modification du mot de passe, veuillez réessayer"
                 }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Erreur lors de l'édition du mot de passe: ${e.message}")
@@ -304,11 +306,19 @@ class UserViewModel(
         }
     }
 
-    fun updateAddress(number: Number, street: String, city: String, zipCode: String, state: String, country: String) {
+    fun updateAddress(
+        number: Number,
+        street: String,
+        city: String,
+        zipCode: String,
+        state: String,
+        country: String
+    ) {
         viewModelScope.launch {
             _loading.value = true
             try {
-                val success = userRepository.updateAddress(number, street, city, zipCode, state, country)
+                val success =
+                    userRepository.updateAddress(number, street, city, zipCode, state, country)
                 if (success) {
                     _updateAddressSuccess.value = true
                     _user.value?.address = Address(number, street, city, zipCode, state, country)
@@ -370,7 +380,7 @@ class UserViewModel(
                 Log.d("UserViewModel", "ID Token: $idToken")
                 val response = userRepository.loginWithGoogle(idToken)
                 if (response != null) {
-                    if (response.user.blockedAccount == false){
+                    if (response.user.blockedAccount == false) {
                         _user.value = response.user
                         _token.value = response.token
                         _loginSuccess.value = true
@@ -386,8 +396,7 @@ class UserViewModel(
                         if (response.user.registrationComplete == false) {
                             _registrationCompleteSuccess.value = false
                             _loading.value = false
-                        }
-                        else {
+                        } else {
                             saveToken(context, response.token)
                             saveUserId(context, response.user._id)
                             userRepository.setUserEmail(response.user.email)
@@ -396,8 +405,7 @@ class UserViewModel(
                             _errorMessage.value = null
                         }
                         _errorMessage.value = null
-                    }
-                    else {
+                    } else {
                         Log.d("UserViewModel", "Compte bloqué")
                     }
                 } else {

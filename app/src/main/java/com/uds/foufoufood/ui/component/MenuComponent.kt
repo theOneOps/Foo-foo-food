@@ -37,16 +37,13 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.uds.foufoufood.R
 import com.uds.foufoufood.activities.main.TokenManager.getToken
-import com.uds.foufoufood.activities.main.TokenManager.getUserId
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.viewmodel.MenuViewModel
 
 @Composable
 fun MenuComponent(
-    navController: NavController,
-    menu: Menu,
-    menuViewModel: MenuViewModel
+    navController: NavController, menu: Menu, menuViewModel: MenuViewModel
 ) {
     val context = LocalContext.current
     val token = getToken(context) ?: ""
@@ -57,9 +54,7 @@ fun MenuComponent(
             .clickable {
                 menuViewModel.setSharedCurrentMenu(menu)
                 navController.navigate(Screen.ClientInstanceMenuPage.route)
-            },
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
+            }, shape = RoundedCornerShape(16.dp), elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Column {
             // Image en haut avec coins arrondis
@@ -81,13 +76,9 @@ fun MenuComponent(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = menu.name.replaceFirstChar { it.uppercase() },
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        fontFamily = FontFamily(Font(R.font.sofiapro_bold))
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Bold
+                    text = menu.name.replaceFirstChar { it.uppercase() }, style = TextStyle(
+                        fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.sofiapro_bold))
+                    ), color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -130,16 +121,14 @@ fun MenuComponent(
                             onClick = {
                                 menuViewModel.deleteMenu(token, menu._id)
                                 Toast.makeText(
-                                    context,
-                                    "Menu supprimé avec succès",
-                                    Toast.LENGTH_SHORT
+                                    context, "Menu supprimé avec succès", Toast.LENGTH_SHORT
                                 ).show()
-                            },
-                            colors = ButtonDefaults.textButtonColors(
+                            }, colors = ButtonDefaults.textButtonColors(
                                 contentColor = MaterialTheme.colorScheme.error
                             )
                         ) {
-                            Text("Supprimer",
+                            Text(
+                                "Supprimer",
                                 textDecoration = TextDecoration.Underline,
                                 fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
                                 fontWeight = FontWeight.Bold,

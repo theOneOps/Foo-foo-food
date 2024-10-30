@@ -14,9 +14,9 @@ import com.uds.foufoufood.data_class.request.TokenGoogleRequest
 import com.uds.foufoufood.data_class.request.UpdateEmailRequest
 import com.uds.foufoufood.data_class.request.VerificationRequest
 import com.uds.foufoufood.data_class.response.ApiResponse
-import com.uds.foufoufood.data_class.response.LoginGoogleResponse
 import com.uds.foufoufood.data_class.response.AuthResponse
 import com.uds.foufoufood.data_class.response.AvailabilityResponse
+import com.uds.foufoufood.data_class.response.LoginGoogleResponse
 import com.uds.foufoufood.data_class.response.RegisterGoogleResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -58,13 +58,13 @@ interface UserApi {
     suspend fun logout(): Response<ApiResponse>
 
     @PUT("api/users/auth/update-email")
-    suspend fun updateEmail(@Header("Authorization") token: String,
-                            @Body emailRequest: UpdateEmailRequest
+    suspend fun updateEmail(
+        @Header("Authorization") token: String, @Body emailRequest: UpdateEmailRequest
     ): Response<AuthResponse>
 
     @PUT("api/users/auth/update-password")
-    suspend fun updatePassword(@Header("Authorization") token: String,
-                               @Body passwordRequest: PasswordRequest
+    suspend fun updatePassword(
+        @Header("Authorization") token: String, @Body passwordRequest: PasswordRequest
     ): Response<ApiResponse>
 
     @PUT("api/users/auth/update-address")
@@ -78,8 +78,7 @@ interface UserApi {
 
     @PUT("api/users/delivery/deliveryAvailability")
     suspend fun updateUserAvailability(
-        @Header("Authorization") token: String,
-        @Body deliveryAvailability : AvailabilityRequest
+        @Header("Authorization") token: String, @Body deliveryAvailability: AvailabilityRequest
     ): Response<ApiResponse>
 
     @GET("api/users/delivery/deliveryAvailability")
@@ -89,18 +88,17 @@ interface UserApi {
 
     @PUT("api/users/register-fcm-token")
     suspend fun registerFcmToken(
-        @Header("Authorization") token: String,
-        @Body request: RegisterFcmTokenRequest
+        @Header("Authorization") token: String, @Body request: RegisterFcmTokenRequest
     ): Response<Void>
 
     @PUT("api/users/block-account/{id}")
-    suspend fun blockAccount(@Path("id") id:String):Response<ApiResponse>
+    suspend fun blockAccount(@Path("id") id: String): Response<ApiResponse>
 
     @PUT("api/users/unlock-account/{id}")
-    suspend fun unlockAccount(@Path("id") id:String):Response<ApiResponse>
+    suspend fun unlockAccount(@Path("id") id: String): Response<ApiResponse>
 
     @DELETE("api/users/delete-account/{id}")
-    suspend fun deleteAccount(@Path("id") id:String):Response<ApiResponse>
+    suspend fun deleteAccount(@Path("id") id: String): Response<ApiResponse>
 
     @POST("api/users/auth/login/google")
     suspend fun loginWithGoogle(@Body idToken: TokenGoogleRequest): Response<LoginGoogleResponse>

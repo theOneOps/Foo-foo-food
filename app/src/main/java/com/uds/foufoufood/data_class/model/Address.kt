@@ -7,7 +7,7 @@ data class Address(
     var zipCode: String? = null,
     var state: String? = null,
     var country: String? = null
-){
+) {
     override fun toString(): String {
         return buildString {
             if (number != null) {

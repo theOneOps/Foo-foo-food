@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,7 +16,7 @@ import com.uds.foufoufood.data_class.model.Speciality
 import com.uds.foufoufood.repository.RestaurantRepository
 import kotlinx.coroutines.launch
 
-class RestaurantViewModel(private val restaurantRepository: RestaurantRepository) : ViewModel(){
+class RestaurantViewModel(private val restaurantRepository: RestaurantRepository) : ViewModel() {
     private val _specialities = MutableLiveData<List<Speciality>?>()
     val specialities: LiveData<List<Speciality>?> get() = _specialities
 
@@ -106,11 +105,11 @@ class RestaurantViewModel(private val restaurantRepository: RestaurantRepository
     fun updateRestaurant(id: String, restaurant: Restaurant) {
         viewModelScope.launch {
             try {
-                val response = restaurantRepository.updateRestaurant( id, restaurant)
+                val response = restaurantRepository.updateRestaurant(id, restaurant)
                 if (response != null) {
-                    if (response.success)
-                    {
-                        val currentRestaurants = restaurants.value?.toMutableList() ?: mutableListOf()
+                    if (response.success) {
+                        val currentRestaurants =
+                            restaurants.value?.toMutableList() ?: mutableListOf()
 
                         val restaurantIndex = currentRestaurants.indexOfFirst { it._id == id }
 
@@ -122,8 +121,7 @@ class RestaurantViewModel(private val restaurantRepository: RestaurantRepository
                 }
             } catch (e: Exception) {
                 Log.d(
-                    "HomeViewModel",
-                    "Exception lors de la modification du restaurant: ${e.message}"
+                    "HomeViewModel", "Exception lors de la modification du restaurant: ${e.message}"
                 )
             }
         }

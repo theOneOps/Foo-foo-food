@@ -1,7 +1,6 @@
 package com.uds.foufoufood.view.client
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,51 +17,37 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -73,19 +58,15 @@ import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.activities.main.TokenManager.getUserId
 import com.uds.foufoufood.data_class.model.Menu
 import com.uds.foufoufood.data_class.model.Restaurant
-import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.ui.component.BackButton
 import com.uds.foufoufood.ui.component.FormNewMenu
 import com.uds.foufoufood.ui.component.MenuComponent
-import com.uds.foufoufood.ui.component.TextLink
 import com.uds.foufoufood.viewmodel.MenuViewModel
 
 
 @Composable
 fun ClientRestaurantScreen(
-    navController: NavController,
-    menuViewModel: MenuViewModel,
-    restaurant: Restaurant
+    navController: NavController, menuViewModel: MenuViewModel, restaurant: Restaurant
 ) {
     val context = LocalContext.current
     val token = getToken(context) ?: ""
@@ -118,7 +99,7 @@ fun ClientRestaurantScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     // Le texte dans le dialog
-                    FormNewMenu(restaurant, menuViewModel, navController)
+                    FormNewMenu(restaurant, menuViewModel)
                 }
             }
         }
@@ -203,7 +184,9 @@ fun RestaurantBanner(restaurant: Restaurant, navController: NavController) {
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(horizontal = 16.dp, vertical = 6.dp)
-                        .offset(x = (4).dp, y = (-4).dp) // Décalage pour être bien positionné sur le bord
+                        .offset(
+                            x = (4).dp, y = (-4).dp
+                        ) // Décalage pour être bien positionné sur le bord
                 ) {
                     Text(
                         text = restaurant.speciality,
@@ -223,15 +206,13 @@ fun RestaurantBanner(restaurant: Restaurant, navController: NavController) {
 
             // Nom du restaurant
             Text(
-                text = restaurant.name,
-                style = TextStyle(
+                text = restaurant.name, style = TextStyle(
                     fontSize = 36.sp,
                     fontWeight = FontWeight.Bold,
                     color = colorResource(id = R.color.black),
                     textAlign = TextAlign.Center,
                     fontFamily = FontFamily(Font(R.font.sofiapro_bold))
-                ),
-                modifier = Modifier
+                ), modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
             )
@@ -240,14 +221,12 @@ fun RestaurantBanner(restaurant: Restaurant, navController: NavController) {
 
             // Adresse du restaurant
             Text(
-                text = "${restaurant.address}",
-                style = TextStyle(
+                text = "${restaurant.address}", style = TextStyle(
                     fontSize = 16.sp,
                     color = Color.Gray,
                     textAlign = TextAlign.Center,
                     fontFamily = FontFamily(Font(R.font.sofiapro_medium))
-                ),
-                modifier = Modifier
+                ), modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 4.dp)
             )
@@ -288,7 +267,14 @@ fun FilterMenus(menuViewModel: MenuViewModel, onSortChanged: (sortOrder: Int) ->
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("Trier par : ", style = TextStyle(fontSize = 18.sp, color = Color.Gray, fontFamily = FontFamily(Font(R.font.sofiapro_medium))))
+        Text(
+            "Trier par : ",
+            style = TextStyle(
+                fontSize = 18.sp,
+                color = Color.Gray,
+                fontFamily = FontFamily(Font(R.font.sofiapro_medium))
+            )
+        )
 
         Spacer(modifier = Modifier.width(8.dp))
 
@@ -297,20 +283,17 @@ fun FilterMenus(menuViewModel: MenuViewModel, onSortChanged: (sortOrder: Int) ->
             verticalArrangement = Arrangement.Center
         ) {
             Box {
-                Row(
-                    modifier = Modifier
-                        .clickable { isDropDownExpanded.value = true }
-                        .padding(8.dp)
-                        .background(
-                            color = colorResource(id = R.color.orange_alpha),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(modifier = Modifier
+                    .clickable { isDropDownExpanded.value = true }
+                    .padding(8.dp)
+                    .background(
+                        color = colorResource(id = R.color.orange_alpha),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = sortOptions[itemPosition],
-                        style = TextStyle(
+                        text = sortOptions[itemPosition], style = TextStyle(
                             fontSize = 16.sp,
                             color = colorResource(id = R.color.orange),
                             fontWeight = FontWeight.Medium
@@ -328,22 +311,21 @@ fun FilterMenus(menuViewModel: MenuViewModel, onSortChanged: (sortOrder: Int) ->
                 DropdownMenu(
                     expanded = isDropDownExpanded.value,
                     onDismissRequest = { isDropDownExpanded.value = false },
-                    modifier = Modifier
-                        .background(Color.White)
+                    modifier = Modifier.background(Color.White)
                 ) {
                     sortOptions.forEachIndexed { index, option ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = option,
-                                    fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = colorResource(id = R.color.orange)) },
-                            onClick = {
-                                isDropDownExpanded.value = false
-                                menuViewModel.updateSortOrder(index)
-                            }
-                        )
+                        DropdownMenuItem(text = {
+                            Text(
+                                text = option,
+                                fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = colorResource(id = R.color.orange)
+                            )
+                        }, onClick = {
+                            isDropDownExpanded.value = false
+                            menuViewModel.updateSortOrder(index)
+                        })
                     }
                 }
             }

@@ -89,16 +89,12 @@ fun ProfileScreen(navController: NavHostController, userViewModel: UserViewModel
                     fontSize = 16.sp,
                     color = Color.Gray,
                 )
-            }
-            else {
-                ProfileEmailSection(
-                    initialEmail = email,
-                    onSaveClick = { newEmail ->
-                        if (newEmail != email && isValidEmail(newEmail)) {
-                            userViewModel.updateEmail(email, newEmail)
-                        }
+            } else {
+                ProfileEmailSection(initialEmail = email, onSaveClick = { newEmail ->
+                    if (newEmail != email && isValidEmail(newEmail)) {
+                        userViewModel.updateEmail(email, newEmail)
                     }
-                )
+                })
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -126,9 +122,7 @@ fun ProfileName(name: String) {
 @Composable
 fun ProfileType(role: String) {
     Text(
-        text = role,
-        fontSize = 16.sp,
-        color = Color(0xFF8B4513) // Couleur marron
+        text = role, fontSize = 16.sp, color = Color(0xFF8B4513) // Couleur marron
     )
 }
 
@@ -136,8 +130,7 @@ fun ProfileType(role: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileEmailSection(
-    initialEmail: String,
-    onSaveClick: (String) -> Unit
+    initialEmail: String, onSaveClick: (String) -> Unit
 ) {
     var isEditable by remember { mutableStateOf(false) }
     var email by remember { mutableStateOf(initialEmail) }
@@ -148,9 +141,7 @@ fun ProfileEmailSection(
     ) {
         Text(
             text = stringResource(id = R.string.email), // Libellé pour "Email"
-            fontSize = 16.sp,
-            color = Color.Gray,
-            modifier = Modifier.padding(end = 10.dp)
+            fontSize = 16.sp, color = Color.Gray, modifier = Modifier.padding(end = 10.dp)
         )
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -162,8 +153,7 @@ fun ProfileEmailSection(
                 email = it
                 isError = !isValidEmail(it)
             },
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             enabled = isEditable, // Activer/désactiver l'édition
             placeholder = {
                 Text(text = stringResource(id = R.string.email_example), color = Color.Gray)
@@ -255,9 +245,7 @@ fun ProfilePasswordSection(
         ) {
             Text(
                 text = stringResource(id = R.string.password), // Libellé pour "Mot de Passe"
-                fontSize = 16.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(end = 10.dp)
+                fontSize = 16.sp, color = Color.Gray, modifier = Modifier.padding(end = 10.dp)
             )
         }
 
@@ -353,9 +341,7 @@ fun ProfilePasswordSection(
         } else {
             Text(
                 text = stringResource(id = R.string.password_instructions), // Mot de passe masqué
-                fontSize = 16.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(end = 10.dp)
+                fontSize = 16.sp, color = Color.Gray, modifier = Modifier.padding(end = 10.dp)
             )
         }
     }

@@ -30,10 +30,6 @@ class NotificationViewModel(
         Log.d("TrackingSocketSetup", "Getting user email")
         val clientEmail = userViewModel.user.value?.email ?: return
         Log.d("TrackingSocketSetup", clientEmail)
-        if (clientEmail == null) {
-            _errorMessage.postValue("Utilisateur non connecté.")
-            return
-        }
 
         try {
             //socket = IO.socket("http://192.168.185.108:3000")

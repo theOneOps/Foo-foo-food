@@ -3,10 +3,10 @@ package com.uds.foufoufood.ui.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -77,17 +77,14 @@ fun TextFieldWithError(
 ) {
     var isError by remember { mutableStateOf(false) }
 
-    TextField(
-        value = value,
+    TextField(value = value,
         onValueChange = {
             onValueChange(it)
             isError = !isValid(it)
         },
         label = {
             Text(
-                label,
-                color = Color.Gray,
-                fontFamily = FontFamily(Font(R.font.sofiapro_regular))
+                label, color = Color.Gray, fontFamily = FontFamily(Font(R.font.sofiapro_regular))
             )
         },
         isError = isError,
@@ -143,9 +140,7 @@ fun PasswordTextField(
         ),
         label = {
             Text(
-                label,
-                color = Color.Gray,
-                fontFamily = FontFamily(Font(R.font.sofiapro_regular))
+                label, color = Color.Gray, fontFamily = FontFamily(Font(R.font.sofiapro_regular))
             )
         },
         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -191,8 +186,7 @@ fun ValidateButton(label: String, onClick: () -> Unit) {
 @Composable
 fun FacebookButton() {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier
             .shadow(
                 elevation = 4.dp,  // Épaisseur de l'ombre
                 shape = RoundedCornerShape(30.dp),
@@ -215,8 +209,7 @@ fun FacebookButton() {
 @Composable
 fun GoogleButton(googleSignInLauncher: () -> Unit) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier
             .shadow(
                 elevation = 4.dp,  // Épaisseur de l'ombre
                 shape = RoundedCornerShape(30.dp),
@@ -247,8 +240,7 @@ fun NetworksButtons(type: String, color: Color, googleSignInLauncher: () -> Unit
             HorizontalDivider(
                 modifier = Modifier
                     .weight(1f)
-                    .height(1.dp),
-                color = color
+                    .height(1.dp), color = color
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
@@ -261,16 +253,14 @@ fun NetworksButtons(type: String, color: Color, googleSignInLauncher: () -> Unit
             HorizontalDivider(
                 modifier = Modifier
                     .weight(1f)
-                    .height(1.dp),
-                color = color
+                    .height(1.dp), color = color
             )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
         ) {
             FacebookButton()
             Spacer(modifier = Modifier.width(35.dp))
@@ -289,9 +279,7 @@ fun RadioButtonWithLabel(label: String, selected: Boolean, onSelect: () -> Unit)
         verticalAlignment = Alignment.CenterVertically
     ) {
         RadioButton(
-            selected = selected,
-            onClick = onSelect,
-            colors = RadioButtonDefaults.colors(
+            selected = selected, onClick = onSelect, colors = RadioButtonDefaults.colors(
                 selectedColor = Color(0xFFFFA500) // Couleur orange
             )
         )
@@ -307,12 +295,10 @@ fun RadioButtonWithLabel(label: String, selected: Boolean, onSelect: () -> Unit)
 
 @Composable
 fun TextLink(label: String, onClick: () -> Unit) {
-    Text(
-        text = label,
+    Text(text = label,
         fontSize = 14.sp,
         fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
         textDecoration = TextDecoration.Underline,
         color = colorResource(id = R.color.orange),
-        modifier = Modifier.clickable { onClick() }
-    )
+        modifier = Modifier.clickable { onClick() })
 }

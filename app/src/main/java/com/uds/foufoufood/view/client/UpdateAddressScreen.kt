@@ -186,20 +186,8 @@ fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewMod
 
     // Afficher les erreurs de connexion si elles existent
     errorMessage?.let {
-        Text(text = "$it", color = Color.Red, modifier = Modifier.padding(16.dp))
+        Text(text = it, color = Color.Red, modifier = Modifier.padding(16.dp))
     }
-}
-
-fun validateAddress(
-    number: Number,
-    street: String,
-    city: String,
-    state: String,
-    zipCode: String,
-    country: String
-): Boolean {
-    return number.toString()
-        .isNotEmpty() && street.isNotEmpty() && city.isNotEmpty() && state.isNotEmpty() && zipCode.isNotEmpty() && country.isNotEmpty()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

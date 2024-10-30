@@ -132,8 +132,7 @@ fun HomeScreenMenu(
                     // si l'utilisateur est connecté en tant que restaurateur, on affiche le bouton de suppression
                     if (idRestaurantOfConnectedUser == menu.restaurantId) {
                         menuViewModel.setIsConnectedRestorer(true)
-                    }
-                    else {
+                    } else {
                         menuViewModel.setIsConnectedRestorer(false)
                     }
                     item {

@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -79,10 +80,9 @@ fun MenuRestaurantScreen(
     ) {
         BackButton(navController = navController)
 
-        LazyColumn (
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top
-        ){
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top
+        ) {
             item {
                 // Image du restaurant avec la spécialité en bas à droite
                 Box(
@@ -101,23 +101,26 @@ fun MenuRestaurantScreen(
                     )
 
                     val isConnectedRestaurateur = menuViewModel.isConnectedRestorer.value!!
-                    if (isConnectedRestaurateur)
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(horizontal = 16.dp, vertical = 6.dp)
-                                .offset(x = (-4).dp, y = (-4).dp), // Décalage pour être bien positionné sur le bord
-                        ) {
-                            // Bouton de modification du menu
-                            ModifyMenu(token, menuViewModel, menu, navController)
-                        }
+                    if (isConnectedRestaurateur) Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(horizontal = 16.dp, vertical = 6.dp)
+                            .offset(
+                                x = (-4).dp, y = (-4).dp
+                            ), // Décalage pour être bien positionné sur le bord
+                    ) {
+                        // Bouton de modification du menu
+                        ModifyMenu(token, menuViewModel, menu, navController)
+                    }
 
                     // Box de spécialité en bas à droite de l'image
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(horizontal = 16.dp, vertical = 6.dp)
-                            .offset(x = (4).dp, y = (-4).dp), // Décalage pour être bien positionné sur le bord
+                            .offset(
+                                x = (4).dp, y = (-4).dp
+                            ), // Décalage pour être bien positionné sur le bord
                     ) {
                         Column(
                             modifier = Modifier
@@ -147,14 +150,12 @@ fun MenuRestaurantScreen(
 
             item {
                 Text(
-                    text = menu.name.replaceFirstChar { it.uppercase() },
-                    style = TextStyle(
+                    text = menu.name.replaceFirstChar { it.uppercase() }, style = TextStyle(
                         fontSize = 36.sp,
                         fontWeight = FontWeight.Bold,
                         color = colorResource(id = R.color.black),
                         fontFamily = FontFamily(Font(R.font.sofiapro_bold))
-                    ),
-                    modifier = Modifier
+                    ), modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 )
@@ -167,13 +168,11 @@ fun MenuRestaurantScreen(
             item {
                 // Description du Menu
                 Text(
-                    text = menu.description,
-                    style = TextStyle(
+                    text = menu.description, style = TextStyle(
                         fontSize = 16.sp,
                         color = Color.Gray,
                         fontFamily = FontFamily(Font(R.font.sofiapro_medium))
-                    ),
-                    modifier = Modifier
+                    ), modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 4.dp)
                 )
@@ -192,24 +191,20 @@ fun MenuRestaurantScreen(
                     Row {
                         // Prix du menu
                         Text(
-                            text = menu.price.toString(),
-                            style = TextStyle(
+                            text = menu.price.toString(), style = TextStyle(
                                 fontSize = 35.sp,
                                 color = colorResource(id = R.color.orange),
                                 fontFamily = FontFamily(Font(R.font.sofiapro_medium))
-                            ),
-                            modifier = Modifier.padding(start = 4.dp)
+                            ), modifier = Modifier.padding(start = 4.dp)
                         )
 
                         // Text icon €
                         Text(
-                            text = "$",
-                            style = TextStyle(
+                            text = "$", style = TextStyle(
                                 fontSize = 15.sp,
                                 color = colorResource(id = R.color.orange),
                                 fontFamily = FontFamily(Font(R.font.sofiapro_medium))
-                            ),
-                            modifier = Modifier.padding(start = 5.dp)
+                            ), modifier = Modifier.padding(start = 5.dp)
                         )
                     }
 
@@ -260,11 +255,11 @@ fun MenuRestaurantScreen(
 
             item {
                 // Bouton d'ajout au panier
-                Column (
+                Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
-                ){
-                    AddToCartButton(menu, cartViewModel, quantity.value)
+                ) {
+                    AddToCartButton(menu, cartViewModel, quantity.intValue)
                 }
             }
         }
@@ -273,20 +268,18 @@ fun MenuRestaurantScreen(
 
 @Composable
 fun AddToCartButton(
-    menu: Menu,
-    cartViewModel: CartViewModel,
-    quantity: Int
+    menu: Menu, cartViewModel: CartViewModel, quantity: Int
 ) {
     val context = LocalContext.current
-    val scale = remember { mutableStateOf(1f) }
+    val scale = remember { mutableFloatStateOf(1f) }
     var showDialog by remember { mutableStateOf(false) } // State to manage dialog visibility
 
     Button(
         onClick = {
             val restaurantId = menu.restaurantId
             val cartItems = cartViewModel.cartItems.value ?: emptyList()
-            val isCartEmptyOrSameRestaurant = cartItems.isEmpty() ||
-                    cartItems.all { it.menu.restaurantId == restaurantId }
+            val isCartEmptyOrSameRestaurant =
+                cartItems.isEmpty() || cartItems.all { it.menu.restaurantId == restaurantId }
 
 
             if (isCartEmptyOrSameRestaurant) {
@@ -295,8 +288,7 @@ fun AddToCartButton(
                     CartItem(
                         menu = menu,
                         quantity = quantity,
-                    ),
-                    restaurantId = restaurantId
+                    ), restaurantId = restaurantId
                 )
                 Toast.makeText(context, "${menu.name} ajouté au panier", Toast.LENGTH_SHORT).show()
             } else {
@@ -305,16 +297,16 @@ fun AddToCartButton(
             }
 
             // Button press effect
-            scale.value = 0.9f
+            scale.floatValue = 0.9f
         },
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.orange)),
         modifier = Modifier
-            .scale(scale.value)
+            .scale(scale.floatValue)
             .padding(8.dp)
     ) {
-        LaunchedEffect(scale.value) {
-            if (scale.value == 0.9f) {
-                scale.value = 1f
+        LaunchedEffect(scale.floatValue) {
+            if (scale.floatValue == 0.9f) {
+                scale.floatValue = 1f
             }
         }
 
@@ -347,8 +339,7 @@ fun AddToCartButton(
 
     // Confirmation dialog for clearing the cart
     if (showDialog) {
-        androidx.compose.material3.AlertDialog(
-            onDismissRequest = { showDialog = false },
+        androidx.compose.material3.AlertDialog(onDismissRequest = { showDialog = false },
             title = { Text("Vider le panier ?") },
             text = { Text("Votre panier contient des articles d'un autre restaurant. Vider le panier et ajouter cet article ?") },
             confirmButton = {
@@ -356,10 +347,8 @@ fun AddToCartButton(
                     cartViewModel.clearCart() // Clear the cart
                     cartViewModel.addItem(
                         CartItem(
-                            menu = menu,
-                            quantity = quantity
-                        ),
-                        restaurantId = menu.restaurantId
+                            menu = menu, quantity = quantity
+                        ), restaurantId = menu.restaurantId
                     )
                     Toast.makeText(context, "${menu.name} ajouté au panier", Toast.LENGTH_SHORT)
                         .show()
@@ -372,31 +361,36 @@ fun AddToCartButton(
                 androidx.compose.material3.TextButton(onClick = { showDialog = false }) {
                     Text("Non")
                 }
-            }
-        )
+            })
     }
 }
 
 @Composable
-fun ModifyMenu(token: String, menuViewModel: MenuViewModel, menu: Menu, navController: NavController) {
+fun ModifyMenu(
+    token: String,
+    menuViewModel: MenuViewModel,
+    menu: Menu,
+    navController: NavController
+) {
     val openDialog = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .background(
-                color = colorResource(id = R.color.white),
-                shape = RoundedCornerShape(12.dp)
+                color = colorResource(id = R.color.white), shape = RoundedCornerShape(12.dp)
             )
-            .padding(horizontal = 16.dp, vertical = 6.dp),
-        verticalArrangement = Arrangement.Center
+            .padding(horizontal = 16.dp, vertical = 6.dp), verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = "Modifier",
             fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
             color = colorResource(id = R.color.orange),
-            modifier = Modifier.align(Alignment.CenterHorizontally).clickable(onClick = {
-                openDialog.value = true
-            }).padding(top = 2.dp)
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .clickable(onClick = {
+                    openDialog.value = true
+                })
+                .padding(top = 2.dp)
         )
     }
 
@@ -414,7 +408,7 @@ fun ModifyMenu(token: String, menuViewModel: MenuViewModel, menu: Menu, navContr
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    FormModifyMenu(menuViewModel, menu, onUpdate = { menuRes ->
+                    FormModifyMenu(menu, onUpdate = { menuRes ->
                         menuViewModel.updateMenu(
                             token,
                             menuRes._id,

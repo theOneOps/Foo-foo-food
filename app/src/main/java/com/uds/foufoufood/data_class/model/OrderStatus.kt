@@ -17,7 +17,7 @@ enum class OrderStatus(val displayName: String) {
 
     companion object {
         fun fromDisplayName(displayName: String): OrderStatus? {
-            return values().firstOrNull { it.displayName == displayName }
+            return entries.firstOrNull { it.displayName == displayName }
         }
     }
 }

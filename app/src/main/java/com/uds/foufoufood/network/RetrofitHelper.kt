@@ -1,7 +1,6 @@
 package com.uds.foufoufood.network
 
 import android.content.Context
-import android.os.Build
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -34,8 +33,7 @@ class RetrofitHelper {
 
                 if (token != null) {
                     requestBuilder.addHeader(
-                        "Authorization",
-                        "Bearer $token"
+                        "Authorization", "Bearer $token"
                     )  // Ajoute le token JWT dans l'en-tête
                 }
 
@@ -43,17 +41,12 @@ class RetrofitHelper {
             }
 
             // Ajoute l'intercepteur au client OkHttp
-            val okHttpClient = OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor)
-                .addInterceptor(authInterceptor)
-                .build()
+            val okHttpClient = OkHttpClient.Builder().addInterceptor(loggingInterceptor)
+                .addInterceptor(authInterceptor).build()
 
             // Retourne une instance Retrofit avec OkHttp et l'intercepteur
-            return Retrofit.Builder()
-                .baseUrl(getBaseUrl())
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            return Retrofit.Builder().baseUrl(getBaseUrl()).client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create()).build()
         }
     }
 }

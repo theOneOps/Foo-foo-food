@@ -6,7 +6,6 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -17,10 +16,6 @@ interface RestaurantApi {
     @GET("api/restaurants")
     suspend fun getAllRestaurants(): Response<List<Restaurant>>
 
-    // Fetch a specific restaurant by ID
-    @GET("api/restaurants/{id}")
-    suspend fun getRestaurantById(@Path("id") restaurantId: String): Response<Restaurant>
-
     // Create a new restaurant
     @POST("api/restaurants")
     suspend fun createRestaurant(@Body restaurant: Restaurant): Response<ApiResponse>
@@ -28,8 +23,7 @@ interface RestaurantApi {
     // Update an existing restaurant by ID
     @PUT("api/restaurants/{id}")
     suspend fun updateRestaurant(
-        @Path("id") restaurantId: String,
-        @Body restaurant: Restaurant
+        @Path("id") restaurantId: String, @Body restaurant: Restaurant
     ): Response<ApiResponse>
 
     // Delete a restaurant by ID
@@ -38,7 +32,6 @@ interface RestaurantApi {
 
     @PUT("api/restaurants/linkarestorer/{id}/{restaurantId}")
     suspend fun linkedARestorer(
-        @Path("id") id: String,
-        @Path("restaurantId") restaurantId: String
+        @Path("id") id: String, @Path("restaurantId") restaurantId: String
     ): Response<ApiResponse>
 }

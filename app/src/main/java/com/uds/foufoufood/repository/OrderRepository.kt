@@ -1,20 +1,19 @@
 package com.uds.foufoufood.repository
 
-import android.content.Context
 import android.util.Log
 import com.uds.foufoufood.data_class.model.Order
 import com.uds.foufoufood.data_class.model.OrderStatus
 import com.uds.foufoufood.data_class.request.OrderRequest
-import com.uds.foufoufood.data_class.response.OrderResponse
 import com.uds.foufoufood.data_class.request.OrderStatusUpdateRequest
 import com.uds.foufoufood.data_class.request.OrderUpdateRequest
 import com.uds.foufoufood.data_class.response.AssignOrderResponse
+import com.uds.foufoufood.data_class.response.OrderResponse
 import com.uds.foufoufood.network.OrderApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 
-class OrderRepository(private val api: OrderApi, private val context: Context) {
+class OrderRepository(private val api: OrderApi) {
     suspend fun getOrderById(orderId: String): Response<Order> {
         return try {
             api.getOrderById(orderId)
@@ -50,8 +49,7 @@ class OrderRepository(private val api: OrderApi, private val context: Context) {
                 ordersList
             } else {
                 Log.e(
-                    "OrderRepository",
-                    "Erreur lors de la récupération des commandes : ${
+                    "OrderRepository", "Erreur lors de la récupération des commandes : ${
                         response.errorBody()?.string()
                     }"
                 )
@@ -126,6 +124,7 @@ class OrderRepository(private val api: OrderApi, private val context: Context) {
             null
         }
     }
+
     suspend fun updateOrder(updatedOrder: Order): Boolean {
         return withContext(Dispatchers.IO) {
             try {
@@ -155,11 +154,17 @@ class OrderRepository(private val api: OrderApi, private val context: Context) {
                 if (response.isSuccessful) {
                     response.body()
                 } else {
-                    Log.e("OrderRepository", "Erreur d'assignation de la commande: ${response.message()}")
+                    Log.e(
+                        "OrderRepository",
+                        "Erreur d'assignation de la commande: ${response.message()}"
+                    )
                     null
                 }
             } catch (e: Exception) {
-                Log.e("OrderRepository", "Exception lors de l'assignation de la commande: ${e.message}")
+                Log.e(
+                    "OrderRepository",
+                    "Exception lors de l'assignation de la commande: ${e.message}"
+                )
                 null
             }
         }

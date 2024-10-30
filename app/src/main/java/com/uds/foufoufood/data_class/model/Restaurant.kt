@@ -1,7 +1,5 @@
 package com.uds.foufoufood.data_class.model
 
-import com.google.gson.annotations.SerializedName
-
 data class Restaurant(
     val name: String,
     val address: Address,
@@ -13,5 +11,5 @@ data class Restaurant(
     val reviews: List<String>,
     val imageUrl: String,
     val userId: String,
-    val _id:String,
+    val _id: String,
 )

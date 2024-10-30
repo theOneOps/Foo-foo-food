@@ -8,13 +8,14 @@ import com.uds.foufoufood.viewmodel.OrderTrackingViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
 class OrderTrackingViewModelFactory(
-    private val orderRepository: OrderRepository,
-    private val userViewModel: UserViewModel
+    private val orderRepository: OrderRepository, private val userViewModel: UserViewModel
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(OrderTrackingViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return OrderTrackingViewModel(orderRepository, userViewModel) as T
+            @Suppress("UNCHECKED_CAST") return OrderTrackingViewModel(
+                orderRepository,
+                userViewModel
+            ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -1,6 +1,5 @@
 package com.uds.foufoufood.viewmodel
 
-import UserRepository
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
@@ -18,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import com.uds.foufoufood.repository.UserRepository
 
 class DeliveryViewModel(
     private val repository: DeliveryRepository,
@@ -51,17 +51,21 @@ class DeliveryViewModel(
                 newOrder?.let {
                     val orderData = it.toString()
                     val orderJson = JSONObject(orderData)
-                    val orderId = orderJson.getJSONObject("order").getString("_id")
+                    orderJson.getJSONObject("order").getString("_id")
 
                     // Charger la commande et afficher la notification
-                    sendNotification(context, "Nouvelle commande", "Une nouvelle commande vous a été assignée.")
+                    sendNotification(
+                        context,
+                        "Nouvelle commande",
+                        "Une nouvelle commande vous a été assignée."
+                    )
                     // Délai avant d'ouvrir la commande ou gérer l'ouverture
                 }
             }
         }
     }
 
-    fun connectSocketForOrders() {
+    private fun connectSocketForOrders() {
         viewModelScope.launch {
             val userEmail = userRepository.getUserEmail()
             if (userEmail != null) {
@@ -78,7 +82,7 @@ class DeliveryViewModel(
         viewModelScope.launch {
             try {
                 val token = getToken(context)
-                if (token == null){
+                if (token == null) {
                     Log.e("DeliveryViewModel", "Token is null")
                     return@launch
                 }
@@ -141,7 +145,6 @@ class DeliveryViewModel(
     }
 
 
-
     fun refreshAvailability() {
         viewModelScope.launch {
             val token = getToken(context)
@@ -151,10 +154,16 @@ class DeliveryViewModel(
                     Log.d("DeliveryViewModel", "Disponibilité récupérée: $serverAvailability")
                     serverAvailability?.let {
                         _isAvailable.value = it
-                        Log.d("DeliveryViewModel", "Disponibilité après mise à jour: ${_isAvailable.value}")
+                        Log.d(
+                            "DeliveryViewModel",
+                            "Disponibilité après mise à jour: ${_isAvailable.value}"
+                        )
                     }
                 } catch (e: Exception) {
-                    Log.e("DeliveryViewModel", "Erreur lors de la récupération de la disponibilité: ${e.message}")
+                    Log.e(
+                        "DeliveryViewModel",
+                        "Erreur lors de la récupération de la disponibilité: ${e.message}"
+                    )
                 }
             }
         }
@@ -162,17 +171,15 @@ class DeliveryViewModel(
 
     private fun sendNotification(context: Context, title: String, message: String) {
         if (ActivityCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.POST_NOTIFICATIONS
+                context, android.Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             val builder = NotificationCompat.Builder(context, "order_notifications")
-                .setSmallIcon(R.drawable.full_logo)
-                .setContentTitle(title)
-                .setContentText(message)
+                .setSmallIcon(R.drawable.full_logo).setContentTitle(title).setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
 
-            NotificationManagerCompat.from(context).notify(System.currentTimeMillis().toInt(), builder.build())
+            NotificationManagerCompat.from(context)
+                .notify(System.currentTimeMillis().toInt(), builder.build())
         } else {
             Log.d("sendNotification", "Permission de notification non accordée")
         }

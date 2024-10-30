@@ -1,4 +1,4 @@
-package com.uds.foufoufood.Firebase_management
+package com.uds.foufoufood.firebase_management
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -17,18 +17,15 @@ class FcmNotificationService : FirebaseMessagingService() {
     }
 
     private fun showNotification(title: String, message: String) {
-        val notificationBuilder = NotificationCompat.Builder(this, "ORDER_STATUS_CHANNEL")
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSmallIcon(R.drawable.full_logo)
-            .setAutoCancel(true)
+        val notificationBuilder =
+            NotificationCompat.Builder(this, "ORDER_STATUS_CHANNEL").setContentTitle(title)
+                .setContentText(message).setSmallIcon(R.drawable.full_logo).setAutoCancel(true)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                "ORDER_STATUS_CHANNEL",
-                "Order Status Updates",
-                NotificationManager.IMPORTANCE_HIGH
+                "ORDER_STATUS_CHANNEL", "Order Status Updates", NotificationManager.IMPORTANCE_HIGH
             )
             notificationManager.createNotificationChannel(channel)
         }

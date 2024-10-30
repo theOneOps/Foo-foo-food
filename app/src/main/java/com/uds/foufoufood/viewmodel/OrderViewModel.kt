@@ -1,6 +1,5 @@
 package com.uds.foufoufood.viewmodel
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,8 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class OrderViewModel(
-    private val repository: OrderRepository,
-    private val context: Context
+    private val repository: OrderRepository
 ) : ViewModel() {
 
     // État de la commande active
@@ -34,10 +32,18 @@ class OrderViewModel(
                 if (response.isSuccessful) {
                     _currentOrder.value = response.body()
                 } else {
-                    Log.e("OrderViewModel", "Erreur lors de la récupération de la commande : ${response.errorBody()?.string()}")
+                    Log.e(
+                        "OrderViewModel",
+                        "Erreur lors de la récupération de la commande : ${
+                            response.errorBody()?.string()
+                        }"
+                    )
                 }
             } catch (e: Exception) {
-                Log.e("OrderViewModel", "Erreur lors de la récupération de la commande : ${e.message}")
+                Log.e(
+                    "OrderViewModel",
+                    "Erreur lors de la récupération de la commande : ${e.message}"
+                )
             }
         }
     }
@@ -47,9 +53,13 @@ class OrderViewModel(
         viewModelScope.launch {
             try {
                 val orders = repository.getOrdersByDeliveryManEmail(email)
-                _orders.value = orders.sortedByDescending { it.orderId } // Tri par ordre décroissant
+                _orders.value =
+                    orders.sortedByDescending { it.orderId } // Tri par ordre décroissant
             } catch (e: Exception) {
-                Log.e("OrderViewModel", "Erreur lors de la récupération des commandes : ${e.message}")
+                Log.e(
+                    "OrderViewModel",
+                    "Erreur lors de la récupération des commandes : ${e.message}"
+                )
             }
         }
     }
@@ -74,7 +84,10 @@ class OrderViewModel(
                 if (success) {
                     _currentOrder.value = order.copy(status = newStatus)
                 } else {
-                    Log.e("OrderViewModel", "Erreur lors de la mise à jour du statut de la commande.")
+                    Log.e(
+                        "OrderViewModel",
+                        "Erreur lors de la mise à jour du statut de la commande."
+                    )
                 }
             }
         }
@@ -86,8 +99,7 @@ class OrderViewModel(
             if (order.status != OrderStatus.WAITING) {
                 viewModelScope.launch {
                     val updatedOrder = order.copy(
-                        status = OrderStatus.WAITING,
-                        deliveryManEmail = null
+                        status = OrderStatus.WAITING, deliveryManEmail = null
                     )
                     val success = repository.updateOrder(updatedOrder)
 

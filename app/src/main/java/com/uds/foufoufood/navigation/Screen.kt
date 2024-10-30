@@ -17,12 +17,9 @@ sealed class Screen(val route: String) {
     object AdminLivreur : Screen("admin_livreur")
     object AdminGerant : Screen("admin_gerant")
     object AdminRestaurant : Screen("admin_restaurant")
-    object AdminUserProfile : Screen("userProfile/{userEmail}") {
-        fun createRoute(userEmail: String): String {
-            return "userProfile/$userEmail"
-        }
-    }
-    object AdminLinkARestorerToAResto: Screen("admin_linked_restaurant_to_restorer")
+    object AdminUserProfile : Screen("userProfile/{userEmail}")
+
+    object AdminLinkARestorerToAResto : Screen("admin_linked_restaurant_to_restorer")
 
     // Delivery
     object DeliveryAvailablePage : Screen("delivery_available_page")
@@ -32,12 +29,12 @@ sealed class Screen(val route: String) {
 
     // Client
     object ClientRestaurantAllMenusPage : Screen("client_restaurant_all_menu_page")
-    object ClientInstanceMenuPage:Screen("menu_page")
-    object Cart:Screen("cart")
+    object ClientInstanceMenuPage : Screen("menu_page")
+    object Cart : Screen("cart")
     object Notifications : Screen("notifications")
 
     // Restaurateur
-    object ModifyRestaurantPage:Screen("modify_restaurant_page")
+    object ModifyRestaurantPage : Screen("modify_restaurant_page")
 
 
 }
