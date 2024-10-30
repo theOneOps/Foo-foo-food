@@ -16,7 +16,7 @@ class RetrofitHelper {
             //return "http://192.168.21.13:3000" // Pour son propre téléphone /!\ MODIFIER SELON SON ADRESSE IP
             //return if (isEmulator()) {
             //    "http://10.0.2.2:3000"
-            // return "http://192.168.21.13:3000"
+            //return "http://192.168.6.215"
         }
 
         fun getRetrofitInstance(context: Context): Retrofit {

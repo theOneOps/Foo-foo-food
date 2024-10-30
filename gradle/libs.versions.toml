@@ -32,6 +32,7 @@ navigationCompose = "2.8.2"
 googleGmsGoogleServices = "4.4.2"
 firebaseStorage = "21.0.1"
 socketIoClient = "2.0.1"
+firebaseMessagingKtx = "24.0.3"
 googleServices = "4.3.15"
 firebaseAuth = "23.1.1"
 playServicesAuth = "20.6.0"
@@ -48,6 +49,7 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 coil-kt-coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coilSvgVersion" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebaseMessaging" }
 github-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "githubCompiler" }
@@ -86,6 +88,8 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

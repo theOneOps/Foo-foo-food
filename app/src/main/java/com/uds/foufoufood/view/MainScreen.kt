@@ -19,11 +19,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.uds.foufoufood.R
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.navigation.UnifiedNavHost
+import com.uds.foufoufood.repository.OrderRepository
 import com.uds.foufoufood.viewmodel.AdminRestaurantsViewModel
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.CartViewModel
 import com.uds.foufoufood.viewmodel.DeliveryViewModel
 import com.uds.foufoufood.viewmodel.MenuViewModel
+import com.uds.foufoufood.viewmodel.OrderTrackingViewModel
 import com.uds.foufoufood.viewmodel.OrderViewModel
 import com.uds.foufoufood.viewmodel.RestaurantViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
@@ -37,8 +39,9 @@ fun MainScreen(
     deliveryViewModel: DeliveryViewModel,
     orderViewModel: OrderViewModel,
     menuViewModel: MenuViewModel,
-    cartViewModel: CartViewModel,
     restaurantViewModel: RestaurantViewModel,
+    cartViewModel: CartViewModel,
+    orderRepository: OrderRepository,
     googleSignInClient: GoogleSignInClient,
     auth: FirebaseAuth
 ) {
@@ -92,6 +95,7 @@ fun MainScreen(
         menuViewModel = menuViewModel,
         restaurantViewModel = restaurantViewModel,
         cartViewModel = cartViewModel,
+        orderRepository = orderRepository,
         showAdminBottomBar = showAdminBottomBar,
         googleSignInClient = googleSignInClient,
         auth = auth

@@ -181,6 +181,15 @@ fun DrawerContent(
                 )
             }
         }
+        if (userViewModel.user.value?.role == "client")
+        DrawerMenuItem(
+            icon = ImageVector.vectorResource(R.drawable.ic_drawer_orders),
+            label = stringResource(R.string.my_orders),
+            onClick = {
+                closeDrawer()
+                navController.navigate(Screen.OrderTracking.route)
+            },
+        )
 
         if (currentScreen in listOf(
                 Screen.DeliveryOrderDetailsPage.route,
@@ -248,6 +257,7 @@ fun DrawerContent(
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.orange)), // Orange color
             shape = RoundedCornerShape(36.dp),
             modifier = Modifier
+                .fillMaxWidth()
                 //.height(50.dp)
                 .padding(16.dp)
                 .align(Alignment.CenterHorizontally)

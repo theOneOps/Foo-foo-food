@@ -44,7 +44,6 @@ import com.uds.foufoufood.viewmodel.UserViewModel
 fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewModel) {
     val context = LocalContext.current
     val address = userViewModel.user.value?.address
-    val hasAddress = address != null
     var number by remember { mutableStateOf(address?.number) }
     var street by remember { mutableStateOf(address?.street ?: "") }
     var zipCode by remember { mutableStateOf(address?.zipCode ?: "") }

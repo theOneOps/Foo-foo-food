@@ -8,6 +8,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.uds.foufoufood.data_class.model.Menu
+import com.uds.foufoufood.data_class.model.Restaurant
 import com.uds.foufoufood.data_class.model.User
 import com.uds.foufoufood.repository.AdminRepository
 import kotlinx.coroutines.launch
@@ -26,8 +28,10 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
     var searchText by mutableStateOf("")
 
     // Filtered list of restaurants based on the selected category and search query
-    var filteredUsers by mutableStateOf(listOf<User>())
-        private set
+    private var _filteredUsers = MutableLiveData<List<User>?>()
+    val filteredUsers: MutableLiveData<List<User>?> get() = _filteredUsers
+
+
 
     fun fetchUsers(role: String) {
         viewModelScope.launch {
@@ -89,11 +93,80 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
         return _users.value ?: emptyList()
     }
 
-    private fun filterUsers(role: String){
-        filteredUsers = _users.value?.filter { user ->
+    fun filterUsers(role: String){
+        _filteredUsers.value = _users.value?.filter { user ->
             user.role == role && user.email.contains(searchText, ignoreCase = true)
         } ?: emptyList()
     }
+
+    fun blockAccount(id:String)
+    {
+        viewModelScope.launch {
+            try {
+                val response = repository.blockAccount(id)
+                if (response != null)
+                {
+                    if (response.success)
+                        Log.d("blockAccount from AdminUsersViewModel","account blocked successfully")
+                }
+                else
+                    Log.e(
+                        "AdminUsersViewModel",
+                        "response from blockAccount null, problem to fix !"
+                    )
+            }
+            catch (e:Exception)
+            {
+                e.message?.let { Log.e("AdminUsersViewModel", it) }
+            }
+        }
+    }
+
+    fun unlockAccount(id:String)
+    {
+        viewModelScope.launch {
+            try {
+                val response = repository.unlockAccount(id)
+                if (response != null)
+                {
+                    if (response.success)
+                        Log.d("unlockAccount from AdminUsersViewModel","account unlocked successfully")
+                }
+                else
+                    Log.e(
+                        "AdminUsersViewModel",
+                        "response from unlockAccount null, problem to fix !"
+                    )
+            }
+            catch (e:Exception)
+            {
+                e.message?.let { Log.e("AdminUsersViewModel", it) }
+            }
+        }
+    }
+
+    fun deleteAccount(id: String) {
+        viewModelScope.launch {
+            try {
+                val response = repository.deleteAccount(id)
+                if (response != null) {
+                    if (response.success)
+                        Log.d(
+                            "deleteAccount from AdminUsersViewModel",
+                            "account deleted successfully"
+                        )
+                } else
+                    Log.e(
+                        "AdminUsersViewModel",
+                        "response from deleteAccount null, problem to fix !"
+                    )
+            } catch (e: Exception) {
+                e.message?.let { Log.e("AdminUsersViewModel", it) }
+            }
+        }
+    }
+
+
 
 
 

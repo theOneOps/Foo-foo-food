@@ -1,5 +1,6 @@
 import android.content.Context
 import android.util.Log
+import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.data_class.model.User
 import com.uds.foufoufood.data_class.request.AddressRequest
 import com.uds.foufoufood.network.UserApi
@@ -7,6 +8,7 @@ import com.uds.foufoufood.data_class.request.EmailRequest
 import com.uds.foufoufood.data_class.request.LoginRequest
 import com.uds.foufoufood.data_class.request.PasswordRequest
 import com.uds.foufoufood.data_class.request.ProfileRequest
+import com.uds.foufoufood.data_class.request.RegisterFcmTokenRequest
 import com.uds.foufoufood.data_class.request.RegistrationRequest
 import com.uds.foufoufood.data_class.request.TokenGoogleRequest
 import com.uds.foufoufood.data_class.request.UpdateEmailRequest
@@ -164,6 +166,16 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
         sharedPreferences.edit().putString("user_email", email).apply()
     }
 
+    suspend fun registerFcmToken(email: String, fcmToken: String): Boolean {
+        return try {
+            val request = RegisterFcmTokenRequest(email, fcmToken)
+            val response = userApi.registerFcmToken("Bearer ${getToken(context)}", request)
+            response.isSuccessful
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error registering FCM token: ${e.message}")
+            false
+        }
+    }
     suspend fun loginWithGoogle(idToken: String): LoginGoogleResponse? = withContext(Dispatchers.IO) {
         return@withContext try {
             Log.d("UserRepository", "ID Token: $idToken")

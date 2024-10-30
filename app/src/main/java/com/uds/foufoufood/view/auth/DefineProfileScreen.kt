@@ -83,6 +83,8 @@ fun DefineProfileScreen(
             onProfileSelected = { selectedProfile = it }
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         ValidateButton(label = stringResource(id = R.string.validate), onClick = {
             if (selectedProfile.isEmpty()) {
                 Toast.makeText(context, "Veuillez choisir un type de profil", Toast.LENGTH_SHORT)
@@ -117,15 +119,6 @@ fun ProfileChoiceSection(
         ProfileRadioButtons(
             selectedProfile = selectedProfile,
             onProfileSelected = onProfileSelected
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(
-            text = stringResource(id = R.string.select_option),
-            fontSize = 16.sp,
-            color = Color.Gray,
-            fontFamily = FontFamily(Font(R.font.sofiapro_regular))
         )
     }
 }

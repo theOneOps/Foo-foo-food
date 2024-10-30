@@ -22,16 +22,20 @@ sealed class Screen(val route: String) {
             return "userProfile/$userEmail"
         }
     }
+    object AdminLinkARestorerToAResto: Screen("admin_linked_restaurant_to_restorer")
 
     // Delivery
     object DeliveryAvailablePage : Screen("delivery_available_page")
     object DeliveryOrderDetailsPage : Screen("delivery_order_page")
     object DeliveryAllOrdersPage : Screen("delivery_all_orders_page")
+    object OrderTracking : Screen("orderTracking")
 
     // Client
     object ClientRestaurantAllMenusPage : Screen("client_restaurant_all_menu_page")
     object ClientInstanceMenuPage:Screen("menu_page")
-    object Cart : Screen("cart")
+    object Cart:Screen("cart")
+    object Notifications : Screen("notifications")
+
     // Restaurateur
     object ModifyRestaurantPage:Screen("modify_restaurant_page")
 

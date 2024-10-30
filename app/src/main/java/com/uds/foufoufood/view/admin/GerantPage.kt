@@ -15,6 +15,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,9 +42,8 @@ fun GerantPage(
         Log.d("GerantPage", "Appel à fetchUsers")
         adminUsersViewModel.fetchUsers("restaurateur")
     }
-
-    // Observe restaurateur users
-    val restaurateurUsers = adminUsersViewModel.filteredUsers
+    val restaurateurState by adminUsersViewModel.filteredUsers.observeAsState()
+    val restaurateurUsers = restaurateurState!!
 
     DrawerScaffold(
         navController = navController,
