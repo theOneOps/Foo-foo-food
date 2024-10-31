@@ -47,6 +47,32 @@ livraison.
 7. Lancez l'application sur un émulateur ou un appareil Android (l'adresse pour lancer le projet sur
    un émulateur est : http://10.0.2.2:3000)
 
+## Tests 
+
+Des utilisateurs, des restaurants et des menus sont présentes côté serveur pour tester l'application.
+Au lancement de l'application, vous pouvez vous connecter avec les identifiants suivants :
+- Client1 : 
+  - Email : johndoe@example.com 
+  - Mot de passe : client123
+- Client2 : 
+  - Email : janedoe@example.com
+  - Mot de passe : client456
+- Livreur1 :
+  - Email : paulsmith@example.com
+  - Mot de passe : livreur123
+- Livreur2 :
+  - Email : alicejohnson@example.com
+  - Mot de passe : livreur456
+- Admin :
+  - Email : admin@example.com
+  - Mot de passe : admin123
+- Restaurateur1 :
+  - Email : restoone@example.com
+  - Mot de passe : resto123
+- Restaurateur2 :
+  - Email : restotwo@example.com
+  - Mot de passe : resto456
+
 ## Démonstration
 
 Une vidéo de démonstration de l'application est disponible sur YouTube :

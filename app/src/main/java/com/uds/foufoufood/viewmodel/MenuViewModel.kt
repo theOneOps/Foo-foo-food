@@ -107,6 +107,7 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                         val currentMenus = _menus.value?.toMutableList() ?: mutableListOf()
                         response.data?.let { currentMenus.add(it[0]) }
                         _menus.value = currentMenus
+                        _sortedMenus.value = currentMenus
                     } else {
                         _errorMessage.value = response.message
                     }
@@ -146,6 +147,7 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
 //                        _menus.value = newMenusList
                         currentMenus.removeIf { it._id == menuId }
                         _menus.value = currentMenus
+                        _sortedMenus.value = currentMenus
                     } else {
                         _errorMessage.value = response.message // Afficher le message d'erreur
                     }
@@ -211,8 +213,7 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
 
                             // Mettre à jour la liste des menus
                             _menus.value = currentMenus
-
-
+                            _sortedMenus.value = currentMenus
                         } else {
                             _errorMessage.value = "Menu non trouvé pour modification"
                         }

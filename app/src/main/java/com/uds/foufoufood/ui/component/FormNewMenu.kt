@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewModel: MenuViewModel) {
+fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewModel: MenuViewModel, onDismiss:()->Unit) {
     val nameState = remember { mutableStateOf("") }
     val descriptorState = remember { mutableStateOf("") }
     val priceState = remember { mutableStateOf("") }
@@ -179,7 +179,9 @@ fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewM
                     modifier = Modifier.padding(vertical = 8.dp))
                 ingredientsState.value.forEachIndexed { index, ingredient ->
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         TextField(
@@ -325,7 +327,8 @@ fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewM
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                                navController.navigate(Screen.HomeRestaurant.route)
+                                //navController.navigate(Screen.HomeRestaurant.route)
+                                onDismiss()
                             } else {
                                 // Si aucune image n'a été uploadée, appeler directement createMenu sans l'URL
                                 menuViewModel.createMenu(
@@ -338,7 +341,8 @@ fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewM
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                                navController.navigate(Screen.HomeRestaurant.route)
+//                                navController.navigate(Screen.ClientRestaurantAllMenusPage.route)
+                                onDismiss()
                             }
                         },
 

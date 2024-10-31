@@ -47,7 +47,6 @@ fun MenuComponent(
 ) {
     val context = LocalContext.current
     val token = getToken(context) ?: ""
-
     Card(
         modifier = Modifier
             .padding(12.dp)
@@ -108,7 +107,7 @@ fun MenuComponent(
                             .padding(horizontal = 16.dp, vertical = 6.dp)
                     ) {
                         Text(
-                            text = "${menu.price} €",
+                            text = "${menu.price} $",
                             color = colorResource(id = R.color.orange),
                             fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
                         )
@@ -123,7 +122,11 @@ fun MenuComponent(
                                 Toast.makeText(
                                     context, "Menu supprimé avec succès", Toast.LENGTH_SHORT
                                 ).show()
-                                navController.navigate(Screen.HomeRestaurant.route)
+///*
+//                                navController.navigate(Screen.HomeRestaurant.route)
+//*/
+                                  navController.navigate(Screen.ClientRestaurantAllMenusPage.route)
+
                             }, colors = ButtonDefaults.textButtonColors(
                                 contentColor = MaterialTheme.colorScheme.error
                             )

@@ -99,7 +99,9 @@ fun ClientRestaurantScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     // Le texte dans le dialog
-                    FormNewMenu(navController, restaurant, menuViewModel)
+                    FormNewMenu(navController, restaurant, menuViewModel, onDismiss = {
+                        openDialog.value = false
+                    })
                 }
             }
         }
