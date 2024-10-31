@@ -39,12 +39,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.uds.foufoufood.firebase_management.FirebaseInstance
 import com.uds.foufoufood.firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
 import com.uds.foufoufood.R
 import com.uds.foufoufood.activities.main.TokenManager.getToken
 import com.uds.foufoufood.data_class.model.Restaurant
+import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.viewmodel.MenuViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +54,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
+fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewModel: MenuViewModel) {
     val nameState = remember { mutableStateOf("") }
     val descriptorState = remember { mutableStateOf("") }
     val priceState = remember { mutableStateOf("") }
@@ -323,6 +325,7 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
+                                navController.navigate(Screen.HomeRestaurant.route)
                             } else {
                                 // Si aucune image n'a été uploadée, appeler directement createMenu sans l'URL
                                 menuViewModel.createMenu(
@@ -335,6 +338,7 @@ fun FormNewMenu(restaurant: Restaurant, menuViewModel: MenuViewModel) {
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
+                                navController.navigate(Screen.HomeRestaurant.route)
                             }
                         },
 

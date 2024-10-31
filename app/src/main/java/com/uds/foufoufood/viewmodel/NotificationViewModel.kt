@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.uds.foufoufood.data_class.model.Notification
+import com.uds.foufoufood.utils.Constants
 import io.socket.client.IO
 import io.socket.client.Socket
 import org.json.JSONObject
@@ -32,14 +33,15 @@ class NotificationViewModel(
         Log.d("TrackingSocketSetup", clientEmail)
 
         try {
-            //socket = IO.socket("http://192.168.185.108:3000")
-            socket = IO.socket("http://192.168.6.215")
+            socket = IO.socket(Constants.BASE_IP_ADDRESS)
+            //socket = IO.socket("http://192.168.6.215")
             socket?.connect()
             val data = JSONObject()
             data.put("clientEmail", clientEmail)
             socket?.emit("register", data)
             socket?.on("notification") { args ->
                 if (args.isNotEmpty()) {
+                    Log.d("NotificationViewModel", "New notification received: $args")
                     val data = args[0] as JSONObject
                     val notification = Notification(
                         id = data.getString("orderId"),

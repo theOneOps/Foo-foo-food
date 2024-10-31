@@ -2,7 +2,10 @@ package com.uds.foufoufood.activities.main
 
 import android.Manifest
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -76,8 +79,9 @@ class MainActivity : AppCompatActivity() {
             // Log and toast
             val msg = token
             Log.d("FBToken", msg)
-            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         })
+
+        createNotificationChannels()
 
         val retrofit = RetrofitHelper.getRetrofitInstance(this)
         requestNotificationPermission(this)
@@ -175,6 +179,34 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
+    private fun createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = getSystemService(NotificationManager::class.java)
+
+            // Canal pour les notifications de commande des clients
+            val clientOrderChannel = NotificationChannel(
+                "client_order_notifications",
+                "Client Order Notifications",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Notifications for client order updates"
+            }
+            notificationManager.createNotificationChannel(clientOrderChannel)
+
+            // Canal pour les notifications de commande des livreurs
+            val deliveryOrderChannel = NotificationChannel(
+                "order_notifications",
+                "Order Notifications",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Notifications for delivery orders assigned to drivers"
+            }
+            notificationManager.createNotificationChannel(deliveryOrderChannel)
+        }
+    }
+
+
 
     private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
 }

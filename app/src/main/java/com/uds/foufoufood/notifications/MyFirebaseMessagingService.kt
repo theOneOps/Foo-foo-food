@@ -1,6 +1,9 @@
 package com.uds.foufoufood.notifications
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -19,20 +22,38 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendNotification(title: String, message: String) {
-        // Vérifie si la permission est accordée pour envoyer des notifications
+        createNotificationChannel() // Create the channel if it doesn't exist
+
         if (ActivityCompat.checkSelfPermission(
                 this, android.Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            // Crée la notification si la permission est accordée
-            val builder =
-                NotificationCompat.Builder(this, "event_channel").setSmallIcon(R.drawable.full_logo)
-                    .setContentTitle(title).setContentText(message)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+            val builder = NotificationCompat.Builder(this, "event_channel")
+                .setSmallIcon(R.drawable.full_logo)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
 
             with(NotificationManagerCompat.from(this)) {
                 notify(System.currentTimeMillis().toInt(), builder.build())
             }
         }
     }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "event_channel"
+            val channelName = "Event Notifications"
+            val channelDescription = "Notifications for events such as order status changes"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+
+            val channel = NotificationChannel(channelId, channelName, importance).apply {
+                description = channelDescription
+            }
+
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
 }

@@ -66,6 +66,7 @@ fun WelcomeScreen(
     val emailValidated by userViewModel.emailValidated.observeAsState()
     val registrationComplete by userViewModel.registrationCompleteSuccess.observeAsState()
     val loginSuccess by userViewModel.loginSuccess.observeAsState()
+    val errorMessage by userViewModel.errorMessage.observeAsState()
 
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -141,6 +142,10 @@ fun WelcomeScreen(
                 navController.navigate("login")
             }
         }
+    }
+
+    errorMessage?.let {
+        Text(text = it, color = Color.Red, modifier = Modifier.padding(16.dp))
     }
 }
 

@@ -166,6 +166,7 @@ fun LoginScreen(
     // Afficher les erreurs de connexion si elles existent
     errorMessage?.let {
         Text(text = it, color = Color.Red, modifier = Modifier.padding(16.dp))
+        userViewModel.resetStatus()
     }
 }
 
@@ -233,7 +234,7 @@ fun handleSignInResult(
                                 newIdToken?.let { token ->
                                     Log.d("Token", "Token Firebase: $token")
                                     decodeFirebaseToken(token)
-                                    userViewModel.loginWithGoogle(token) // Utilisez le token pour l'authentification
+                                    userViewModel.loginWithGoogle(token, context) // Utilisez le token pour l'authentification
                                 }
                             } else {
                                 Log.e("Token", "Erreur lors de la mise à jour du token")

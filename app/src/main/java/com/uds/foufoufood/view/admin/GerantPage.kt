@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -26,6 +28,7 @@ import com.uds.foufoufood.data_class.model.User
 import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.ui.component.DrawerScaffold
 import com.uds.foufoufood.ui.component.SearchBar
+import com.uds.foufoufood.ui.component.TitlePage
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
@@ -50,28 +53,15 @@ fun GerantPage(
         userViewModel = userViewModel,
         currentScreen = Screen.AdminGerant.route
     ) {
-        Scaffold(topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 20.dp, top = 20.dp)
-            ) {
-                IconButton(
-                    onClick = {
-                        navController.navigate(Screen.AdminGerant.route)
-                    }, modifier = Modifier.align(Alignment.TopEnd)
-                ) {
-                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                }
-            }
-        }) { paddingValues ->
-            // Main content area for displaying users
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .background(Color.White)
-            ) {
+        Column(
+            modifier = Modifier
+                .padding(top = 60.dp, start = 20.dp, end = 20.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(10.dp))
+
+            TitlePage(label = "Les restaurateurs")
                 // Search Bar
                 SearchBar(
                     searchText = adminUsersViewModel.searchText,
@@ -98,7 +88,6 @@ fun GerantPage(
                     }
                 }
             }
-        }
     }
 }
 

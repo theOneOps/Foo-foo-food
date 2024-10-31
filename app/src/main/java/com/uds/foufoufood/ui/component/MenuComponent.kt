@@ -123,6 +123,7 @@ fun MenuComponent(
                                 Toast.makeText(
                                     context, "Menu supprimé avec succès", Toast.LENGTH_SHORT
                                 ).show()
+                                navController.navigate(Screen.HomeRestaurant.route)
                             }, colors = ButtonDefaults.textButtonColors(
                                 contentColor = MaterialTheme.colorScheme.error
                             )

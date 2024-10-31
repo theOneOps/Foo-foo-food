@@ -1,7 +1,10 @@
 package com.uds.foufoufood.viewmodel
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -18,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import com.uds.foufoufood.repository.UserRepository
+import com.uds.foufoufood.utils.Constants
 
 class DeliveryViewModel(
     private val repository: DeliveryRepository,
@@ -116,7 +120,7 @@ class DeliveryViewModel(
 
     private fun setupSocketConnection(token: String) {
         try {
-            socket = IO.socket("http://192.168.21.13:3000")
+            socket = IO.socket(Constants.BASE_IP_ADDRESS)
             socket.connect()
 
             socket.emit("join", token)
@@ -130,6 +134,7 @@ class DeliveryViewModel(
                         _newOrderAssigned.value = data
                         Log.d("DeliveryViewModel", "will change screen")
                     }
+
                 }
             }
         } catch (e: Exception) {
@@ -174,8 +179,34 @@ class DeliveryViewModel(
                 context, android.Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            val builder = NotificationCompat.Builder(context, "order_notifications")
-                .setSmallIcon(R.drawable.full_logo).setContentTitle(title).setContentText(message)
+            Log.d("sendNotification", "Permission de notification accordée")
+
+            val channelId = "order_notifications"
+            val channelName = "Order Notifications"
+            val channelDescription = "Notifications for new orders"
+
+            // Create the notification channel if it doesn't already exist
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val importance = NotificationManager.IMPORTANCE_HIGH
+                val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                // Check if the channel already exists
+                var channel = notificationManager.getNotificationChannel(channelId)
+                if (channel == null) {
+                    channel = NotificationChannel(channelId, channelName, importance).apply {
+                        description = channelDescription
+                    }
+                    notificationManager.createNotificationChannel(channel)
+                    Log.d("sendNotification", "Notification channel created")
+                } else {
+                    Log.d("sendNotification", "Notification channel already exists")
+                }
+            }
+
+            val builder = NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.full_logo)
+                .setContentTitle(title)
+                .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
 
             NotificationManagerCompat.from(context)
@@ -184,6 +215,7 @@ class DeliveryViewModel(
             Log.d("sendNotification", "Permission de notification non accordée")
         }
     }
+
 
 
 }

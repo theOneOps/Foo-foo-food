@@ -2,6 +2,7 @@ package com.uds.foufoufood.network
 
 import android.content.Context
 import com.uds.foufoufood.activities.main.TokenManager.getToken
+import com.uds.foufoufood.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -11,8 +12,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitHelper {
     companion object {
         private fun getBaseUrl(): String {
-            return "http://10.0.2.2:3000" // Pour l'émulateur
-            //return "http://192.168.21.13:3000" // Pour son propre téléphone /!\ MODIFIER SELON SON ADRESSE IP
+            //return "http://10.0.2.2:3000" // Pour l'émulateur
+            return Constants.BASE_IP_ADDRESS // Pour son propre téléphone /!\ MODIFIER SELON SON ADRESSE IP
             //return if (isEmulator()) {
             //    "http://10.0.2.2:3000"
             //return "http://192.168.6.215"

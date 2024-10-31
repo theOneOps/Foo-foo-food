@@ -76,7 +76,7 @@
     <string name="featured_restaurant" translatable="true">Restaurant à la une</string>
     <string name="view_all" translatable="true">Voir Tous</string>
     <string name="popular_items" translatable="true">Les plats préférés</string>
-    <string name="my_orders">Mes commandes</string>
+    <string name="my_orders">Ma dernière commande</string>
     <string name="my_profile">Mon profil</string>
     <string name="delivery_address">Adresse de livraison</string>
     <string name="update_delivery_address">Mise à jour de l\'adresse de livraison</string>

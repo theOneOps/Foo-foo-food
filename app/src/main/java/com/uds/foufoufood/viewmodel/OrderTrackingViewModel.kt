@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.uds.foufoufood.data_class.model.Order
 import com.uds.foufoufood.data_class.model.OrderStatus
 import com.uds.foufoufood.repository.OrderRepository
+import com.uds.foufoufood.utils.Constants
 import io.socket.client.IO
 import io.socket.client.Socket
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +58,7 @@ class OrderTrackingViewModel(
         val clientEmail = userViewModel.user.value?.email ?: return
         Log.d("TrackingSocketSetup", clientEmail)
         try {
-            socket = IO.socket("http://192.168.185.108:3000")
+            socket = IO.socket(Constants.BASE_IP_ADDRESS)
             socket?.connect()
             val data = JSONObject()
             data.put("clientEmail", clientEmail)

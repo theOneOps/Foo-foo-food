@@ -2,6 +2,7 @@ package com.uds.foufoufood.viewmodel
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -342,6 +343,8 @@ class UserViewModel(
         _loginSuccess.value = null
         _registerGoogleSuccess.value = null
         _registrationCompleteStatus.value = null
+        auth.signOut()
+        googleSignInClient.signOut()
     }
 
     fun registerWithGoogle(idToken: String) {
@@ -373,7 +376,7 @@ class UserViewModel(
     }
 
 
-    fun loginWithGoogle(idToken: String) {
+    fun loginWithGoogle(idToken: String, context: Context) {
         viewModelScope.launch {
             _loading.value = true
             try {
@@ -401,7 +404,11 @@ class UserViewModel(
                             saveUserId(context, response.user._id)
                             userRepository.setUserEmail(response.user.email)
                             _registrationCompleteSuccess.value = true
-                            Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
+                            Toast.makeText(
+                                context,
+                                "Connexion avec google réussie",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             _errorMessage.value = null
                         }
                         _errorMessage.value = null
@@ -410,6 +417,8 @@ class UserViewModel(
                     }
                 } else {
                     _errorMessage.value = "Erreur, connexion échouée"
+                    auth.signOut()
+                    googleSignInClient.signOut()
                 }
             } catch (e: IOException) {
                 _errorMessage.value = "Erreur réseau, veuillez vérifier votre connexion"

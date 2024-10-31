@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -27,6 +29,7 @@ import com.uds.foufoufood.data_class.model.User
 import com.uds.foufoufood.navigation.Screen
 import com.uds.foufoufood.ui.component.DrawerScaffold
 import com.uds.foufoufood.ui.component.SearchBar
+import com.uds.foufoufood.ui.component.TitlePage
 import com.uds.foufoufood.viewmodel.AdminUsersViewModel
 import com.uds.foufoufood.viewmodel.UserViewModel
 
@@ -51,59 +54,44 @@ fun ClientScreen(
         userViewModel = userViewModel,
         currentScreen = Screen.AdminClient.route
     ) {
-        Scaffold(topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 20.dp, top = 20.dp)
-            ) {
-                IconButton(
-                    onClick = {
-                        // Open drawer when clicked
-                        navController.navigate(Screen.AdminClient.route)
-                    }, modifier = Modifier.align(Alignment.TopEnd)
-                ) {
-                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                }
-            }
-        }) { paddingValues ->
-            // Main content of the page (list of users)
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .background(Color.White)
-            ) {
-                // Search Bar
-                SearchBar(
-                    searchText = adminUsersViewModel.searchText,
-                    onSearchTextChanged = adminUsersViewModel::onSearchQueryChanged,
-                )
+        Column(
+            modifier = Modifier
+                .padding(top = 60.dp, start = 20.dp, end = 20.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(10.dp))
 
-                // Display client users
-                if (clientUsers.isEmpty()) {
-                    Text("Aucun client trouvé.")
-                    Log.d("ClientPage", "Aucun utilisateur trouvé.")
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxSize()
-                    ) {
-                        items(clientUsers.size) { index ->
-                            val user = clientUsers[index]
-                            UserItem(user = user, onClick = {
-                                if (user.email.isNotEmpty()) {
-                                    navController.navigate("userProfile/${user.email}")
-                                } else {
-                                    Log.e(
-                                        "ClientPage", "L'utilisateur n'a pas d'email valide"
-                                    )
-                                }
-                            }, onRoleChanged = { newRole ->
-                                onRoleChanged(user, newRole)
-                            })
-                        }
+            TitlePage(label = "Les clients")
+            // Search Bar
+            SearchBar(
+                searchText = adminUsersViewModel.searchText,
+                onSearchTextChanged = adminUsersViewModel::onSearchQueryChanged,
+            )
+
+            // Display client users
+            if (clientUsers.isEmpty()) {
+                Text("Aucun client trouvé.")
+                Log.d("ClientPage", "Aucun utilisateur trouvé.")
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize()
+                ) {
+                    items(clientUsers.size) { index ->
+                        val user = clientUsers[index]
+                        UserItem(user = user, onClick = {
+                            if (user.email.isNotEmpty()) {
+                                navController.navigate("userProfile/${user.email}")
+                            } else {
+                                Log.e(
+                                    "ClientPage", "L'utilisateur n'a pas d'email valide"
+                                )
+                            }
+                        }, onRoleChanged = { newRole ->
+                            onRoleChanged(user, newRole)
+                        })
                     }
                 }
             }

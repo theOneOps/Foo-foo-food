@@ -60,7 +60,7 @@ fun TitlePage(label: String) {
         color = Color.Black,
     )
 
-    Spacer(modifier = Modifier.height(50.dp))
+    Spacer(modifier = Modifier.height(40.dp))
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

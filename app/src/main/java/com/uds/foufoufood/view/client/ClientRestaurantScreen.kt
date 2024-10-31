@@ -99,7 +99,7 @@ fun ClientRestaurantScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     // Le texte dans le dialog
-                    FormNewMenu(restaurant, menuViewModel)
+                    FormNewMenu(navController, restaurant, menuViewModel)
                 }
             }
         }
