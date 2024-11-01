@@ -8,7 +8,6 @@ data class Restaurant(
     val openingHours: String,
     val items: List<Menu>,
     val rating: Double,
-    val reviews: List<String>,
     val imageUrl: String,
     val userId: String,
     val _id: String,

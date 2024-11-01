@@ -175,7 +175,7 @@ fun FormModifyRestaurantScreen(
 
             item {
                 TextField(value = imageUrlState.value,
-                    onValueChange = { imageUrlState.value = it },
+                    onValueChange = {  },
                     label = {
                         Text(
                             "URL de l'image",
@@ -347,7 +347,6 @@ fun FormModifyRestaurantScreen(
                                 userId = restaurant.userId,
                                 _id = restaurant._id,
                                 rating = restaurant.rating,
-                                reviews = restaurant.reviews,
                                 items = restaurant.items,
                             )
 

@@ -165,7 +165,8 @@ fun LoginScreen(
 
     // Afficher les erreurs de connexion si elles existent
     errorMessage?.let {
-        Text(text = it, color = Color.Red, modifier = Modifier.padding(16.dp))
+        Toast.makeText(context,it,Toast.LENGTH_SHORT).show()
+        //Text(text = it, color = Color.Red, modifier = Modifier.padding(16.dp))
         userViewModel.resetStatus()
     }
 }

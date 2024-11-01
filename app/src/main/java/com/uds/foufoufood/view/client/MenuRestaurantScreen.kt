@@ -284,13 +284,21 @@ fun AddToCartButton(
 
             if (isCartEmptyOrSameRestaurant) {
                 // Add item to cart directly if it's the same restaurant or cart is empty
-                cartViewModel.addItem(
-                    CartItem(
-                        menu = menu,
-                        quantity = quantity,
-                    ), restaurantId = restaurantId
-                )
-                Toast.makeText(context, "${menu.name} ajouté au panier", Toast.LENGTH_SHORT).show()
+                if (quantity <= 0)
+                {
+                    Toast.makeText(context, "quantité commandée trop faible ", Toast.LENGTH_SHORT).show()
+                }
+                else
+                {
+                    cartViewModel.addItem(
+                        CartItem(
+                            menu = menu,
+                            quantity = quantity,
+                        ), restaurantId = restaurantId
+                    )
+                    Toast.makeText(context, "${menu.name} ajouté au panier", Toast.LENGTH_SHORT).show()
+
+                }
             } else {
                 // Show confirmation dialog if a different restaurant's item is being added
                 showDialog = true
