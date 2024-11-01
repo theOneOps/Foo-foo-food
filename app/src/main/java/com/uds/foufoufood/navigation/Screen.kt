@@ -1,7 +1,8 @@
 package com.uds.foufoufood.navigation
 
-// Classe scellée pour définir les routes de navigation
+// This class is used to define the different screens of the application
 sealed class Screen(val route: String) {
+    // AUTH
     object Welcome : Screen("welcome")
     object Login : Screen("login")
     object Register : Screen("register")
@@ -9,32 +10,30 @@ sealed class Screen(val route: String) {
     object Address : Screen("address")
     object UpdateAddress : Screen("update_address")
 
+    // HOME
     object HomeRestaurant : Screen("home_restaurant")
     object HomeMenu : Screen("home_menu")
 
-    //Admin
+    // ADMIN
     object AdminClient : Screen("admin_client")
     object AdminLivreur : Screen("admin_livreur")
     object AdminGerant : Screen("admin_gerant")
     object AdminRestaurant : Screen("admin_restaurant")
     object AdminUserProfile : Screen("userProfile/{userEmail}")
-
     object AdminLinkARestorerToAResto : Screen("admin_linked_restaurant_to_restorer")
 
-    // Delivery
+    // DELIVERY
     object DeliveryAvailablePage : Screen("delivery_available_page")
     object DeliveryOrderDetailsPage : Screen("delivery_order_page")
     object DeliveryAllOrdersPage : Screen("delivery_all_orders_page")
     object OrderTracking : Screen("orderTracking")
 
-    // Client
+    // CLIENT
     object ClientRestaurantAllMenusPage : Screen("client_restaurant_all_menu_page")
     object ClientInstanceMenuPage : Screen("menu_page")
     object Cart : Screen("cart")
     object Notifications : Screen("notifications")
 
-    // Restaurateur
+    // RESTAURANT
     object ModifyRestaurantPage : Screen("modify_restaurant_page")
-
-
 }

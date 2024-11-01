@@ -112,10 +112,7 @@ fun ProfileScreen(navController: NavHostController, userViewModel: UserViewModel
 @Composable
 fun ProfileName(name: String) {
     Text(
-        text = name,
-        fontSize = 22.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color(0xFFFFA500) // Couleur orange
+        text = name, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFFA500)
     )
 }
 
@@ -140,21 +137,22 @@ fun ProfileEmailSection(
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
-            text = stringResource(id = R.string.email), // Libellé pour "Email"
-            fontSize = 16.sp, color = Color.Gray, modifier = Modifier.padding(end = 10.dp)
+            text = stringResource(id = R.string.email),
+            fontSize = 16.sp,
+            color = Color.Gray,
+            modifier = Modifier.padding(end = 10.dp)
         )
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        // Champ de texte pour afficher/modifier l'email
         TextField(
-            value = email, // Email actuel de l'utilisateur
+            value = email,
             onValueChange = {
                 email = it
                 isError = !isValidEmail(it)
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = isEditable, // Activer/désactiver l'édition
+            enabled = isEditable,
             placeholder = {
                 Text(text = stringResource(id = R.string.email_example), color = Color.Gray)
             },
@@ -182,43 +180,42 @@ fun ProfileEmailSection(
 
     Column {
         if (!isEditable) {
-            // Bouton pour activer l'édition de l'email
             Button(
-                onClick = { isEditable = true }, // Passer en mode édition
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.orange)) // Optionnel : changer la couleur du bouton
+                onClick = { isEditable = true },
+                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.orange))
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically // Aligner verticalement
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.pen_square_icon),
                         contentDescription = "Edit Email",
-                        modifier = Modifier.size(30.dp) // Ajuster la taille de l'icône si nécessaire
+                        modifier = Modifier.size(30.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // Espacement entre l'icône et le texte
-                    Text(text = "Modifier") // Le texte du bouton
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Modifier")
                 }
             }
         } else {
             Button(
                 onClick = {
                     if (!isError) {
-                        isEditable = false // Désactiver le mode édition
-                        onSaveClick(email) // Appeler la fonction de sauvegarde
+                        isEditable = false
+                        onSaveClick(email)
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.orange_pale)) // Optionnel : changer la couleur du bouton
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically // Aligner verticalement
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.save),
                         contentDescription = "Save Email",
-                        modifier = Modifier.size(30.dp) // Ajuster la taille de l'icône si nécessaire
+                        modifier = Modifier.size(30.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // Espacement entre l'icône et le texte
-                    Text(text = "Enregistrer") // Le texte du bouton
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Enregistrer")
                 }
             }
         }
@@ -244,21 +241,22 @@ fun ProfilePasswordSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(id = R.string.password), // Libellé pour "Mot de Passe"
-                fontSize = 16.sp, color = Color.Gray, modifier = Modifier.padding(end = 10.dp)
+                text = stringResource(id = R.string.password),
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(end = 10.dp)
             )
         }
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Champ de texte pour afficher/modifier le mot de passe
         if (isEditable) {
             TextField(
                 label = { Text(stringResource(id = R.string.previous_password)) },
                 value = previousPassword,
                 onValueChange = {
                     previousPassword = it
-                    isPreviousPasswordError = !isValidPassword(it) // Valider le mot de passe
+                    isPreviousPasswordError = !isValidPassword(it)
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     focusedTextColor = colorResource(id = R.color.black),
@@ -292,7 +290,7 @@ fun ProfilePasswordSection(
                         )
                     }
                 },
-                enabled = isEditable, // Activer ou désactiver l'édition
+                enabled = isEditable,
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -303,7 +301,7 @@ fun ProfilePasswordSection(
                 value = newPassword,
                 onValueChange = {
                     newPassword = it
-                    isNewPasswordError = !isValidPassword(it) // Valider le mot de passe
+                    isNewPasswordError = !isValidPassword(it)
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     focusedTextColor = colorResource(id = R.color.black),
@@ -340,8 +338,10 @@ fun ProfilePasswordSection(
             )
         } else {
             Text(
-                text = stringResource(id = R.string.password_instructions), // Mot de passe masqué
-                fontSize = 16.sp, color = Color.Gray, modifier = Modifier.padding(end = 10.dp)
+                text = stringResource(id = R.string.password_instructions),
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(end = 10.dp)
             )
         }
     }
@@ -349,44 +349,42 @@ fun ProfilePasswordSection(
     Spacer(modifier = Modifier.height(15.dp))
 
     if (!isEditable) {
-        // Bouton pour activer l'édition du mot de passe
         Button(
-            onClick = { isEditable = true }, // Passer en mode édition
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.orange)) // Optionnel : changer la couleur du bouton
+            onClick = { isEditable = true },
+            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.orange))
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically // Aligner verticalement
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.pen_square_icon),
                     contentDescription = "Edit Password",
-                    modifier = Modifier.size(30.dp) // Ajuster la taille de l'icône si nécessaire
+                    modifier = Modifier.size(30.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp)) // Espacement entre l'icône et le texte
-                Text(text = "Modifier") // Le texte du bouton
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "Modifier")
             }
         }
     } else {
-        // Bouton pour sauvegarder le mot de passe modifié
         Button(
             onClick = {
                 if (!isNewPasswordError && !isPreviousPasswordError) {
-                    isEditable = false // Désactiver le mode édition
-                    onSaveClick(previousPassword, newPassword) // Appeler la fonction de sauvegarde
+                    isEditable = false
+                    onSaveClick(previousPassword, newPassword)
                 }
             },
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.orange_pale)) // Optionnel : changer la couleur du bouton
+            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.orange_pale))
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically // Aligner verticalement
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.save),
                     contentDescription = "Save Password",
-                    modifier = Modifier.size(30.dp) // Ajuster la taille de l'icône si nécessaire
+                    modifier = Modifier.size(30.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp)) // Espacement entre l'icône et le texte
-                Text(text = "Enregistrer") // Le texte du bouton
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "Enregistrer")
             }
         }
     }

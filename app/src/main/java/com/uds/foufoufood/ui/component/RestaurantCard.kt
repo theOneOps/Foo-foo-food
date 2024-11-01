@@ -76,7 +76,6 @@ fun RestaurantCard(
                         .height(200.dp),
                     contentScale = ContentScale.Crop
                 )
-                // Gradient overlay at the bottom of the image for better text visibility
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -100,7 +99,6 @@ fun RestaurantCard(
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start
             ) {
-                // Restaurant name
                 Text(
                     text = restaurant.name,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
@@ -114,7 +112,6 @@ fun RestaurantCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Speciality tag with rounded background
                     Box(
                         modifier = Modifier
                             .background(
@@ -130,7 +127,6 @@ fun RestaurantCard(
                         )
                     }
 
-                    // Modify button for restaurant owners
                     if (userId == restaurant.userId) {
                         TextButton(
                             onClick = {

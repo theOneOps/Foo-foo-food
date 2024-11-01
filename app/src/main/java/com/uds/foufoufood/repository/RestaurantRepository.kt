@@ -8,24 +8,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class RestaurantRepository(private val restaurantApi: RestaurantApi) {
-
-    // Fetch all restaurants
     suspend fun getAllRestaurants(): List<Restaurant>? = withContext(Dispatchers.IO) {
         try {
             val response = restaurantApi.getAllRestaurants()
             if (response.isSuccessful) {
-                response.body()  // Return the list of restaurants
+                response.body()
             } else {
-                Log.e("RestaurantRepository", "Error fetching restaurants: ${response.code()}")
+                Log.e(
+                    "RestaurantRepository getAllRestaurants",
+                    "Error fetching restaurants: ${response.code()}"
+                )
                 null
             }
         } catch (e: Exception) {
-            Log.e("RestaurantRepository", "Network error: ${e.message}")
+            Log.e("RestaurantRepository getAllRestaurants", "Network error: ${e.message}")
             null
         }
     }
 
-    // Create a new restaurant
     suspend fun createRestaurant(restaurant: Restaurant): ApiResponse? =
         withContext(Dispatchers.IO) {
             try {
@@ -33,16 +33,18 @@ class RestaurantRepository(private val restaurantApi: RestaurantApi) {
                 if (response.isSuccessful) {
                     response.body()
                 } else {
-                    Log.e("RestaurantRepository", "Error creating restaurant: ${response.code()}")
+                    Log.e(
+                        "RestaurantRepository createRestaurant",
+                        "Error creating restaurant: ${response.code()}"
+                    )
                     null
                 }
             } catch (e: Exception) {
-                Log.e("RestaurantRepository", "Network error: ${e.message}")
+                Log.e("RestaurantRepository createRestaurant", "Network error: ${e.message}")
                 null
             }
         }
 
-    // Update an existing restaurant by ID
     suspend fun updateRestaurant(id: String, restaurant: Restaurant): ApiResponse? =
         withContext(Dispatchers.IO) {
             try {
@@ -50,27 +52,32 @@ class RestaurantRepository(private val restaurantApi: RestaurantApi) {
                 if (response.isSuccessful) {
                     response.body()
                 } else {
-                    Log.e("RestaurantRepository", "Error updating restaurant: ${response.code()}")
+                    Log.e(
+                        "RestaurantRepository updateRestaurant",
+                        "Error updating restaurant: ${response.code()}"
+                    )
                     null
                 }
             } catch (e: Exception) {
-                Log.e("RestaurantRepository", "Network error: ${e.message}")
+                Log.e("RestaurantRepository updateRestaurant", "Network error: ${e.message}")
                 null
             }
         }
 
-    // Delete a restaurant by ID
     suspend fun deleteRestaurant(id: String): ApiResponse? = withContext(Dispatchers.IO) {
         try {
             val response = restaurantApi.deleteRestaurant(id)
             if (response.isSuccessful) {
                 response.body()
             } else {
-                Log.e("RestaurantRepository", "Error deleting restaurant: ${response.code()}")
+                Log.e(
+                    "RestaurantRepository deleteRestaurant",
+                    "Error deleting restaurant: ${response.code()}"
+                )
                 null
             }
         } catch (e: Exception) {
-            Log.e("RestaurantRepository", "Network error: ${e.message}")
+            Log.e("RestaurantRepository deleteRestaurant", "Network error: ${e.message}")
             null
         }
     }
@@ -82,11 +89,14 @@ class RestaurantRepository(private val restaurantApi: RestaurantApi) {
                 if (response.isSuccessful) {
                     response.body()
                 } else {
-                    Log.e("RestaurantRepository", "Error deleting restaurant: ${response.code()}")
+                    Log.e(
+                        "RestaurantRepository linkARestorer",
+                        "Error deleting restaurant: ${response.code()}"
+                    )
                     null
                 }
             } catch (e: Exception) {
-                Log.e("RestaurantRepository", "Network error: ${e.message}")
+                Log.e("RestaurantRepository linkARestorer", "Network error: ${e.message}")
                 null
             }
         }

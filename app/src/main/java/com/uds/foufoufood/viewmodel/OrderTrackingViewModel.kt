@@ -54,9 +54,7 @@ class OrderTrackingViewModel(
     }
 
     private fun setupSocket() {
-        Log.d("TrackingSocketSetup", "Getting user email")
         val clientEmail = userViewModel.user.value?.email ?: return
-        Log.d("TrackingSocketSetup", clientEmail)
         try {
             socket = IO.socket(Constants.BASE_IP_ADDRESS)
             socket?.connect()
@@ -85,13 +83,11 @@ class OrderTrackingViewModel(
                     val updatedOrder = order.copy(status = newStatus)
                     _currentOrder.postValue(updatedOrder)
                 } else {
-                    Log.e("OrderTrackingViewModel", "Statut de commande inconnu : $status")
                     _errorMessage.postValue("Statut de commande inconnu : $status")
                 }
             }
         }
     }
-
 
     fun refreshOrder() {
         fetchCurrentOrder()
@@ -100,7 +96,7 @@ class OrderTrackingViewModel(
     private fun startPeriodicRefresh() {
         viewModelScope.launch {
             while (true) {
-                delay(60 * 1000L) // Refresh every 60 seconds
+                delay(60 * 1000L)
                 fetchCurrentOrder()
             }
         }

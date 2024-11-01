@@ -54,9 +54,6 @@ fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewMod
 
     val updateAddressSuccess by userViewModel.updateAddressSuccess.observeAsState()
 
-    Log.d("UpdateAddressScreen", "Address : $address")
-    Log.d("UpdateAddressScreen", "$updateAddressSuccess")
-
     LaunchedEffect(updateAddressSuccess) {
         if (updateAddressSuccess == true) {
             Toast.makeText(context, "Adresse mise à jour avec succès", Toast.LENGTH_SHORT).show()
@@ -83,14 +80,13 @@ fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewMod
         Spacer(modifier = Modifier.height(10.dp))
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            // Appliquer Modifier.weight dans le Row ici
             AddressTextField(
                 value = number?.toString() ?: "",
                 placeholder = "N°",
                 onValueChange = {
                     number = it.toIntOrNull()
                 },
-                modifier = Modifier.weight(1f) // Appliquer le weight dans le Row
+                modifier = Modifier.weight(1f)
             )
 
             Spacer(modifier = Modifier.width(11.dp))
@@ -101,7 +97,7 @@ fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewMod
                 onValueChange = {
                     street = it
                 },
-                modifier = Modifier.weight(3f) // Appliquer un autre poids
+                modifier = Modifier.weight(3f)
             )
         }
 
@@ -114,7 +110,7 @@ fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewMod
                 onValueChange = {
                     zipCode = it
                 },
-                modifier = Modifier.weight(1.3f) // Appliquer le weight
+                modifier = Modifier.weight(1.3f)
             )
 
             Spacer(modifier = Modifier.width(11.dp))
@@ -125,7 +121,7 @@ fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewMod
                 onValueChange = {
                     city = it
                 },
-                modifier = Modifier.weight(1.7f) // Appliquer le weight ici aussi
+                modifier = Modifier.weight(1.7f)
             )
         }
 
@@ -184,7 +180,6 @@ fun UpdateAddressScreen(navController: NavController, userViewModel: UserViewMod
         )
     }
 
-    // Afficher les erreurs de connexion si elles existent
     errorMessage?.let {
         Text(text = it, color = Color.Red, modifier = Modifier.padding(16.dp))
     }
@@ -196,7 +191,7 @@ fun AddressTextField(
     value: String,
     placeholder: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier // Accepter un Modifier externe pour personnalisation
+    modifier: Modifier = Modifier
 ) {
     TextField(
         value = value,

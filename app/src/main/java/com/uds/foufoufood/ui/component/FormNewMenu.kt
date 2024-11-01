@@ -73,41 +73,32 @@ fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewM
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            // Convertir le Uri en String (ici, en supposant qu'il s'agit d'une URL valide)
-            val imageUrl = it.toString() // Assurez-vous que c'est une URL valide
+            val imageUrl = it.toString()
 
-            // Appeler la fonction pour télécharger et compresser l'image
             CoroutineScope(Dispatchers.Main).launch {
                 val compressedImage =
                     downloadAndCompressImageFromUrl(imageUrl, context)
 
                 if (compressedImage != null) {
-                    // Référence Firebase où l'image sera stockée
                     val storageRef =
                         FirebaseInstance.storageRef.child(
                             "images/${restaurant.userId}/${restaurant._id}" +
                                     "${System.currentTimeMillis()}.webp"
                         )
 
-                    // Envoie l'image compressée sur Firebase
                     val uploadTask = storageRef.putBytes(compressedImage)
 
-                    // Gérer le succès ou l'échec de l'envoi
                     uploadTask.addOnSuccessListener {
-                        // Récupérer l'URL de téléchargement une fois l'image envoyée
                         storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                            // Mets à jour imageState avec l'URL de l'image sur Firebase
                             imageState.value = downloadUrl.toString()
-                            println("L'image a été téléchargée : ${imageState.value}")
-                            Log.d("FormNewMenu", imageState.value)
                         }
                     }.addOnFailureListener { e ->
-                        Log.e("Firebase", "Échec de l'upload de l'image : ${e.message}", e)
+                        Log.e("Firebase", "Error uploading image: $e")
                     }
                 } else {
                     Log.e(
                         "Image",
-                        "Erreur lors du téléchargement ou de la compression de l'image."
+                        "Error compressing image"
                     )
                 }
             }
@@ -170,7 +161,6 @@ fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewM
                 )
             }
 
-            // Gestion dynamique des ingrédients
             item {
                 Text(
                     text = "Ingrédients : ",
@@ -214,7 +204,7 @@ fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewM
                             onClick = {
                                 ingredientsState.value = ingredientsState.value.toMutableList().apply { removeAt(index) }
                             },
-                            enabled = ingredientsState.value.size > 1 // Désactivez le bouton "-" si un seul champ reste
+                            enabled = ingredientsState.value.size > 1
                         ) {
                             Icon(imageVector = Icons.Default.Remove, contentDescription = "Supprimer")
                         }
@@ -310,13 +300,10 @@ fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewM
                                 return@Button
                             }
 
-                            // Conversion du prix en Double avant la soumission
                             val price = priceState.value.toDoubleOrNull() ?: 0.0
 
-                            // Vérifie si une image a été uploadée et l'URL est disponible
                             val imageUri = imageState.value
                             if (imageUri.isNotEmpty()) {
-                                // Appel au ViewModel pour créer le menu avec l'URL de l'image déjà uploadée
                                 menuViewModel.createMenu(
                                     token, nameState.value, descriptorState.value,
                                     price, restaurant._id, categoryState.value, imageUri, ingredientsState.value
@@ -327,10 +314,8 @@ fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewM
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                                //navController.navigate(Screen.HomeRestaurant.route)
                                 onDismiss()
                             } else {
-                                // Si aucune image n'a été uploadée, appeler directement createMenu sans l'URL
                                 menuViewModel.createMenu(
                                     token, nameState.value, descriptorState.value,
                                     price, restaurant._id, categoryState.value, "", ingredientsState.value
@@ -341,7 +326,6 @@ fun FormNewMenu(navController: NavController,  restaurant: Restaurant, menuViewM
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-//                                navController.navigate(Screen.ClientRestaurantAllMenusPage.route)
                                 onDismiss()
                             }
                         },

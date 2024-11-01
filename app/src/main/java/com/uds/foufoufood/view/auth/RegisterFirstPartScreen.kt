@@ -61,12 +61,10 @@ fun RegisterFirstPartScreen(
 ) {
     val context = LocalContext.current
 
-    // Champs d'entrée utilisateur (nom, email, mot de passe)
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    // Observer LiveData registrationInitSuccess avec observeAsState
     val registrationInitSuccess by userViewModel.registrationInitSuccess.observeAsState()
     val registrationGoogleSuccess by userViewModel.registerGoogleSuccess.observeAsState()
     val registrationCompleteStatus by userViewModel.registrationCompleteStatus.observeAsState()
@@ -78,9 +76,7 @@ fun RegisterFirstPartScreen(
         handleSignUpResult(task, auth, context, userViewModel)
     }
 
-    // Réagir au changement d'état de registrationInitSuccess
     LaunchedEffect(registrationInitSuccess, registrationGoogleSuccess, registrationCompleteStatus) {
-        // si on est en mode inscription classique, alors on a changé le statut de registrationInitSuccess
         if (registrationInitSuccess == true) {
             Toast.makeText(
                 context,
@@ -96,25 +92,18 @@ fun RegisterFirstPartScreen(
                 Toast.LENGTH_SHORT
             ).show()
         }
-
-        Log.d("RegisterFirstPartScreen", "registrationGoogleSuccess: $registrationGoogleSuccess")
-        Log.d("RegisterFirstPartScreen", "registrationCompleteStatus: $registrationCompleteStatus")
-        // si on est en mode inscription avec Google, alors on a changé le statut de registerGoogleSuccess
         if (registrationGoogleSuccess == true && registrationCompleteStatus == true) {
-            Log.d("RegisterFirstPartScreen", "Inscription réussie avec Google")
             Toast.makeText(
                 context, "Inscription réussie avec Google", Toast.LENGTH_SHORT
             ).show()
             userViewModel.resetStatus()
             navController.navigate(Screen.HomeRestaurant.route)
         } else if (registrationGoogleSuccess == false && registrationCompleteStatus == false) {
-            Log.d("RegisterFirstPartScreen", "Erreur lors de l'inscription avec Google")
             Toast.makeText(
                 context, "Erreur lors de l'inscription avec Google", Toast.LENGTH_SHORT
             ).show()
         } else if (registrationGoogleSuccess == true && registrationCompleteStatus == false) {
             email = userViewModel.user.value?.email ?: ""
-            Log.d("RegisterFirstPartScreen", "Email: $email")
             navController.navigate("define_profile/${email}")
         }
     }
@@ -188,68 +177,59 @@ fun handleSignUpResult(
     userViewModel: UserViewModel
 ) {
     try {
-        // Obtenir l'objet GoogleSignInAccount à partir de la tâche
         val account = task.getResult(ApiException::class.java)
         val idToken = account?.idToken
 
         if (idToken != null) {
-            Log.d("Google Sign-In", "ID Token: $idToken")
-            // Authentification Firebase avec le token Google
             val credential = GoogleAuthProvider.getCredential(idToken, null)
-            Log.d("Google Sign-In", "Credential: $credential")
             auth.signInWithCredential(credential).addOnCompleteListener { signInTask ->
-                    if (signInTask.isSuccessful) {
-                        // Si l'authentification est réussie, obtenir un nouveau token Firebase
-                        auth.currentUser?.getIdToken(false)?.addOnCompleteListener { tokenTask ->
-                            if (tokenTask.isSuccessful) {
-                                val newIdToken = tokenTask.result?.token
-                                newIdToken?.let { token ->
-                                    Log.d("Token", "Token Firebase: $token")
-                                    decodeFirebaseToken(token)
-                                    userViewModel.registerWithGoogle(token) // Utilisez le token pour l'authentification
-                                }
-                            } else {
-                                Log.e("Token", "Erreur lors de la mise à jour du token")
+                if (signInTask.isSuccessful) {
+                    auth.currentUser?.getIdToken(false)?.addOnCompleteListener { tokenTask ->
+                        if (tokenTask.isSuccessful) {
+                            val newIdToken = tokenTask.result?.token
+                            newIdToken?.let { token ->
+                                decodeFirebaseToken(token)
+                                userViewModel.registerWithGoogle(token) // Utilisez le token pour l'authentification
                             }
+                        } else {
+                            Log.e(
+                                "RegisterFirstPartScreen Google Sign-In handleSignUpResult",
+                                "Error : ${tokenTask.exception?.message}"
+                            )
                         }
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "Échec de l'authentification Google",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
+                } else {
+                    Toast.makeText(
+                        context, "Échec de l'authentification Google", Toast.LENGTH_SHORT
+                    ).show()
                 }
+            }
         } else {
             Toast.makeText(context, "ID Token introuvable", Toast.LENGTH_SHORT).show()
         }
     } catch (e: ApiException) {
-        Log.e("Google Sign-In", "Erreur : ${e.message}")
+        Log.e("RegisterFirstPartScreen Google Sign-In handleSignUpResult", "Erreur : ${e.message}")
     }
 }
 
 fun decodeFirebaseToken(firebaseToken: String?) {
     if (firebaseToken == null) {
-        Log.e("TokenError", "Le token est nul.")
         return
     }
 
     try {
-        // Découpe le token en trois parties
         val parts = firebaseToken.split(".")
         if (parts.size < 2) {
-            Log.e("TokenError", "Le format du token est invalide.")
+            Log.e(
+                "RegisterFirstPartScreen decodeFirebaseToken",
+                "The token does not have the required parts."
+            )
             return
         }
 
-        // Décode le payload (la partie au milieu du token)
         val payload = String(Base64.decode(parts[1], Base64.URL_SAFE))
 
-        // Parse et affiche le payload JSON
         val jsonPayload = JSONObject(payload)
-        Log.d("FirebaseTokenPayload", "Payload du token : $jsonPayload")
-
-        // Affiche des claims spécifiques
         val aud = jsonPayload.optString("aud")
         val iss = jsonPayload.optString("iss")
         val sub = jsonPayload.optString("sub")
@@ -257,7 +237,7 @@ fun decodeFirebaseToken(firebaseToken: String?) {
 
         Log.d("FirebaseTokenClaims", "aud: $aud, iss: $iss, sub: $sub, exp: $exp")
     } catch (e: Exception) {
-        Log.e("TokenDecodeError", "Erreur lors de la décomposition du token.", e)
+        Log.e("decodeFirebaseToken decodeFirebaseToken", "Error : ${e.message}")
     }
 }
 

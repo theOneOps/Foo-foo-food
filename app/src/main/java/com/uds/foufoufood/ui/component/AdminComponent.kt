@@ -30,7 +30,7 @@ fun BottomNavBarAdmin(selectedItem: Int, onItemSelected: (Int) -> Unit) {
                 Icon(
                     painter = painterResource(id = R.drawable.groups),
                     contentDescription = "Clients",
-                    modifier = Modifier.size(24.dp) // Limite la taille de l'icône
+                    modifier = Modifier.size(24.dp)
                 )
             },
                 selected = selectedItem == 0,
@@ -41,7 +41,7 @@ fun BottomNavBarAdmin(selectedItem: Int, onItemSelected: (Int) -> Unit) {
                 Icon(
                     painter = painterResource(id = R.drawable.delivery),
                     contentDescription = "Livreurs",
-                    modifier = Modifier.size(24.dp) // Limite la taille de l'icône
+                    modifier = Modifier.size(24.dp)
                 )
             },
                 selected = selectedItem == 1,
@@ -51,7 +51,7 @@ fun BottomNavBarAdmin(selectedItem: Int, onItemSelected: (Int) -> Unit) {
                 Icon(
                     painter = painterResource(id = R.drawable.cook),
                     contentDescription = "Gérants",
-                    modifier = Modifier.size(24.dp) // Limite la taille de l'icône
+                    modifier = Modifier.size(24.dp)
                 )
             },
                 selected = selectedItem == 2,
@@ -61,7 +61,7 @@ fun BottomNavBarAdmin(selectedItem: Int, onItemSelected: (Int) -> Unit) {
                 Icon(
                     painter = painterResource(id = R.drawable.restaurant),
                     contentDescription = "Restaurants",
-                    modifier = Modifier.size(24.dp) // Limite la taille de l'icône
+                    modifier = Modifier.size(24.dp)
                 )
             },
                 selected = selectedItem == 3,

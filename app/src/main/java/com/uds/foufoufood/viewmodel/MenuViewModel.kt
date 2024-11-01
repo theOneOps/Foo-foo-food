@@ -50,14 +50,10 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
 
     fun updateSortOrder(sortOrder: Int) {
         _sortOrder.value = sortOrder
-        Log.d("MenuViewModel", "Sort order updated to: $sortOrder")
         applySort()
     }
 
     private fun applySort() {
-        Log.d("MenuViewModel", "applySort")
-        Log.d("MenuViewModel", "sortOrder - apply sort : ${sortOrder.value}")
-        Log.d("MenuViewModel", "menus - apply sort : ${menus.value}")
         _menus.value?.let { menus ->
             _sortedMenus.value = when (_sortOrder.value) {
                 0 -> menus.sortedBy { it.price }
@@ -65,21 +61,22 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                 else -> menus
             }
         }
-        Log.d("MenuViewModel", "sortedMenus - apply sort : ${sortedMenus.value}")
     }
 
     suspend fun getAllMenusByRestaurant(token: String, restaurantId: String) {
         try {
             val response = repository.getAllMenusByRestaurant(token, restaurantId)
-            // Vérifier si la réponse est réussie
             if (response != null && response.success) {
-                _menus.postValue(response.data ?: emptyList()) // Mettre à jour le LiveData
+                _menus.postValue(response.data ?: emptyList())
                 _sortedMenus.postValue(response.data ?: emptyList())
             } else {
-                Log.e("MenuViewModel", "Erreur d'accès aux menus : ${response?.message}")
+                Log.e(
+                    "MenuViewModel getAllMenusByRestaurant",
+                    "Error fetching menus: ${response?.message}"
+                )
             }
         } catch (e: Exception) {
-            Log.e("MenuViewModel", "Exception lors de la récupération des menus: ${e.message}", e)
+            Log.e("MenuViewModel getAllMenusByRestaurant", "Failed to fetch menus: ${e.message}")
         }
     }
 
@@ -117,12 +114,11 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
             } catch (e: Exception) {
                 _errorMessage.value = "Exception: ${e.message}"
                 Log.e(
-                    "MenuViewModel", "Exception lors de la creation de menu : ${e.message}", e
+                    "MenuViewModel createMenu", "Exception creating menu: ${e.message}", e
                 )
             }
         }
     }
-
 
     fun setSharedRestaurant(restaurant: Restaurant) {
         _sharedRestaurant.value = restaurant
@@ -143,23 +139,20 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                 if (response != null) {
                     if (response.success) {
                         val currentMenus = _menus.value?.toMutableList() ?: mutableListOf()
-//                        val newMenusList = currentMenus.filter { it.menuId != menuId }
-//                        _menus.value = newMenusList
                         currentMenus.removeIf { it._id == menuId }
                         _menus.value = currentMenus
                         _sortedMenus.value = currentMenus
                     } else {
-                        _errorMessage.value = response.message // Afficher le message d'erreur
+                        _errorMessage.value = response.message
                     }
                 } else {
-                    _errorMessage.value =
-                        "Erreur lors de la suppression du menu"
+                    _errorMessage.value = "Erreur lors de la suppression du menu"
 
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "Exception: ${e.message}" // Loguer l'exception
+                _errorMessage.value = "Exception: ${e.message}"
                 Log.e(
-                    "MenuViewModel", "Exception lors de la suppresion du menu: ${e.message}", e
+                    "MenuViewModel deleteMenu", "Exception deleting menu: ${e.message}", e
                 )
             }
         }
@@ -193,10 +186,8 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                     if (response.success) {
                         val currentMenus = _menus.value?.toMutableList() ?: mutableListOf()
 
-                        // Chercher le menu correspondant à menuId
                         val menuIndex = currentMenus.indexOfFirst { it._id == menuId }
 
-                        // Si le menu est trouvé, le mettre à jour
                         if (menuIndex != -1) {
                             val updatedMenu = currentMenus[menuIndex].copy(
                                 name = name,
@@ -205,21 +196,19 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
                                 image = image,
                                 description = description
                             )
-                            // Remplacer l'ancien menu par le nouveau
+
                             currentMenus[menuIndex] = updatedMenu
                             if (_sharedCurrentMenu.value?._id == updatedMenu._id) setSharedCurrentMenu(
                                 updatedMenu
                             )
 
-                            // Mettre à jour la liste des menus
                             _menus.value = currentMenus
                             _sortedMenus.value = currentMenus
                         } else {
                             _errorMessage.value = "Menu non trouvé pour modification"
                         }
                     } else {
-                        _errorMessage.value =
-                            response.message // Afficher le message d'erreur de l'API
+                        _errorMessage.value = response.message
                     }
                 } else {
                     _errorMessage.value = "Erreur lors de la modification du menu"
@@ -227,7 +216,7 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
             } catch (e: Exception) {
                 _errorMessage.value = "Exception: ${e.message}" // Loguer l'exception
                 Log.e(
-                    "MenuViewModel", "Exception lors de la modification du menu: ${e.message}", e
+                    "MenuViewModel updateMenu", "Exception updating menu: ${e.message}", e
                 )
             }
         }
@@ -282,14 +271,11 @@ class MenuViewModel(private val repository: MenuRepository) : ViewModel() {
 
     private fun filterMenus() {
         _filteredMenu.value = _menus.value?.filter { menu ->
-            // Match by search query
             val matchesQuery = menu.name.contains(searchTextCategory, ignoreCase = true)
 
-            // Match by category (if a category is selected)
             val matchesCategory = _selectedCategory.value?.let {
                 menu.category == it.name
-            } ?: true // If no category is selected, show all
-
+            } ?: true
             matchesQuery && matchesCategory
         }
     }

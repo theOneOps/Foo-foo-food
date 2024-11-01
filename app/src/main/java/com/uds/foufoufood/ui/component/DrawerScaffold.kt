@@ -73,15 +73,12 @@ fun DrawerScaffold(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Main content displayed in the background
             screenContent()
 
-            // Menu button overlayed at the top-right corner
             IconButton(
                 onClick = {
                     scope.launch { drawerState.open() }
-                },
-                modifier = Modifier
+                }, modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(start = 20.dp, top = 20.dp)
             ) {
@@ -101,7 +98,6 @@ fun DrawerScaffold(
     })
 }
 
-
 @Composable
 fun DrawerContent(
     navController: NavHostController,
@@ -115,7 +111,6 @@ fun DrawerContent(
     val name = userViewModel.user.value?.name ?: ""
     val email = userViewModel.user.value?.email ?: ""
 
-    // Get screen width for 80% drawer width
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val drawerWidth = screenWidth * 0.8f
 
@@ -126,7 +121,6 @@ fun DrawerContent(
             .background(colorResource(R.color.white))
             .padding(12.dp)
     ) {
-        // Profile Section
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -135,7 +129,7 @@ fun DrawerContent(
         ) {
             Icon(painter = painterResource(R.drawable.ic_profile_avatar),
                 contentDescription = "Edit Profile",
-                tint = colorResource(R.color.orange), // Orange color
+                tint = colorResource(R.color.orange),
                 modifier = Modifier
                     .size(64.dp)
                     .padding(start = 8.dp)
@@ -146,7 +140,6 @@ fun DrawerContent(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // User information
             Column {
                 Text(
                     text = name,
@@ -235,7 +228,6 @@ fun DrawerContent(
                     label = stringResource(R.string.delivery_address),
                     onClick = {
                         closeDrawer()
-                        // Handle navigation to address
                         navController.navigate(Screen.Address.route)
                     },
                 )
@@ -244,7 +236,6 @@ fun DrawerContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // butuon deconnexion centré
         Button(
             onClick = {
                 closeDrawer()
@@ -254,7 +245,7 @@ fun DrawerContent(
                 Toast.makeText(context, R.string.logout_success, Toast.LENGTH_SHORT).show()
                 navController.navigate(Screen.Welcome.route)
             },
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.orange)), // Orange color
+            colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.orange)),
             shape = RoundedCornerShape(36.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -290,19 +281,17 @@ fun DrawerMenuItem(icon: ImageVector, label: String, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Icon
         Icon(
             imageVector = icon,
             contentDescription = label,
             modifier = Modifier
                 .size(36.dp)
                 .padding(4.dp),
-            tint = colorResource(R.color.orange) // Orange color
+            tint = colorResource(R.color.orange)
         )
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Menu item label
         Text(
             text = label,
             fontSize = 18.sp,

@@ -15,17 +15,23 @@ class DeliveryRepository(private val api: UserApi) {
                 val response =
                     api.updateUserAvailability("Bearer $token", AvailabilityRequest(available))
                 if (response.isSuccessful) {
-                    Log.d("DeliveryRepository", "Successfully updated availability on server")
+                    Log.d(
+                        "DeliveryRepository updateAvailabilityOnServer",
+                        "Successfully updated availability on server"
+                    )
                     true
                 } else {
                     Log.e(
-                        "DeliveryRepository",
+                        "DeliveryRepository updateAvailabilityOnServer",
                         "Failed to update availability: ${response.errorBody()?.string()}"
                     )
                     false
                 }
             } catch (e: Exception) {
-                Log.e("DeliveryRepository", "Error updating availability on server: ${e.message}")
+                Log.e(
+                    "DeliveryRepository updateAvailabilityOnServer",
+                    "Error updating availability on server: ${e.message}"
+                )
                 false
             }
         }
@@ -35,13 +41,17 @@ class DeliveryRepository(private val api: UserApi) {
         val response = api.getAvailability("Bearer $token")  // Méthode GET vers l’API
         return if (response.isSuccessful) {
             val availabilityResponse: AvailabilityResponse? = response.body()
-            Log.d("DeliveryRepository", "Availability response: $availabilityResponse")
+            Log.d(
+                "DeliveryRepository getAvailabilityFromServer",
+                "Availability response: $availabilityResponse"
+            )
             availabilityResponse?.isAvailable
         } else {
-            Log.e("DeliveryRepository", "Erreur de requête: ${response.errorBody()?.string()}")
+            Log.e(
+                "DeliveryRepository getAvailabilityFromServer",
+                "Error getting availability: ${response.errorBody()?.string()}"
+            )
             null
         }
     }
-
-
 }

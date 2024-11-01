@@ -37,7 +37,8 @@ fun SpecialityPills(
 ) {
     LazyRow {
         items(specialities) { category ->
-            SpecialityPill(speciality = category,
+            SpecialityPill(
+                speciality = category,
                 isSelected = selectedSpeciality == category,
                 onClick = {
                     if (selectedSpeciality == category) {
@@ -54,12 +55,12 @@ fun SpecialityPills(
 fun SpecialityPill(speciality: Speciality, isSelected: Boolean, onClick: () -> Unit) {
     Surface(
         color = if (isSelected) colorResource(id = R.color.orange_pale)
-        else colorResource(id = R.color.white), // Use colors from resources
-        shape = RoundedCornerShape(24.dp), // Rounded pill shape
+        else colorResource(id = R.color.white),
+        shape = RoundedCornerShape(24.dp),
         modifier = Modifier
             .padding(9.dp)
             .clickable(onClick = onClick)
-            .shadow(4.dp, RoundedCornerShape(48.dp)), // Elevation with rounded shape
+            .shadow(4.dp, RoundedCornerShape(48.dp)),
         tonalElevation = 8.dp
     ) {
         Column(
@@ -69,24 +70,22 @@ fun SpecialityPill(speciality: Speciality, isSelected: Boolean, onClick: () -> U
                 .height(95.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Round Icon
             Image(
                 painter = painterResource(id = speciality.iconResId),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(52.dp) // Icon size
-                    .clip(CircleShape), // Make the icon round
+                    .size(52.dp)
+                    .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Category name
             Text(
                 fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
                 text = speciality.name,
                 color = if (isSelected) colorResource(id = R.color.white)
-                else colorResource(id = R.color.black), // Text color based on selection
+                else colorResource(id = R.color.black),
                 style = MaterialTheme.typography.bodySmall
             )
         }

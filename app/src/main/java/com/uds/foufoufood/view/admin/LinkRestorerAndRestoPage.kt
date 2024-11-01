@@ -1,6 +1,5 @@
 package com.uds.foufoufood.view.admin
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -40,12 +39,11 @@ fun LinkRestorerRestoAndRestoPage(
     restaurant: Restaurant
 ) {
     val context = LocalContext.current
-    var expanded by remember { mutableStateOf(false) }         // Gère l'état du menu déroulant
-    var selectedRestorerName by remember { mutableStateOf("") } // Gère l'élément sélectionné
+    var expanded by remember { mutableStateOf(false) }
+    var selectedRestorerName by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        Log.d("GerantPage", "Appel à fetchUsers")
-        adminUsersViewModel.fetchUsers("restaurateur") // AdminViewModel get all users
+        adminUsersViewModel.fetchUsers("restaurateur")
     }
     val anyFreeRestorers by adminUsersViewModel.filteredUsers.observeAsState()
     val freeRestorers =
@@ -57,7 +55,6 @@ fun LinkRestorerRestoAndRestoPage(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Affiche le nom du restaurant en haut
         item {
             Text(
                 text = restaurant.name,
@@ -67,7 +64,6 @@ fun LinkRestorerRestoAndRestoPage(
             )
         }
 
-        // DropdownMenu pour sélectionner un restaurateur
         if (freeRestorers.isEmpty()) {
             item {
                 Text("il n'y a pas de restaurateur à lier à un restaurant")
@@ -99,19 +95,14 @@ fun LinkRestorerRestoAndRestoPage(
             }
         }
 
-        // Espacement
         item {
             Spacer(modifier = Modifier.height(24.dp))
         }
 
-        // Bouton de validation de l'association
         item {
             Button(
                 onClick = {
                     if (selectedRestorerName.isNotEmpty()) {
-                        //todo
-                        // Action pour lier le restaurateur au restaurant
-                        // adminUsersViewModel.linkRestorerToRestaurant(restaurant.id, selectedRestorerId)
                         val restorerSelectedId =
                             freeRestorers.filter { it.name == selectedRestorerName }
                         restorerSelectedId[0].let {
@@ -119,10 +110,9 @@ fun LinkRestorerRestoAndRestoPage(
                                 it._id, restaurant._id
                             )
                         }
-                        Toast.makeText(context, "restaurateur bien lié", Toast.LENGTH_SHORT).show()
-
+                        Toast.makeText(context, "Restaurateur lié avec succès", Toast.LENGTH_SHORT)
+                            .show()
                         navController.popBackStack()
-
                     }
                 }, modifier = Modifier.fillMaxWidth(), enabled = selectedRestorerName.isNotEmpty()
             ) {

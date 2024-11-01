@@ -1,4 +1,3 @@
-// In NotificationViewModel.kt
 package com.uds.foufoufood.viewmodel
 
 import android.util.Log
@@ -28,20 +27,16 @@ class NotificationViewModel(
     }
 
     private fun setupSocket() {
-        Log.d("TrackingSocketSetup", "Getting user email")
         val clientEmail = userViewModel.user.value?.email ?: return
-        Log.d("TrackingSocketSetup", clientEmail)
 
         try {
             socket = IO.socket(Constants.BASE_IP_ADDRESS)
-            //socket = IO.socket("http://192.168.6.215")
             socket?.connect()
             val data = JSONObject()
             data.put("clientEmail", clientEmail)
             socket?.emit("register", data)
             socket?.on("notification") { args ->
                 if (args.isNotEmpty()) {
-                    Log.d("NotificationViewModel", "New notification received: $args")
                     val data = args[0] as JSONObject
                     val notification = Notification(
                         id = data.getString("orderId"),
@@ -59,7 +54,7 @@ class NotificationViewModel(
 
     private fun addNotification(notification: Notification) {
         val currentNotifications = _notifications.value?.toMutableList() ?: mutableListOf()
-        currentNotifications.add(0, notification) // Add to the top of the list
+        currentNotifications.add(0, notification)
         _notifications.postValue(currentNotifications)
     }
 
@@ -87,6 +82,4 @@ class NotificationViewModel(
         }
         _notifications.postValue(updatedNotifications)
     }
-
-
 }

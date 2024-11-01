@@ -12,40 +12,37 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitHelper {
     companion object {
         private fun getBaseUrl(): String {
-            return "http://10.0.2.2:3000" // Pour l'émulateur
-            //return Constants.BASE_IP_ADDRESS // Pour son propre téléphone /!\ MODIFIER SELON SON ADRESSE IP
-            //return if (isEmulator()) {
-            //    "http://10.0.2.2:3000"
-            //return "http://192.168.6.215"
+            return Constants.BASE_IP_ADDRESS
         }
 
         fun getRetrofitInstance(context: Context): Retrofit {
 
-            // Crée un intercepteur de logging
+            // Create an interceptor to log the requests/responses
             val loggingInterceptor = HttpLoggingInterceptor().apply {
                 level =
-                    HttpLoggingInterceptor.Level.BODY  // Affiche les détails complets des requêtes/réponses
+                    // Display the body of the request/response
+                    HttpLoggingInterceptor.Level.BODY
             }
 
-            // Intercepteur pour injecter le token JWT dans l'en-tête Authorization
+            // Interceptor to add the JWT token to the request
             val authInterceptor = okhttp3.Interceptor { chain ->
-                val token = getToken(context)  // Récupère dynamiquement le token JWT
+                val token = getToken(context)
                 val requestBuilder = chain.request().newBuilder()
 
                 if (token != null) {
+                    // Add the token to the request header
                     requestBuilder.addHeader(
                         "Authorization", "Bearer $token"
-                    )  // Ajoute le token JWT dans l'en-tête
+                    )
                 }
-
                 chain.proceed(requestBuilder.build())
             }
 
-            // Ajoute l'intercepteur au client OkHttp
+            // Add the interceptors to the OkHttp client
             val okHttpClient = OkHttpClient.Builder().addInterceptor(loggingInterceptor)
                 .addInterceptor(authInterceptor).build()
 
-            // Retourne une instance Retrofit avec OkHttp et l'intercepteur
+            // Return the Retrofit instance
             return Retrofit.Builder().baseUrl(getBaseUrl()).client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create()).build()
         }

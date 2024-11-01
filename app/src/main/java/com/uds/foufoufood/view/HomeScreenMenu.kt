@@ -44,7 +44,6 @@ fun HomeScreenMenu(
     userViewModel: UserViewModel,
     menuViewModel: MenuViewModel
 ) {
-    // State for controlling drawer
     val categories by menuViewModel.categories.observeAsState()
     val filteredMenu by menuViewModel.filteredMenu.observeAsState()
     val selectedCategory by menuViewModel.selectedCategory.observeAsState()
@@ -56,7 +55,6 @@ fun HomeScreenMenu(
         textAddress = "Aucune adresse de livraison"
     }
 
-    // Initialize the categories and restaurants here with drawables
     LaunchedEffect(Unit) {
         menuViewModel.initialize()
     }
@@ -116,9 +114,7 @@ fun HomeScreenMenu(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Category Pills and Restaurant List
             LazyColumn {
-                // Category Pills
                 item {
                     SpecialityPills(
                         specialities = categories ?: emptyList(),
@@ -127,9 +123,7 @@ fun HomeScreenMenu(
                     )
                 }
 
-                // Restaurant List
                 for (menu in filteredMenu ?: emptyList()) {
-                    // si l'utilisateur est connecté en tant que restaurateur, on affiche le bouton de suppression
                     if (idRestaurantOfConnectedUser == menu.restaurantId) {
                         menuViewModel.setIsConnectedRestorer(true)
                     } else {

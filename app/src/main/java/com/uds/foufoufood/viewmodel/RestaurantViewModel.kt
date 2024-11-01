@@ -42,7 +42,6 @@ class RestaurantViewModel(private val restaurantRepository: RestaurantRepository
     }
 
     private fun getIconSpecialityResId(speciality: String): Int {
-        Log.d("RestaurantViewModel", "Speciality: $speciality")
         return when (speciality) {
             "USA" -> R.drawable.usa
             "Français" -> R.drawable.france
@@ -52,7 +51,6 @@ class RestaurantViewModel(private val restaurantRepository: RestaurantRepository
         }
     }
 
-    // Fetch restaurants from the backend
     private fun fetchRestaurants(userIdConnected: String) {
         viewModelScope.launch {
             val fetchedRestaurants = restaurantRepository.getAllRestaurants()
@@ -75,28 +73,23 @@ class RestaurantViewModel(private val restaurantRepository: RestaurantRepository
         }
     }
 
-    // Handle category selection
     fun onSpecialitySelected(speciality: Speciality?) {
         _selectedSpeciality.value = speciality
         filterRestaurants()
     }
 
-    // Handle search query changes
     fun onSearchQueryChangedSpeciality(query: String) {
         searchText = query
         filterRestaurants()
     }
 
-    // Filter restaurants based on the selected category and search query
     private fun filterRestaurants() {
         _filteredRestaurants.value = _restaurants.value?.filter { restaurant ->
-            // Match by search query
             val matchesQuery = restaurant.name.contains(searchText, ignoreCase = true)
 
-            // Match by category (if a category is selected)
             val matchesSpeciality = _selectedSpeciality.value?.let {
                 restaurant.speciality == it.name
-            } ?: true // If no category is selected, show all
+            } ?: true
 
             matchesQuery && matchesSpeciality
         }
@@ -121,7 +114,7 @@ class RestaurantViewModel(private val restaurantRepository: RestaurantRepository
                 }
             } catch (e: Exception) {
                 Log.d(
-                    "HomeViewModel", "Exception lors de la modification du restaurant: ${e.message}"
+                    "HomeViewModel updateRestaurant", "Failed to update restaurant: ${e.message}"
                 )
             }
         }

@@ -46,32 +46,23 @@ fun MainScreen(
     var connectUser by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        // Au démarrage de l'application, vérifiez si un token est disponible
         val token = getToken(context)
-        Log.d("MainScreen", "Token: $token")
         if (token != null) {
             userViewModel.getUserFromToken(token)
         }
     }
 
-    // Met à jour connectUser dès que l'utilisateur est disponible
     user?.let {
         connectUser = it.role ?: ""
         emailValidated = it.emailValidated ?: false
     }
 
-
-
-    Log.d("MainScreen", "connectUser: $connectUser, isLoading: $isLoading, user: $user")
-
-
     if (user == null) {
         connectUser = ""
         emailValidated = false
     }
-    // Détermine si la BottomBar doit être affichée pour l'admin
-    val showAdminBottomBar = connectUser == "admin"
 
+    val showAdminBottomBar = connectUser == "admin"
 
     if (isLoading == true) {
         LoadingScreen()

@@ -78,37 +78,28 @@ fun FormModifyRestaurantScreen(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            // Convertir le Uri en String (ici, en supposant qu'il s'agit d'une URL valide)
-            val imageUrl = it.toString() // Assurez-vous que c'est une URL valide
+            val imageUrl = it.toString()
 
-            // Appeler la fonction pour télécharger et compresser l'image
             CoroutineScope(Dispatchers.Main).launch {
                 val compressedImage = downloadAndCompressImageFromUrl(imageUrl, context)
 
                 if (compressedImage != null) {
-                    // Référence Firebase où l'image sera stockée
                     val storageRef = FirebaseInstance.storageRef.child(
                         "images/${restaurant.userId}/${restaurant._id}" + "${System.currentTimeMillis()}.webp"
                     )
 
-                    // Envoie l'image compressée sur Firebase
                     val uploadTask = storageRef.putBytes(compressedImage)
 
-                    // Gérer le succès ou l'échec de l'envoi
                     uploadTask.addOnSuccessListener {
-                        // Récupérer l'URL de téléchargement une fois l'image envoyée
                         storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                            // Mets à jour imageState avec l'URL de l'image sur Firebase
                             imageUrlState.value = downloadUrl.toString()
-                            println("L'image a été téléchargée : ${imageUrlState.value}")
-                            Log.d("FormNewMenu", imageUrlState.value)
                         }
                     }.addOnFailureListener { e ->
-                        Log.e("Firebase", "Échec de l'upload de l'image : ${e.message}", e)
+                        Log.e("Firebase", "Error uploading image: $e")
                     }
                 } else {
                     Log.e(
-                        "Image", "Erreur lors du téléchargement ou de la compression de l'image."
+                        "Image", "Error compressing image"
                     )
                 }
             }
@@ -215,7 +206,6 @@ fun FormModifyRestaurantScreen(
                 )
             }
 
-            // Champs pour l'adresse
             item {
                 TextFieldWithError(
                     value = numberState.value,
@@ -290,8 +280,6 @@ fun FormModifyRestaurantScreen(
                 ) {
                     Button(
                         onClick = {
-                            // véfier si tous les champs sont valides
-
                             if (nameState.value == "" || phoneState.value == "" || openingHoursState.value == "" || numberState.value == "" || streetState.value == "" || cityState.value == "" || countryState.value == "") {
                                 Toast.makeText(
                                     context,
@@ -377,13 +365,11 @@ fun FormModifyRestaurantScreen(
 }
 
 fun isValidHours(hours: String): Boolean {
-    // regex pour vérifier si les heures sont valides
     val regex = Regex("([0-1]?[0-9]|2[0-3]):[0-5][0-9] - ([0-1]?[0-9]|2[0-3]):[0-5][0-9]")
     return hours.isNotEmpty() && regex.matches(hours)
 }
 
 fun isValidPhoneNumber(phone: String): Boolean {
-    // regex pour vérifier si le numéro de téléphone est valide
     val regex =
         Regex("^\\+?(\\d{1,3})?[-.\\s]?(\\(?\\d{1,4}\\)?)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}\$")
     return phone.isNotEmpty() && regex.matches(phone)

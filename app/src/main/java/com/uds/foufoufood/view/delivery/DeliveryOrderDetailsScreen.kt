@@ -60,7 +60,6 @@ fun DeliveryOrderDetailsScreen(
             .background(Color.White)
             .padding(16.dp)
     ) {
-        // Contenu principal de la page
         order?.let {
             Column(
                 modifier = Modifier
@@ -81,7 +80,6 @@ fun DeliveryOrderDetailsScreen(
                 HorizontalDivider(thickness = 1.dp, color = Color.Gray)
                 Spacer(modifier = Modifier.height(30.dp))
 
-                // Restaurant et client
                 Column(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -96,7 +94,6 @@ fun DeliveryOrderDetailsScreen(
                 HorizontalDivider(thickness = 1.dp, color = Color.Gray)
                 Spacer(modifier = Modifier.height(30.dp))
 
-                // Plats commandés
                 Text(
                     text = "Plats commandés :",
                     style = MaterialTheme.typography.bodyMedium.copy(
@@ -124,7 +121,6 @@ fun DeliveryOrderDetailsScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Statut de la commande
                 Text(
                     text = "Statut : ${it.status.displayName}",
                     style = MaterialTheme.typography.bodyLarge.copy(
@@ -140,7 +136,6 @@ fun DeliveryOrderDetailsScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Boutons d'action
                 ActionButtons(
                     order = it,
                     orderViewModel = orderViewModel,
@@ -160,29 +155,26 @@ fun DetailText(label: String, value: String, color: Color) {
             .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Label aligné à gauche avec une couleur différente
         Text(
             text = "$label: ",
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
-                color = colorResource(id = R.color.orange) // Couleur pour le label
+                color = colorResource(id = R.color.orange)
             ),
-            modifier = Modifier.weight(1f) // Ajuste la largeur pour le label
+            modifier = Modifier.weight(1f)
         )
 
-        // Valeur alignée à droite
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
-                color = color // Couleur pour la valeur
+                color = color
             ),
-            modifier = Modifier.weight(1f), // Ajuste la largeur pour la valeur
-            textAlign = TextAlign.End // Aligne la valeur à droite
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.End
         )
     }
 }
-
 
 @Composable
 fun MenuItemRow(menu: Menu, quantity: Int) {
@@ -254,7 +246,7 @@ fun ActionButtons(
                 orderViewModel.cancelOrder(navController, deliveryViewModel)
                 Log.d("DeliveryOrderDetailsScreen", "Commande annulée")
             },
-            enabled = order.status == OrderStatus.PREPARING, // Seul le statut "Preparing" permet l'appui
+            enabled = order.status == OrderStatus.PREPARING,
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = if (order.status == OrderStatus.PREPARING) Color.Red else colorResource(id = R.color.grey_stroke), // Rouge si activé, gris si désactivé
                 disabledContentColor = Color.Black.copy(alpha = 0.2f),
@@ -265,6 +257,5 @@ fun ActionButtons(
         ) {
             Text(text = "Annuler")
         }
-
     }
 }

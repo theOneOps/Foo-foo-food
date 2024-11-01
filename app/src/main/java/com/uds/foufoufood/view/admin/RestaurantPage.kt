@@ -74,7 +74,6 @@ fun RestaurantPage(
                 }
 
                 FloatingActionButton(onClick = {
-                    // Navigation vers la page pour ajouter un nouveau restaurant
                     navController.navigate("addRestaurant")
                 }, content = {
                     Icon(Icons.Default.Add, contentDescription = "Ajouter un restaurant")
@@ -115,10 +114,9 @@ fun RestaurantItem(
         ) {
             Text(text = restaurant.name, style = MaterialTheme.typography.bodyLarge)
             Button(onClick = {
-                // todo delete restaurant
                 adminRestaurantsViewModel.deleteRestaurant(restaurantId = restaurant._id)
             }) {
-                Text(text = "supprimer")
+                Text(text = "Supprimer")
             }
         }
     }

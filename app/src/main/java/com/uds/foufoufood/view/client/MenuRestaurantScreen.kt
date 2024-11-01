@@ -65,7 +65,7 @@ import com.uds.foufoufood.viewmodel.MenuViewModel
 fun MenuRestaurantScreen(
     menu: Menu,
     menuViewModel: MenuViewModel,
-    cartViewModel: CartViewModel, // Add CartViewModel here
+    cartViewModel: CartViewModel,
     navController: NavController
 ) {
     val context = LocalContext.current
@@ -84,13 +84,11 @@ fun MenuRestaurantScreen(
             modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top
         ) {
             item {
-                // Image du restaurant avec la spécialité en bas à droite
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(300.dp)
                 ) {
-                    // Image du restaurant
                     AsyncImage(
                         model = menu.image,
                         modifier = Modifier
@@ -107,20 +105,18 @@ fun MenuRestaurantScreen(
                             .padding(horizontal = 16.dp, vertical = 6.dp)
                             .offset(
                                 x = (-4).dp, y = (-4).dp
-                            ), // Décalage pour être bien positionné sur le bord
+                            ),
                     ) {
-                        // Bouton de modification du menu
                         ModifyMenu(token, menuViewModel, menu, navController)
                     }
 
-                    // Box de spécialité en bas à droite de l'image
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(horizontal = 16.dp, vertical = 6.dp)
                             .offset(
                                 x = (4).dp, y = (-4).dp
-                            ), // Décalage pour être bien positionné sur le bord
+                            ),
                     ) {
                         Column(
                             modifier = Modifier
@@ -166,7 +162,6 @@ fun MenuRestaurantScreen(
             }
 
             item {
-                // Description du Menu
                 Text(
                     text = menu.description, style = TextStyle(
                         fontSize = 16.sp,
@@ -189,7 +184,6 @@ fun MenuRestaurantScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row {
-                        // Prix du menu
                         Text(
                             text = menu.price.toString(), style = TextStyle(
                                 fontSize = 35.sp,
@@ -198,7 +192,6 @@ fun MenuRestaurantScreen(
                             ), modifier = Modifier.padding(start = 4.dp)
                         )
 
-                        // Text icon €
                         Text(
                             text = "$", style = TextStyle(
                                 fontSize = 15.sp,
@@ -208,13 +201,11 @@ fun MenuRestaurantScreen(
                         )
                     }
 
-                    // Bouton d'ajout au panier
                     CounterProductBought(quantity)
                 }
             }
 
             item {
-                // Ingrédients
                 for (ingredient in menu.ingredients) {
                     Text(
                         text = "- ${ingredient.replaceFirstChar { it.uppercase() }}",
@@ -235,7 +226,6 @@ fun MenuRestaurantScreen(
             }
 
             item {
-                // Divider
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -254,7 +244,6 @@ fun MenuRestaurantScreen(
             }
 
             item {
-                // Bouton d'ajout au panier
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -272,7 +261,7 @@ fun AddToCartButton(
 ) {
     val context = LocalContext.current
     val scale = remember { mutableFloatStateOf(1f) }
-    var showDialog by remember { mutableStateOf(false) } // State to manage dialog visibility
+    var showDialog by remember { mutableStateOf(false) }
 
     Button(
         onClick = {
@@ -281,30 +270,28 @@ fun AddToCartButton(
             val isCartEmptyOrSameRestaurant =
                 cartItems.isEmpty() || cartItems.all { it.menu.restaurantId == restaurantId }
 
-
             if (isCartEmptyOrSameRestaurant) {
-                // Add item to cart directly if it's the same restaurant or cart is empty
-                if (quantity <= 0)
-                {
-                    Toast.makeText(context, "quantité commandée trop faible ", Toast.LENGTH_SHORT).show()
-                }
-                else
-                {
+                if (quantity <= 0) {
+                    Toast.makeText(
+                        context,
+                        "Veuillez entrer une quantité valide",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
                     cartViewModel.addItem(
                         CartItem(
                             menu = menu,
                             quantity = quantity,
                         ), restaurantId = restaurantId
                     )
-                    Toast.makeText(context, "${menu.name} ajouté au panier", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "${menu.name} ajouté au panier", Toast.LENGTH_SHORT)
+                        .show()
 
                 }
             } else {
-                // Show confirmation dialog if a different restaurant's item is being added
                 showDialog = true
             }
 
-            // Button press effect
             scale.floatValue = 0.9f
         },
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.orange)),
@@ -345,14 +332,13 @@ fun AddToCartButton(
         }
     }
 
-    // Confirmation dialog for clearing the cart
     if (showDialog) {
         androidx.compose.material3.AlertDialog(onDismissRequest = { showDialog = false },
             title = { Text("Vider le panier ?") },
             text = { Text("Votre panier contient des articles d'un autre restaurant. Vider le panier et ajouter cet article ?") },
             confirmButton = {
                 androidx.compose.material3.TextButton(onClick = {
-                    cartViewModel.clearCart() // Clear the cart
+                    cartViewModel.clearCart()
                     cartViewModel.addItem(
                         CartItem(
                             menu = menu, quantity = quantity
@@ -360,7 +346,7 @@ fun AddToCartButton(
                     )
                     Toast.makeText(context, "${menu.name} ajouté au panier", Toast.LENGTH_SHORT)
                         .show()
-                    showDialog = false // Close the dialog
+                    showDialog = false
                 }) {
                     Text("Oui")
                 }
@@ -375,10 +361,7 @@ fun AddToCartButton(
 
 @Composable
 fun ModifyMenu(
-    token: String,
-    menuViewModel: MenuViewModel,
-    menu: Menu,
-    navController: NavController
+    token: String, menuViewModel: MenuViewModel, menu: Menu, navController: NavController
 ) {
     val openDialog = remember { mutableStateOf(false) }
 

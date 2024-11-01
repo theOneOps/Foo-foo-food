@@ -24,38 +24,37 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.uds.foufoufood.data_class.model.User
 
-
 @Composable
 fun UserItem(
-    user: User, modifier: Modifier = Modifier, onClick: () -> Unit, onRoleChanged: (String) -> Unit
+    user: User, modifier: Modifier = Modifier, onClick: () -> Unit
 ) {
     Row(modifier = modifier
-        .fillMaxWidth() // Prendre toute la largeur disponible
-        .padding(6.dp) // Ajouter un padding autour de chaque utilisateur
-        .shadow(4.dp, RoundedCornerShape(15.dp)) // Ombre avec coins arrondis
+        .fillMaxWidth()
+        .padding(6.dp)
+        .shadow(4.dp, RoundedCornerShape(15.dp))
         .background(
             Color.White, shape = RoundedCornerShape(15.dp)
-        ) // Fond blanc avec coins arrondis
+        )
         .clickable { onClick() }
-        .padding(16.dp), // Padding interne au composant
+        .padding(16.dp),
 
         verticalAlignment = Alignment.CenterVertically) {
-        // Image de l'utilisateur
         AsyncImage(
-            model = user.avatarUrl, // Charger l'image à partir de l'URL
+            model = user.avatarUrl,
             contentDescription = "Avatar de ${user.name}",
             modifier = Modifier
-                .size(48.dp) // Taille de l'image
-                .clip(RoundedCornerShape(24.dp)) // Image ronde
-                .padding(end = 8.dp) // Espacement entre l'image et les informations
+                .size(48.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .padding(end = 8.dp)
         )
-        // Informations de l'utilisateur
+
         Column(
-            verticalArrangement = Arrangement.Center // Centrer verticalement
+            verticalArrangement = Arrangement.Center
         ) {
             Text(text = user.name, color = Color.Black)
             Text(text = user.email, color = Color.Gray)
         }
+
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next"

@@ -57,7 +57,6 @@ fun CartScreen(
     val orderSuccessMessage by cartViewModel.orderSuccessMessage.observeAsState()
     val context = LocalContext.current
 
-    // Display error and success messages as Toasts
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -118,9 +117,8 @@ fun CartItemRow(
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Image miniature du menu
         AsyncImage(
-            model = item.menu.image, // Assurez-vous que 'imageUrl' est une propriété valide
+            model = item.menu.image,
             contentDescription = item.menu.name,
             modifier = Modifier
                 .size(80.dp)
@@ -172,7 +170,7 @@ fun CartItemRow(
                 }
             }
         }
-        // Bouton pour supprimer l'ensemble des quantités de ce menu
+
         IconButton(onClick = onDelete) {
             Icon(
                 imageVector = Icons.Default.Close,
@@ -200,9 +198,3 @@ fun CheckoutButton(totalPrice: Double, onClick: () -> Unit) {
         )
     }
 }
-
-
-
-
-
-

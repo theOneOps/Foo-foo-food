@@ -50,13 +50,10 @@ fun NotificationsScreen(
     val errorMessage by notificationViewModel.errorMessage.observeAsState()
 
     val context = LocalContext.current
-
-    // Add this LaunchedEffect to mark all notifications as read when the screen is opened
     LaunchedEffect(Unit) {
         notificationViewModel.markAllNotificationsAsRead()
     }
 
-    // Display error messages
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -84,9 +81,7 @@ fun NotificationsScreen(
             ) {
                 items(notifications) { notification ->
                     NotificationItem(notification = notification, onClick = {
-                        // Handle notification click
                         notificationViewModel.markNotificationAsRead(notification.id)
-                        // Navigate to order details or appropriate screen
                         navController.navigate("orderTracking")
                     })
                 }

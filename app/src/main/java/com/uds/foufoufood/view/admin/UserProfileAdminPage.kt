@@ -55,21 +55,18 @@ fun UserProfileAdminPage(
 ) {
     val context = LocalContext.current
     if (userEmail != null) {
-        // Récupérer les détails de l'utilisateur
         val user = users.find { it.email == userEmail }
         var selectedRole by remember { mutableStateOf(user?.role ?: "Client") }
         var showDropdown by remember { mutableStateOf(false) }
 
         var isBlocked by remember { mutableStateOf(user?.blockedAccount) }
 
-
         if (user != null) {
             Scaffold(topBar = {
                 TopAppBar(title = { Text(text = "Profil Utilisateur") }, navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Retour"
+                            Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour"
                         )
                     }
                 })
@@ -81,7 +78,6 @@ fun UserProfileAdminPage(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Image de profil centrée
                     Image(
                         painter = rememberAsyncImagePainter(model = user.avatarUrl),
                         contentDescription = "Photo de profil",
@@ -92,15 +88,12 @@ fun UserProfileAdminPage(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Nom de l'utilisateur
                     Text(text = user.name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
-                    // Email de l'utilisateur
                     Text(text = user.email, fontSize = 16.sp, color = Color.Gray)
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Sélecteur de rôle
                     Text(
                         text = "Changer le rôle", fontSize = 18.sp, fontWeight = FontWeight.SemiBold
                     )
@@ -112,7 +105,8 @@ fun UserProfileAdminPage(
                             Icon(Icons.Filled.ArrowDropDown, contentDescription = "Changer le rôle")
                         }
 
-                        DropdownMenu(expanded = showDropdown,
+                        DropdownMenu(
+                            expanded = showDropdown,
                             onDismissRequest = { showDropdown = false }) {
                             DropdownMenuItem(text = { Text("Client") }, onClick = {
                                 selectedRole = "client"
@@ -134,7 +128,6 @@ fun UserProfileAdminPage(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Afficher le bouton Associer si le rôle est Restaurateur
                     if (selectedRole == "Restaurateur") {
                         Button(
                             onClick = {
@@ -149,7 +142,6 @@ fun UserProfileAdminPage(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
-                    // Bouton pour activer/désactiver le compte
                     Button(
                         onClick = {
                             if (isBlocked == true) {
@@ -168,18 +160,17 @@ fun UserProfileAdminPage(
                         )
                     }
 
-
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Bouton pour supprimer le compte
                     Button(
                         onClick = {
-                            // todo Logique pour supprimer le compte PAS ENCORE FAIT
                             adminUsersViewModel.deleteAccount(user._id)
                             navController.popBackStack()
-
-                            Toast.makeText(context, "compte bien supprimé", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(
+                                context,
+                                "Compte supprimé avec succès",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                         modifier = Modifier.fillMaxWidth()
@@ -189,7 +180,7 @@ fun UserProfileAdminPage(
                 }
             }
         } else {
-            Text("ID utilisateur manquant")
+            Text("Utilisateur non trouvé")
         }
     }
 }

@@ -72,8 +72,7 @@ interface UserApi {
 
     @PUT("api/users/{email}/role")
     suspend fun updateUserRole(
-        @Path("email") userEmail: String,       // ID de l'utilisateur
-        @Body roleUpdateRequest: RoleUpdateRequest // Corps de la requête avec le nouveau rôle
+        @Path("email") userEmail: String, @Body roleUpdateRequest: RoleUpdateRequest
     ): Response<ApiResponse>
 
     @PUT("api/users/delivery/deliveryAvailability")

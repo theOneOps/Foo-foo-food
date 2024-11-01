@@ -78,15 +78,9 @@ fun LoginScreen(
         handleSignInResult(task, auth, context, userViewModel)
     }
 
-    Log.d("LoginScreen", "user: $user")
-
     LaunchedEffect(user, loginSuccess) {
         Log.d("LoginScreen", "loginSuccess: $loginSuccess")
         if (loginSuccess == true) {
-            Log.d("LoginScreen", "emailValidated: $emailValidated")
-            Log.d("LoginScreen", "registrationComplete: $registrationComplete")
-            Log.d("LoginScreen", "user.emailValidated: ${user?.emailValidated}")
-            Log.d("LoginScreen", "user.registrationComplete: ${user?.registrationComplete}")
             if (emailValidated == true && registrationComplete == true) {
                 val startDestination = user?.role?.let { getStartDestination(it, emailValidated!!) }
                 if (startDestination != null) {
@@ -95,7 +89,6 @@ fun LoginScreen(
                     }
                 }
                 userViewModel.resetStatus()
-                // La navigation sera gérée par MainScreen après la mise à jour du rôle de l'utilisateur
                 Toast.makeText(context, "Connexion réussie", Toast.LENGTH_SHORT).show()
             } else if (emailValidated == false) {
                 navController.navigate("verify_code/$email")
@@ -137,7 +130,6 @@ fun LoginScreen(
         ForgotPasswordText()
         Spacer(modifier = Modifier.height(25.dp))
 
-        // Bouton de validation pour la connexion
         ValidateButton(label = stringResource(id = R.string.sign_in), onClick = {
             if (isEmailValid(email) && isValidPassword(password)) {
                 userViewModel.login(email, password)
@@ -155,18 +147,14 @@ fun LoginScreen(
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-
         // Boutons pour se connecter via des réseaux sociaux (si nécessaire)
         NetworksButtons(
-            stringResource(id = R.string.sign_in_with),
-            Color.Gray
+            stringResource(id = R.string.sign_in_with), Color.Gray
         ) { googleSignInLauncher.launch(googleSignInClient.signInIntent) }
     }
 
-    // Afficher les erreurs de connexion si elles existent
     errorMessage?.let {
-        Toast.makeText(context,it,Toast.LENGTH_SHORT).show()
-        //Text(text = it, color = Color.Red, modifier = Modifier.padding(16.dp))
+        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         userViewModel.resetStatus()
     }
 }
@@ -217,42 +205,37 @@ fun handleSignInResult(
     userViewModel: UserViewModel
 ) {
     try {
-        // Obtenir l'objet GoogleSignInAccount à partir de la tâche
         val account = task.getResult(ApiException::class.java)
         val idToken = account?.idToken
 
         if (idToken != null) {
-            Log.d("Google Sign-In", "ID Token: $idToken")
-            // Authentification Firebase avec le token Google
             val credential = GoogleAuthProvider.getCredential(idToken, null)
-            Log.d("Google Sign-In", "Credential: $credential")
             auth.signInWithCredential(credential).addOnCompleteListener { signInTask ->
-                    if (signInTask.isSuccessful) {
-                        // Si l'authentification est réussie, obtenir un nouveau token Firebase
-                        auth.currentUser?.getIdToken(false)?.addOnCompleteListener { tokenTask ->
-                            if (tokenTask.isSuccessful) {
-                                val newIdToken = tokenTask.result?.token
-                                newIdToken?.let { token ->
-                                    Log.d("Token", "Token Firebase: $token")
-                                    decodeFirebaseToken(token)
-                                    userViewModel.loginWithGoogle(token, context) // Utilisez le token pour l'authentification
-                                }
-                            } else {
-                                Log.e("Token", "Erreur lors de la mise à jour du token")
+                if (signInTask.isSuccessful) {
+                    auth.currentUser?.getIdToken(false)?.addOnCompleteListener { tokenTask ->
+                        if (tokenTask.isSuccessful) {
+                            val newIdToken = tokenTask.result?.token
+                            newIdToken?.let { token ->
+                                decodeFirebaseToken(token)
+                                userViewModel.loginWithGoogle(token, context)
                             }
+                        } else {
+                            Log.e(
+                                "LoginScreen Google Sign-In handleSignInResult",
+                                "Error : ${tokenTask.exception?.message}"
+                            )
                         }
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "Échec de l'authentification Google",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
+                } else {
+                    Toast.makeText(
+                        context, "Échec de l'authentification Google", Toast.LENGTH_SHORT
+                    ).show()
                 }
+            }
         } else {
             Toast.makeText(context, "ID Token introuvable", Toast.LENGTH_SHORT).show()
         }
     } catch (e: ApiException) {
-        Log.e("Google Sign-In", "Erreur : ${e.message}")
+        Log.e("LoginScreen Google Sign-In handleSignInResult", "Error : ${e.message}")
     }
 }

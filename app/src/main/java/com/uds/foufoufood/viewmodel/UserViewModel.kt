@@ -64,7 +64,6 @@ class UserViewModel(
     lateinit var googleSignInClient: GoogleSignInClient
     lateinit var auth: FirebaseAuth
 
-    // Fonctions
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _loading.value = true
@@ -76,7 +75,6 @@ class UserViewModel(
                         _token.value = response.token
                         _loginSuccess.value = true
 
-                        // Fetch and register FCM token with the backend
                         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 val fcmToken = task.result
@@ -92,7 +90,6 @@ class UserViewModel(
                             saveUserId(context, response.user._id)
                             _emailValidated.value = true
                             userRepository.setUserEmail(email)
-                            Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
                             _errorMessage.value = null
                         }
 
@@ -104,7 +101,6 @@ class UserViewModel(
                             saveUserId(context, response.user._id)
                             userRepository.setUserEmail(email)
                             _registrationCompleteSuccess.value = true
-                            Log.d("UserViewModel", "Token JWT sauvegardé : ${response.token}")
                             _errorMessage.value = null
                         }
                     } else {
@@ -165,7 +161,6 @@ class UserViewModel(
                     userRepository.setUserEmail(response.user.email)
                     _registrationCompleteSuccess.value = true
 
-                    // Fetch and register FCM token with the backend
                     FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val fcmToken = task.result
@@ -189,9 +184,10 @@ class UserViewModel(
             _loading.value = true
             try {
                 userRepository.resendVerificationCode(email)
-                // _resendCodeEvent.value = success
             } catch (e: Exception) {
-                // _resendCodeEvent.value = false
+                Log.e(
+                    "UserViewModel resendVerificationCode", "Error resending verification code: ${e.message}"
+                )
             } finally {
                 _loading.value = false
             }
@@ -206,8 +202,7 @@ class UserViewModel(
                 _user.value = user.body()
             } catch (e: Exception) {
                 Log.e(
-                    "UserViewModel",
-                    "Erreur lors de la récupération de l'utilisateur: ${e.message}"
+                    "UserViewModel getUser", "Error fetching user: ${e.message}"
                 )
             } finally {
                 _loading.value = false
@@ -224,8 +219,7 @@ class UserViewModel(
                 _token.value = token
             } catch (e: Exception) {
                 Log.e(
-                    "UserViewModel",
-                    "Erreur lors de la récupération de l'utilisateur: ${e.message}"
+                    "UserViewModel getUserFromToken", "Error fetching user: ${e.message}"
                 )
             } finally {
                 _loading.value = false
@@ -247,9 +241,8 @@ class UserViewModel(
             } catch (e: Exception) {
                 _errorMessage.value = "Erreur lors de la déconnexion"
             } finally {
-                // Réinitialisez les valeurs qui pourraient provoquer des écrans de chargement infinis
                 _loading.value = false
-                resetStatus() // Réinitialiser tous les états après la déconnexion
+                resetStatus()
             }
         }
     }
@@ -275,7 +268,7 @@ class UserViewModel(
                         "Erreur lors de la modification de l'email, veuillez réessayer"
                 }
             } catch (e: Exception) {
-                Log.e("UserViewModel", "Erreur lors de l'édition de l'email: ${e.message}")
+                Log.e("UserViewModel updateEmail", "Error updating email: ${e.message}")
             } finally {
                 _loading.value = false
             }
@@ -300,7 +293,7 @@ class UserViewModel(
                         "Erreur lors de la modification du mot de passe, veuillez réessayer"
                 }
             } catch (e: Exception) {
-                Log.e("UserViewModel", "Erreur lors de l'édition du mot de passe: ${e.message}")
+                Log.e("UserViewModel updatePassword", "Error updating password: ${e.message}")
             } finally {
                 _loading.value = false
             }
@@ -325,7 +318,7 @@ class UserViewModel(
                     _user.value?.address = Address(number, street, city, zipCode, state, country)
                 }
             } catch (e: Exception) {
-                Log.e("UserViewModel", "Erreur lors de l'édition de l'adresse: ${e.message}")
+                Log.e("UserViewModel updateAddress", "Error updating address: ${e.message}")
             } finally {
                 _loading.value = false
             }
@@ -351,11 +344,8 @@ class UserViewModel(
         viewModelScope.launch {
             _loading.value = true
             try {
-                Log.d("UserViewModel", "ID Token: $idToken")
                 val response = userRepository.registerWithGoogle(idToken)
-                Log.d("UserViewModel", "Response: $response")
                 if (response != null) {
-                    Log.d("UserViewModel", "Utilisateur enregistré avec succès")
                     _emailValidated.value = true
                     _loading.value = false
                     _errorMessage.value = null
@@ -375,12 +365,10 @@ class UserViewModel(
         }
     }
 
-
     fun loginWithGoogle(idToken: String, context: Context) {
         viewModelScope.launch {
             _loading.value = true
             try {
-                Log.d("UserViewModel", "ID Token: $idToken")
                 val response = userRepository.loginWithGoogle(idToken)
                 if (response != null) {
                     if (response.user.blockedAccount == false) {
@@ -388,7 +376,6 @@ class UserViewModel(
                         _token.value = response.token
                         _loginSuccess.value = true
 
-                        // Fetch and register FCM token with the backend
                         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 val fcmToken = task.result
@@ -413,7 +400,7 @@ class UserViewModel(
                         }
                         _errorMessage.value = null
                     } else {
-                        Log.d("UserViewModel", "Compte bloqué")
+                        Log.d("UserViewModel loginWithGoogle", "Account blocked")
                     }
                 } else {
                     _errorMessage.value = "Erreur, connexion échouée"
@@ -435,10 +422,10 @@ class UserViewModel(
             try {
                 val success = userRepository.registerFcmToken(email, fcmToken)
                 if (success) {
-                    Log.d("UserViewModel", "FCM token registered successfully.")
+                    Log.d("UserViewModel registerFcmToken", "FCM token registered successfully")
                 }
             } catch (e: Exception) {
-                Log.e("UserViewModel", "Error registering FCM token: ${e.message}")
+                Log.e("UserViewModel registerFcmToken", "Error registering FCM token: ${e.message}")
             }
         }
     }

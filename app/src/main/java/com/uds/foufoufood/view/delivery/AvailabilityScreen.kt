@@ -64,10 +64,8 @@ fun AvailabilityScreen(
     val newOrder by deliveryViewModel.newOrderAssigned.collectAsState()
     var showTick by remember { mutableStateOf(false) }
 
-    // Vérifiez s'il y a déjà une commande en cours à l'arrivée sur l'écran
     val email = deliveryViewModel.currentDeliveryManEmail
 
-    // Animation de l'affichage "En attente d'une commande..."
     val infiniteTransition = rememberInfiniteTransition(label = "")
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -82,16 +80,11 @@ fun AvailabilityScreen(
         }
     }
 
-    // Detect new orders and navigate to the order details page
     LaunchedEffect(newOrder) {
         newOrder?.let {
-            // Convertir l'objet JSON en chaîne de caractères ou extraire les données nécessaires
             val orderData = it.toString()
             val orderJson = JSONObject(orderData)
             val orderId = orderJson.getJSONObject("order").getString("_id")
-
-            Log.d("Availability", "New order assigned: $orderData")
-            Log.d("OrderDetails", "Order ID: $orderId")
 
             orderViewModel.loadOrder(orderId)
             showTick = true
@@ -109,7 +102,7 @@ fun AvailabilityScreen(
             .padding(20.dp)
     ) {
         IconButton(
-            onClick = { navController.navigate(Screen.DeliveryAllOrdersPage.route) }, // Action de retour
+            onClick = { navController.navigate(Screen.DeliveryAllOrdersPage.route) },
             modifier = Modifier
                 .shadow(8.dp, shape = RoundedCornerShape(12.dp))
                 .background(Color.White, shape = RoundedCornerShape(12.dp))
@@ -131,7 +124,6 @@ fun AvailabilityScreen(
                 .align(Alignment.TopEnd)
         )
 
-        // Titre principal au centre en haut
         Text(
             text = "Statut de Livraison",
             fontSize = 30.sp,
@@ -140,7 +132,7 @@ fun AvailabilityScreen(
             color = colorResource(id = R.color.orange),
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 100.dp) // Ajustement en fonction de l'espace entre le logo et le titre
+                .padding(top = 100.dp)
         )
 
         Box(
@@ -160,17 +152,14 @@ fun AvailabilityScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Texte de message dynamique
                     Text(
                         text = if (isAvailable) "En attente d'une commande..." else "Appuyez pour prendre une commande",
                         fontSize = 18.sp,
                         fontFamily = FontFamily(Font(R.font.sofiapro_medium)),
                         color = colorResource(id = R.color.orange),
                         modifier = Modifier.scale(if (isAvailable) scale else 1f)
-
                     )
 
-                    // Switch de disponibilité
                     Box(modifier = Modifier.scale(1.3f)) {
                         Switch(
                             checked = isAvailable,
@@ -183,7 +172,6 @@ fun AvailabilityScreen(
                         )
                     }
 
-                    // Texte de disponibilité
                     Text(
                         text = if (isAvailable) "Status Livraison : Disponible pour livrer" else "Status Livraison : Indisponible",
                         fontSize = 18.sp,
@@ -194,12 +182,11 @@ fun AvailabilityScreen(
             }
         }
     }
-    // Logo en bas de page avec animation de montée
+
     val logoOffset by animateDpAsState(targetValue = if (isAvailable) 380.dp else 1000.dp,
         label = ""
     )
 
-    // Logo centré en bas avec animation
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -208,7 +195,7 @@ fun AvailabilityScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier.offset(y = logoOffset) // Applique l'animation d'offset vertical
+            modifier = Modifier.offset(y = logoOffset)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.logo_only),

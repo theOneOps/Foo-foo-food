@@ -23,7 +23,6 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class UserRepository(private val userApi: UserApi, private val context: Context) {
-
     private val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     suspend fun getUser(email: String): Response<User> = withContext(Dispatchers.IO) {
@@ -37,13 +36,13 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
                 response.body()
             } else {
                 Log.e(
-                    "UserRepository",
-                    "Erreur lors de la récupération de l'utilisateur: ${response.code()}"
+                    "UserRepository getUserFromToken",
+                    "Error getting user from token: ${response.code()}"
                 )
                 null
             }
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur réseau: ${e.message}")
+            Log.e("UserRepository getUserFromToken", "Network error: ${e.message}")
             null
         }
     }
@@ -52,45 +51,45 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
         withContext(Dispatchers.IO) {
             try {
                 val request = LoginRequest(email, password)
-                val response = userApi.login(request)  // Appel API direct
+                val response = userApi.login(request)
                 if (response.isSuccessful) {
-                    response.body()  // Retourner les données d'authentification si tout va bien
+                    response.body()
                 } else {
-                    Log.e("UserRepository", "Erreur de connexion: ${response.code()}")
+                    Log.e("UserRepository login", "Error logging in: ${response.code()}")
                     null
                 }
             } catch (e: Exception) {
-                Log.e("UserRepository", "Erreur reseau: ${e.message}")
+                Log.e("UserRepository login", "Network error: ${e.message}")
                 null
             }
         }
 
-    // Inscription - Étape 1
     suspend fun initiateRegistration(name: String, email: String, password: String): Boolean =
         withContext(Dispatchers.IO) {
             return@withContext try {
                 val request = RegistrationRequest(name, email, password)
                 val response = userApi.initiateRegistration(request)
-                response.isSuccessful && response.body()?.success == true  // Retourne true si succès
+                response.isSuccessful && response.body()?.success == true
             } catch (e: Exception) {
-                Log.e("UserRepository", "Erreur d'inscription: ${e.message}")
+                Log.e(
+                    "UserRepository initiateRegistration",
+                    "Error initiating registration: ${e.message}"
+                )
                 false
             }
         }
 
-    // Vérification du code - Étape 2
     suspend fun verifyCode(email: String, code: String): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
             val request = VerificationRequest(email, code)
             val response = userApi.verifyCode(request)
             response.isSuccessful && response.body()?.success == true
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur de verification: ${e.message}")
+            Log.e("UserRepository verifyCode", "Error verifying code: ${e.message}")
             false
         }
     }
 
-    // Inscription complète - Étape 3
     suspend fun completeRegistration(email: String, profileType: String): AuthResponse? =
         withContext(Dispatchers.IO) {
             try {
@@ -99,34 +98,38 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
                 if (response.isSuccessful) {
                     response.body()
                 } else {
-                    Log.e("UserRepository", "Erreur d'inscription complète: ${response.code()}")
+                    Log.e(
+                        "UserRepository completeRegistration",
+                        "Error completing registration: ${response.code()}"
+                    )
                     null
                 }
             } catch (e: Exception) {
-                Log.e("UserRepository", "Erreur réseau: ${e.message}")
+                Log.e("UserRepository completeRegistration", "Network error: ${e.message}")
                 null
             }
         }
 
-    // Renvoi du code de vérification
     suspend fun resendVerificationCode(email: String): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
             val request = EmailRequest(email)
             val response = userApi.resendVerificationCode(request)
             response.isSuccessful && response.body()?.success == true
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur lors de l'envoi du code: ${e.message}")
+            Log.e(
+                "UserRepository resendVerificationCode",
+                "Error resending verification code: ${e.message}"
+            )
             false
         }
     }
-
 
     suspend fun logout(): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
             val response = userApi.logout()
             response.isSuccessful
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur lors de la déconnexion: ${e.message}")
+            Log.e("UserRepository logout", "Error logging out: ${e.message}")
             false
         }
     }
@@ -134,13 +137,11 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
     suspend fun updateEmail(token: String, previous: String, email: String): AuthResponse? =
         withContext(Dispatchers.IO) {
             return@withContext try {
-                Log.d("UserRepository", "Token: $token")
                 val response =
                     userApi.updateEmail("Bearer $token", UpdateEmailRequest(previous, email))
-                Log.d("UserRepository", "Response: ${response.body()}")
                 response.body()
             } catch (e: Exception) {
-                Log.e("UserRepository", "Erreur lors de l'édition de l'email: ${e.message}")
+                Log.e("UserRepository updateEmail", "Error updating email: ${e.message}")
                 null
             }
         }
@@ -154,7 +155,7 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
             )
             response.isSuccessful
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur lors de l'édition du mot de passe: ${e.message}")
+            Log.e("UserRepository updatePassword", "Error updating password: ${e.message}")
             false
         }
     }
@@ -172,7 +173,7 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
                 userApi.updateAddress(AddressRequest(number, street, city, state, zipCode, country))
             response.isSuccessful
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur lors de l'édition de l'adresse: ${e.message}")
+            Log.e("UserRepository updateAddress", "Error updating address: ${e.message}")
             false
         }
     }
@@ -191,7 +192,7 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
             val response = userApi.registerFcmToken("Bearer ${getToken(context)}", request)
             response.isSuccessful
         } catch (e: Exception) {
-            Log.e("UserRepository", "Error registering FCM token: ${e.message}")
+            Log.e("UserRepository registerFcmToken", "Error registering FCM token: ${e.message}")
             false
         }
     }
@@ -199,12 +200,11 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
     suspend fun loginWithGoogle(idToken: String): LoginGoogleResponse? =
         withContext(Dispatchers.IO) {
             return@withContext try {
-                Log.d("UserRepository", "ID Token: $idToken")
                 val response = userApi.loginWithGoogle(TokenGoogleRequest(idToken))
                 response.body()
             } catch (e: Exception) {
                 Log.e(
-                    "UserRepository", "Erreur lors de l'authentification avec Google: ${e.message}"
+                    "UserRepository loginWithGoogle", "Error logging in with Google: ${e.message}"
                 )
                 null
             }
@@ -213,12 +213,12 @@ class UserRepository(private val userApi: UserApi, private val context: Context)
     suspend fun registerWithGoogle(idToken: String): RegisterGoogleResponse? =
         withContext(Dispatchers.IO) {
             return@withContext try {
-                Log.d("UserRepository", "ID Token: $idToken")
                 val response = userApi.registerWithGoogle(TokenGoogleRequest(idToken))
                 response.body()
             } catch (e: Exception) {
                 Log.e(
-                    "UserRepository", "Erreur lors de l'authentification avec Google: ${e.message}"
+                    "UserRepository registerWithGoogle",
+                    "Error registering with Google: ${e.message}"
                 )
                 null
             }

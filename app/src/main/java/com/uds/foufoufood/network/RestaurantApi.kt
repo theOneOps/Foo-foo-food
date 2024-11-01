@@ -11,22 +11,17 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface RestaurantApi {
-
-    // Fetch all restaurants
     @GET("api/restaurants")
     suspend fun getAllRestaurants(): Response<List<Restaurant>>
 
-    // Create a new restaurant
     @POST("api/restaurants")
     suspend fun createRestaurant(@Body restaurant: Restaurant): Response<ApiResponse>
 
-    // Update an existing restaurant by ID
     @PUT("api/restaurants/{id}")
     suspend fun updateRestaurant(
         @Path("id") restaurantId: String, @Body restaurant: Restaurant
     ): Response<ApiResponse>
 
-    // Delete a restaurant by ID
     @DELETE("api/restaurants/{id}")
     suspend fun deleteRestaurant(@Path("id") restaurantId: String): Response<ApiResponse>
 

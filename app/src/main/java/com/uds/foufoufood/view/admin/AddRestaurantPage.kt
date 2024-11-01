@@ -29,7 +29,6 @@ import com.uds.foufoufood.data_class.model.Address
 import com.uds.foufoufood.data_class.model.Restaurant
 import java.util.UUID
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddRestaurantPage(
@@ -66,7 +65,7 @@ fun AddRestaurantPage(
                         val newAddress = Address(
                             street = "Street", number = 99, country = "Canada", city = "Sherbrooke"
                         )
-                        // Créer un nouvel objet restaurant et le passer à la fonction de callback
+
                         val newRestaurant = Restaurant(
                             name = restaurantName,
                             newAddress,
@@ -80,7 +79,7 @@ fun AddRestaurantPage(
                             _id = UUID.randomUUID().toString(),
                         )
                         onRestaurantAdded(newRestaurant)
-                        navController.popBackStack() // Retour à la liste des restaurants après l'ajout
+                        navController.popBackStack()
                     }
                 }, modifier = Modifier.fillMaxWidth()
             ) {

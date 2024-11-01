@@ -11,30 +11,29 @@ class MenuRepository(private val menuApi: MenuApi) {
     suspend fun getAllMenusByRestaurant(token: String, restaurantId: String): MenuResponse? =
         withContext(Dispatchers.IO) {
             try {
-                Log.e("MenuRepository", restaurantId)
+                Log.e("MenuRepository getAllMenusByRestaurant", restaurantId)
                 val response = menuApi.getAllMenusByRestaurant(token, restaurantId)
 
-                // Vérifier si la réponse est réussie
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     if (responseBody != null) {
                         return@withContext responseBody
                     } else {
-                        Log.e("MenuRepository", "Réponse vide pour getAllMenus")
+                        Log.e("MenuRepository getAllMenusByRestaurant", "Response body is null")
                         null
                     }
                 } else {
-                    // Si la réponse n'est pas réussie
                     Log.e(
-                        "MenuRepository",
-                        "Erreur d'accès aux menus : ${response.message()} " + "(Code: ${response.code()})"
+                        "MenuRepository getAllMenusByRestaurant",
+                        "Error getting menus by restaurant: ${response.message()} (Code: ${response.code()})"
                     )
                     null
                 }
             } catch (e: Exception) {
-                // En cas d'exception
                 Log.e(
-                    "MenuRepository", "Exception lors de l'accès aux menus :" + " ${e.message}", e
+                    "MenuRepository getAllMenusByRestaurant",
+                    "Exception getting menus by restaurant: ${e.message}",
+                    e
                 )
                 null
             }
@@ -43,27 +42,24 @@ class MenuRepository(private val menuApi: MenuApi) {
     suspend fun getAllMenus(): MenuResponse? = withContext(Dispatchers.IO) {
         try {
             val response = menuApi.getAllMenus()
-            // Vérifier si la réponse est réussie
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
                     return@withContext responseBody
                 } else {
-                    Log.e("MenuRepository", "Réponse vide pour getAllMenus")
+                    Log.e("MenuRepository getAllMenus", "Response body is null")
                     null
                 }
             } else {
-                // Si la réponse n'est pas réussie
                 Log.e(
-                    "MenuRepository",
-                    "Erreur d'accès aux menus : ${response.message()} " + "(Code: ${response.code()})"
+                    "MenuRepository getAllMenus",
+                    "Error getting all menus: ${response.message()} (Code: ${response.code()}"
                 )
                 null
             }
         } catch (e: Exception) {
-            // En cas d'exception
             Log.e(
-                "MenuRepository", "Exception lors de l'accès aux menus :" + " ${e.message}", e
+                "MenuRepository getAllMenus", "Exception getting all menus: ${e.message}", e
             )
             null
         }
@@ -80,7 +76,6 @@ class MenuRepository(private val menuApi: MenuApi) {
         ingredients: List<String>
     ): MenuResponse? = withContext(Dispatchers.IO) {
         try {
-            // Création de l'objet MenuRequest
             val request = MenuRequest(
                 name = name,
                 description = description,
@@ -91,30 +86,26 @@ class MenuRepository(private val menuApi: MenuApi) {
                 ingredients = ingredients
             )
 
-            // Appel à l'API
             val response = menuApi.createMenu(token, request)
 
-            // Vérification si la réponse est réussie
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
                     return@withContext responseBody
                 } else {
-                    Log.e("MenuRepository", "Réponse vide lors de la création du menu")
+                    Log.e("MenuRepository createMenu", "Response body is null")
                     null
                 }
             } else {
-                // Si la réponse n'est pas réussie, loguer l'erreur avec plus de détails
                 Log.e(
-                    "MenuRepository",
-                    "Erreur lors de la création du menu : ${response.message()}" + " (Code: ${response.code()})"
+                    "MenuRepository createMenu",
+                    "Error creating menu: ${response.message()} (Code: ${response.code()})"
                 )
                 null
             }
         } catch (e: Exception) {
-            // Gestion des exceptions et log d'erreur détaillé
             Log.e(
-                "MenuRepository", "Exception lors de la création du menu :" + " ${e.message}", e
+                "MenuRepository createMenu", "Exception creating menu: ${e.message}", e
             )
             null
         }
@@ -132,8 +123,6 @@ class MenuRepository(private val menuApi: MenuApi) {
         ingredients: List<String>
     ): MenuResponse? = withContext(Dispatchers.IO) {
         try {
-            // Création de l'objet MenuRequest
-            // Appel à l'API
             val request = MenuRequest(
                 name = name,
                 price = price,
@@ -145,65 +134,56 @@ class MenuRepository(private val menuApi: MenuApi) {
             )
             val response = menuApi.updateMenu(token, menuId, request)
 
-            // Vérification si la réponse est réussie
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
                     return@withContext responseBody
                 } else {
                     Log.e(
-                        "MenuRepository", "Réponse vide " + "lors de la modification du menu"
+                        "MenuRepository updateMenu", "Response body is null"
                     )
                     null
                 }
             } else {
-                // Si la réponse n'est pas réussie, loguer l'erreur avec plus de détails
                 Log.e(
-                    "MenuRepository",
-                    "Erreur lors de la modification du menu : ${response.message()}" + " (Code: ${response.code()})"
+                    "MenuRepository updateMenu",
+                    "Error updating menu: ${response.message()} (Code: ${response.code()})"
                 )
                 null
             }
         } catch (e: Exception) {
-            // Gestion des exceptions et log d'erreur détaillé
             Log.e(
-                "MenuRepository", "Exception lors " + "de la modification du menu : ${e.message}", e
+                "MenuRepository updateMenu", "Exception updating menu: ${e.message}", e
             )
             null
         }
     }
 
-
     suspend fun deleteMenu(
         token: String, menuId: String
     ): MenuResponse? = withContext(Dispatchers.IO) {
         try {
-            // Création de l'objet MenuRequest
-            // Appel à l'API
             val response = menuApi.deleteMenu(token, menuId)
-            // Vérification si la réponse est réussie
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
                     return@withContext responseBody
                 } else {
                     Log.e(
-                        "MenuRepository", "Réponse vide " + "lors de la suppression du menu"
+                        "MenuRepository deleteMenu", "Response body is null"
                     )
                     null
                 }
             } else {
-                // Si la réponse n'est pas réussie, loguer l'erreur avec plus de détails
                 Log.e(
-                    "MenuRepository",
-                    "Erreur lors de la suppression du menu : ${response.message()}" + " (Code: ${response.code()})"
+                    "MenuRepository deleteMenu",
+                    "Error deleting menu: ${response.message()} (Code: ${response.code()})"
                 )
                 null
             }
         } catch (e: Exception) {
-            // Gestion des exceptions et log d'erreur détaillé
             Log.e(
-                "MenuRepository", "Exception lors " + "de la suppression du menu : ${e.message}", e
+                "MenuRepository deleteMenu", "Exception deleting menu: ${e.message}", e
             )
             null
         }

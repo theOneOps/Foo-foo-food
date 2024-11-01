@@ -28,6 +28,6 @@ data class Address(
             if (!country.isNullOrEmpty()) {
                 append(country)
             }
-        }.trimEnd(',', ' ') // Supprime la virgule et l'espace final
+        }.trimEnd(',', ' ') // Delete the last comma
     }
 }

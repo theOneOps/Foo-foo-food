@@ -21,18 +21,17 @@ class FcmNotificationService : FirebaseMessagingService() {
     }
 
     private fun showNotification(title: String, message: String) {
-        // Vérifie si l'application a la permission d'envoyer des notifications
+        // Check if the app has permission to post notifications
         if (ActivityCompat.checkSelfPermission(
                 this, android.Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            Log.d("FcmNotificationService", "Permission de notification accordée")
-
+            Log.d("FcmNotificationService showNotification", "Permission for notification granted")
             val channelId = "client_order_notifications"
             val channelName = "Client Order Notifications"
             val channelDescription = "Notifications for client order updates"
 
-            // Crée le canal de notification si nécessaire
+            // Create the notification channel if it doesn't exist
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val notificationManager = getSystemService(NotificationManager::class.java)
                 var channel = notificationManager.getNotificationChannel(channelId)
@@ -42,13 +41,13 @@ class FcmNotificationService : FirebaseMessagingService() {
                         description = channelDescription
                     }
                     notificationManager.createNotificationChannel(channel)
-                    Log.d("FcmNotificationService", "Canal de notification créé")
+                    Log.d("FcmNotificationService showNotification", "Channel of notification created")
                 } else {
-                    Log.d("FcmNotificationService", "Canal de notification déjà existant")
+                    Log.d("FcmNotificationService showNotification", "Channel of notification already exists")
                 }
             }
 
-            // Construit la notification
+            // Build the notification
             val notificationBuilder = NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.logo_only)
                 .setContentTitle(title)
@@ -56,10 +55,10 @@ class FcmNotificationService : FirebaseMessagingService() {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
 
-            // Affiche la notification avec un ID unique
+            // Display the notification
             NotificationManagerCompat.from(this).notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
         } else {
-            Log.d("FcmNotificationService", "Permission de notification non accordée")
+            Log.d("FcmNotificationService showNotification", "Permission for notification not granted")
         }
     }
 }

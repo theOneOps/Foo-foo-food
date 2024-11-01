@@ -10,7 +10,7 @@ data class User(
     var address: Address? = null,
     var emailValidated: Boolean? = false,
     var registrationComplete: Boolean? = false,
-    val deliveryAvailability: Boolean? = null, // Nullable pour les non-livreurs
+    val deliveryAvailability: Boolean? = null,
     val restaurantId: String?,
     val _id: String,
     val blockedAccount: Boolean? = false

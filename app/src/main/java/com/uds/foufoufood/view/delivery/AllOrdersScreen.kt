@@ -2,7 +2,16 @@ package com.uds.foufoufood.view.delivery
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -44,11 +53,9 @@ fun AllOrdersScreen(
     orderViewModel: OrderViewModel,
     userViewModel: UserViewModel
 ) {
-    // Collect the list of orders from the ViewModel
     val deliveryOrders by orderViewModel.orders.collectAsState()
 
     LaunchedEffect(Unit) {
-        // Fetch orders for the delivery person using their email
         userViewModel.user.value?.email?.let { email ->
             orderViewModel.fetchOrdersForDeliveryMan(email)
         }
@@ -69,7 +76,6 @@ fun AllOrdersScreen(
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
             ) {
-                // Header with logo and title
                 Spacer(modifier = Modifier.height(100.dp))
 
                 Text(
@@ -143,7 +149,7 @@ fun OrderItemRow(
         modifier = Modifier
             .fillMaxWidth()
             .border(1.dp, borderColor, shape = MaterialTheme.shapes.medium)
-            .shadow(2.dp, shape = MaterialTheme.shapes.medium) // Légère ombre pour le style
+            .shadow(2.dp, shape = MaterialTheme.shapes.medium)
             .background(backgroundColor)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,

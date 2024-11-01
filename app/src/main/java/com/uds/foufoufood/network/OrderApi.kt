@@ -52,6 +52,4 @@ interface OrderApi {
     suspend fun assignOrderToDelivery(
         @Path("id") orderId: String
     ): Response<AssignOrderResponse>
-
-
 }

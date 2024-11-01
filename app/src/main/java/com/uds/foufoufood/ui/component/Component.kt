@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uds.foufoufood.R
 
-
 @Composable
 fun TitlePage(label: String) {
     Text(
@@ -107,7 +106,6 @@ fun TextFieldWithError(
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
     )
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -188,9 +186,9 @@ fun FacebookButton() {
     Row(
         verticalAlignment = Alignment.CenterVertically, modifier = Modifier
             .shadow(
-                elevation = 4.dp,  // Épaisseur de l'ombre
+                elevation = 4.dp,
                 shape = RoundedCornerShape(30.dp),
-                clip = false // Garde les coins arrondis de l'ombre
+                clip = false
             )
             .background(Color.White, shape = RoundedCornerShape(30.dp))
             .size(140.dp, 54.dp)
@@ -211,9 +209,9 @@ fun GoogleButton(googleSignInLauncher: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically, modifier = Modifier
             .shadow(
-                elevation = 4.dp,  // Épaisseur de l'ombre
+                elevation = 4.dp,
                 shape = RoundedCornerShape(30.dp),
-                clip = false // Garde les coins arrondis de l'ombre
+                clip = false
             )
             .background(Color.White, shape = RoundedCornerShape(30.dp))
             .size(140.dp, 54.dp)
@@ -269,7 +267,6 @@ fun NetworksButtons(type: String, color: Color, googleSignInLauncher: () -> Unit
     }
 }
 
-
 @Composable
 fun RadioButtonWithLabel(label: String, selected: Boolean, onSelect: () -> Unit) {
     Row(
@@ -280,7 +277,7 @@ fun RadioButtonWithLabel(label: String, selected: Boolean, onSelect: () -> Unit)
     ) {
         RadioButton(
             selected = selected, onClick = onSelect, colors = RadioButtonDefaults.colors(
-                selectedColor = Color(0xFFFFA500) // Couleur orange
+                selectedColor = Color(0xFFFFA500)
             )
         )
         Spacer(modifier = Modifier.width(5.dp))

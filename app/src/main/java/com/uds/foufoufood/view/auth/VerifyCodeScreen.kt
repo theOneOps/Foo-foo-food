@@ -59,16 +59,12 @@ fun VerifyCodeScreen(
     val context = LocalContext.current
 
     val codeVerificationSuccess by userViewModel.codeVerificationSuccess.observeAsState()
-    Log.d("VerifyCodeScreen", "Code verification success: $codeVerificationSuccess")
     val user by userViewModel.user.observeAsState()
-    Log.d("VerifyCodeScreen", "User: $user")
 
     LaunchedEffect(codeVerificationSuccess, user) {
         userViewModel.getUser(email)
 
         if (codeVerificationSuccess == true) {
-            Log.d("VerifyCodeScreen", "Code verification success")
-            Log.d("VerifyCodeScreen", "Registration complete: ${user?.registrationComplete}")
             when (user?.registrationComplete) {
                 true -> {
                     Toast.makeText(context, R.string.email_update_success, Toast.LENGTH_SHORT)
@@ -102,19 +98,16 @@ fun VerifyCodeScreen(
     ) {
         TitlePage(label = stringResource(id = R.string.verification_code))
 
-        // Champ de saisie du code
         VerificationCodeInput(code = code, onCodeChanged = { index, value ->
             if (value.length <= 1) {
                 code = code.toMutableList().also { it[index] = value }
             }
         })
 
-        // Section "Pas reçu de code"
         NoCodeReceivedSection {
             userViewModel.resendVerificationCode(email)
         }
 
-        // Bouton de validation
         ValidateButton(label = stringResource(id = R.string.verify), onClick = {
             val enteredCode = code.joinToString("")
             if (enteredCode.length == 6) {
@@ -155,14 +148,12 @@ fun VerificationCodeInput(code: List<String>, onCodeChanged: (Int, String) -> Un
                     if (value.length <= 1) {
                         onCodeChanged(i, value)
                         if (value.isNotEmpty() && i < 5) {
-                            // Passer au champ suivant
                             focusRequesters[i + 1].requestFocus()
                         }
                     }
                 }, onBackspace = {
                     if (code[i].isEmpty() && i > 0) {
-                        // Revenir au champ précédent si on appuie sur backspace et le champ est vide
-                        onCodeChanged(i - 1, "") // Vider le champ précédent
+                        onCodeChanged(i - 1, "")
                         focusRequesters[i - 1].requestFocus()
                     }
                 }, focusRequester = focusRequesters[i]
@@ -189,7 +180,7 @@ fun VerificationCodeEditText(
         .focusRequester(focusRequester)
         .onKeyEvent { keyEvent ->
             if (keyEvent.key == Key.Backspace && keyEvent.type == KeyEventType.KeyDown && value.isEmpty()) {
-                onBackspace() // Appeler onBackspace() quand le champ est vide
+                onBackspace()
                 true
             } else {
                 false
@@ -219,8 +210,7 @@ fun NoCodeReceivedSection(onResendClick: () -> Unit) {
         Spacer(modifier = Modifier.width(10.dp))
 
         TextLink(
-            label = stringResource(id = R.string.resend),
-            onClick = onResendClick // Appelle la fonction de renvoi du code
+            label = stringResource(id = R.string.resend), onClick = onResendClick
         )
     }
 }

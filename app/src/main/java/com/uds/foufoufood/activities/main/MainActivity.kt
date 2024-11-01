@@ -4,13 +4,9 @@ import android.Manifest
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -50,17 +46,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adminRestaurantsViewModel: AdminRestaurantsViewModel
     private lateinit var deliveryViewModel: DeliveryViewModel
     private lateinit var orderViewModel: OrderViewModel
-
-    //    private lateinit var homeViewModel: HomeViewModel
     private lateinit var menuViewModel: MenuViewModel
     private lateinit var restaurantViewModel: RestaurantViewModel
     private lateinit var cartViewModel: CartViewModel
     private lateinit var googleSignInClient: GoogleSignInClient
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
-    //private lateinit var orderTrackingViewModel: OrderTrackingViewModel
+
+    private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -69,16 +63,8 @@ class MainActivity : AppCompatActivity() {
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
                 return@OnCompleteListener
             }
-
-            // Get new FCM registration token
-            val token = task.result
-
-            // Log and toast
-            val msg = token
-            Log.d("FBToken", msg)
         })
 
         createNotificationChannels()
@@ -86,30 +72,35 @@ class MainActivity : AppCompatActivity() {
         val retrofit = RetrofitHelper.getRetrofitInstance(this)
         requestNotificationPermission(this)
 
+        // Initialize repositories and api
         val userApi = retrofit.create(UserApi::class.java)
         val userRepository = UserRepository(userApi, this)
 
         val restaurantApi = retrofit.create(RestaurantApi::class.java)
         val restaurantRepository = RestaurantRepository(restaurantApi)
 
+        val orderApi = retrofit.create(OrderApi::class.java)
+        val orderRepository = OrderRepository(orderApi)
+
+        val menuApi = retrofit.create(MenuApi::class.java)
+        val menuRepository = MenuRepository(menuApi)
+
+        val adminRepository = AdminRepository(userApi, this)
+
+        // USER
         userViewModel = UserViewModel(userRepository, this)
 
         // ADMIN
-        val adminRepository = AdminRepository(userApi, this)
         adminUsersViewModel = AdminUsersViewModel(adminRepository)
         adminRestaurantsViewModel = AdminRestaurantsViewModel(restaurantRepository)
 
         // DELIVERY
         val deliveryRepository = DeliveryRepository(userApi)
         deliveryViewModel = DeliveryViewModel(deliveryRepository, userRepository, this)
-        val orderApi = retrofit.create(OrderApi::class.java)
-        val orderRepository = OrderRepository(orderApi)
+
         orderViewModel = OrderViewModel(orderRepository)
         cartViewModel = CartViewModel(orderRepository, userViewModel)
-        //orderTrackingViewModel = OrderTrackingViewModel(orderRepository, userViewModel)
 
-        val menuApi = retrofit.create(MenuApi::class.java)
-        val menuRepository = MenuRepository(menuApi)
         menuViewModel = MenuViewModel(menuRepository)
 
         restaurantViewModel = RestaurantViewModel(restaurantRepository)
@@ -141,6 +132,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Check if the app has the permission to show notifications
     private fun checkNotificationPermission() {
         if (ContextCompat.checkSelfPermission(
                 this, Manifest.permission.POST_NOTIFICATIONS
@@ -154,6 +146,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Handle the result of the permission request
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
@@ -167,6 +160,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Request the permission to show notifications
     private fun requestNotificationPermission(activity: Activity) {
         if (ActivityCompat.checkSelfPermission(
                 activity, Manifest.permission.POST_NOTIFICATIONS
@@ -180,11 +174,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Create notification channels for Android 8.0 and above
     private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = getSystemService(NotificationManager::class.java)
 
-            // Canal pour les notifications de commande des clients
+            // Channel for client order notifications
             val clientOrderChannel = NotificationChannel(
                 "client_order_notifications",
                 "Client Order Notifications",
@@ -194,19 +189,13 @@ class MainActivity : AppCompatActivity() {
             }
             notificationManager.createNotificationChannel(clientOrderChannel)
 
-            // Canal pour les notifications de commande des livreurs
+            // Channel for delivery order notifications
             val deliveryOrderChannel = NotificationChannel(
-                "order_notifications",
-                "Order Notifications",
-                NotificationManager.IMPORTANCE_HIGH
+                "order_notifications", "Order Notifications", NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = "Notifications for delivery orders assigned to drivers"
             }
             notificationManager.createNotificationChannel(deliveryOrderChannel)
         }
     }
-
-
-
-    private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
 }

@@ -1,6 +1,5 @@
 package com.uds.foufoufood.view.auth
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -76,7 +75,6 @@ fun WelcomeScreen(
     }
 
     LaunchedEffect(user, loginSuccess) {
-        Log.d("LoginScreen", "loginSuccess: $loginSuccess")
         if (loginSuccess == true) {
             if (emailValidated == true && registrationComplete == true) {
                 val startDestination = user?.role?.let { getStartDestination(it, emailValidated!!) }
@@ -86,7 +84,6 @@ fun WelcomeScreen(
                     }
                 }
                 userViewModel.resetStatus()
-                // La navigation sera gérée par MainScreen après la mise à jour du rôle de l'utilisateur
                 Toast.makeText(context, "Connexion réussie", Toast.LENGTH_SHORT).show()
             } else if (emailValidated == false) {
                 navController.navigate("verify_code/${user?.email}")
@@ -95,7 +92,6 @@ fun WelcomeScreen(
             }
         }
     }
-
 
     Box(
         modifier = Modifier
@@ -145,7 +141,7 @@ fun WelcomeScreen(
     }
 
     errorMessage?.let {
-        Text(text = it, color = Color.Red, modifier = Modifier.padding(16.dp))
+        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
     }
 }
 

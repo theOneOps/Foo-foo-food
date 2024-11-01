@@ -1,6 +1,5 @@
 package com.uds.foufoufood.view.client
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -74,12 +73,10 @@ fun ClientRestaurantScreen(
 
     val scrollState = rememberLazyListState()
 
-    // Observer les menus à partir du ViewModel
     val sortedMenus by menuViewModel.sortedMenus.observeAsState(initial = emptyList())
 
     val openDialog = remember { mutableStateOf(false) }
 
-    // Lancer la récupération des menus dans un effet à composition stable
     LaunchedEffect(Unit) {
         menuViewModel.getAllMenusByRestaurant(token, restaurant._id)
     }
@@ -98,7 +95,6 @@ fun ClientRestaurantScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // Le texte dans le dialog
                     FormNewMenu(navController, restaurant, menuViewModel, onDismiss = {
                         openDialog.value = false
                     })
@@ -126,7 +122,6 @@ fun ClientRestaurantScreen(
             }
         }
 
-        // Bouton flottant en bas à droite
         if (userId == restaurant.userId) {
             FloatingActionButton(
                 onClick = { openDialog.value = true },
@@ -147,7 +142,6 @@ fun ClientRestaurantScreen(
     }
 }
 
-
 @Composable
 fun RestaurantBanner(restaurant: Restaurant, navController: NavController) {
     Box(
@@ -155,23 +149,19 @@ fun RestaurantBanner(restaurant: Restaurant, navController: NavController) {
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        // Bouton de retour en haut à gauche
         BackButton(navController = navController)
 
-        // Conteneur principal pour l'image et les informations du restaurant
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
                 .padding(8.dp)
         ) {
-            // Image du restaurant avec la spécialité en bas à droite
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(300.dp)
             ) {
-                // Image du restaurant
                 AsyncImage(
                     model = restaurant.imageUrl,
                     modifier = Modifier
@@ -181,14 +171,13 @@ fun RestaurantBanner(restaurant: Restaurant, navController: NavController) {
                     contentScale = ContentScale.Crop
                 )
 
-                // Box de spécialité en bas à droite de l'image
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(horizontal = 16.dp, vertical = 6.dp)
                         .offset(
                             x = (4).dp, y = (-4).dp
-                        ) // Décalage pour être bien positionné sur le bord
+                        )
                 ) {
                     Text(
                         text = restaurant.speciality,
@@ -206,7 +195,6 @@ fun RestaurantBanner(restaurant: Restaurant, navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Nom du restaurant
             Text(
                 text = restaurant.name, style = TextStyle(
                     fontSize = 36.sp,
@@ -221,7 +209,6 @@ fun RestaurantBanner(restaurant: Restaurant, navController: NavController) {
 
             Spacer(modifier = Modifier.height(3.dp))
 
-            // Adresse du restaurant
             Text(
                 text = "${restaurant.address}", style = TextStyle(
                     fontSize = 16.sp,
@@ -253,12 +240,9 @@ fun FilterMenus(menuViewModel: MenuViewModel, onSortChanged: (sortOrder: Int) ->
     val isDropDownExpanded = remember { mutableStateOf(false) }
     val itemPosition = menuViewModel.sortOrder.observeAsState(0).value ?: 0
 
-    // Options de tri
     val sortOptions = listOf("Prix croissant", "Prix décroissant")
 
-    // Appeler onSortChanged chaque fois que l'option de tri change
     LaunchedEffect(itemPosition) {
-        Log.d("FilterMenus", "Sort option selected: $itemPosition")
         onSortChanged(itemPosition)
     }
 
@@ -270,8 +254,7 @@ fun FilterMenus(menuViewModel: MenuViewModel, onSortChanged: (sortOrder: Int) ->
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            "Trier par : ",
-            style = TextStyle(
+            "Trier par : ", style = TextStyle(
                 fontSize = 18.sp,
                 color = Color.Gray,
                 fontFamily = FontFamily(Font(R.font.sofiapro_medium))

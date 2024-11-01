@@ -56,7 +56,6 @@ fun MenuComponent(
             }, shape = RoundedCornerShape(16.dp), elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Column {
-            // Image en haut avec coins arrondis
             AsyncImage(
                 model = menu.image,
                 modifier = Modifier
@@ -67,7 +66,6 @@ fun MenuComponent(
                 contentScale = ContentScale.Crop,
             )
 
-            // Contenu du menu
             Column(
                 modifier = Modifier
                     .background(colorResource(id = R.color.white))
@@ -91,13 +89,11 @@ fun MenuComponent(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Row for Price and Delete Button (if applicable)
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Price Tag
                     Box(
                         modifier = Modifier
                             .background(
@@ -113,7 +109,6 @@ fun MenuComponent(
                         )
                     }
 
-                    // Delete Menu Button (if user is restaurateur)
                     val isConnectedRestaurateur = menuViewModel.isConnectedRestorer.value == true
                     if (isConnectedRestaurateur) {
                         TextButton(

@@ -38,7 +38,6 @@ fun BottomNavBarClient(
         containerColor = colorResource(id = R.color.white),
         contentColor = colorResource(id = R.color.white),
     ) {
-        // Liste des éléments avec des icônes Material et des libellés
         val items = listOf(
             Pair("Restaurants", R.drawable.storefront),
             Pair("Menus", R.drawable.menubook),
@@ -76,4 +75,3 @@ fun BottomNavBarClient(
         }
     }
 }
-

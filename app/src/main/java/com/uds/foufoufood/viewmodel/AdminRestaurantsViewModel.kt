@@ -21,14 +21,16 @@ class AdminRestaurantsViewModel(private val restaurantRepository: RestaurantRepo
         _selected_Restorer.value = restaurant
     }
 
-
     fun fetchRestaurants() {
         viewModelScope.launch {
             try {
                 val fetchedRestaurants = restaurantRepository.getAllRestaurants()
                 _restaurants.value = fetchedRestaurants
             } catch (e: Exception) {
-                Log.e("AdminRestaurantsViewModel", "Failed to fetch restaurants: ${e.message}")
+                Log.e(
+                    "AdminRestaurantsViewModel fetchRestaurants",
+                    "Failed to fetch restaurants: ${e.message}"
+                )
             }
         }
     }
@@ -44,16 +46,22 @@ class AdminRestaurantsViewModel(private val restaurantRepository: RestaurantRepo
                         currentRestaurants.add(restaurant)
                         _restaurants.value = currentRestaurants.toList()
                     } else {
-                        Log.e("AdminRestaurantsViewModel", "addRestaurant is not working")
+                        Log.e(
+                            "AdminRestaurantsViewModel addRestaurant",
+                            "Response from addRestaurant null"
+                        )
                     }
                 } else {
                     Log.e(
-                        "AdminRestaurantsViewModel",
-                        "response from addRestaurant null, problem to fix !"
+                        "AdminRestaurantsViewModel addRestaurant",
+                        "Response from addRestaurant null"
                     )
                 }
             } catch (e: Exception) {
-                Log.e("AdminRestaurantsViewModel", "Exception during addRestaurant: ${e.message}")
+                Log.e(
+                    "AdminRestaurantsViewModel addRestaurant",
+                    "Exception during addRestaurant: ${e.message}"
+                )
             }
         }
     }
@@ -66,18 +74,17 @@ class AdminRestaurantsViewModel(private val restaurantRepository: RestaurantRepo
                     if (response.success) {
                         val currentRestaurants =
                             _restaurants.value?.toMutableList() ?: mutableListOf()
-//                        val newMenusList = currentMenus.filter { it.menuId != menuId }
-//                        _menus.value = newMenusList
                         currentRestaurants.removeIf { it._id == restaurantId }
                         _restaurants.value = currentRestaurants
                     } else Log.e(
-                        "AdminRestaurantsViewModel",
-                        "response from deleteRestaurant null, problem to fix !"
+                        "AdminRestaurantsViewModel deleteRestaurant",
+                        "Response from deleteRestaurant null"
                     )
                 }
             } catch (e: Exception) {
                 Log.e(
-                    "AdminRestaurantsViewModel", "Exception during deleteRestaurant: ${e.message}"
+                    "AdminRestaurantsViewModel deleteRestaurant",
+                    "Exception during deleteRestaurant: ${e.message}"
                 )
 
             }
@@ -92,22 +99,20 @@ class AdminRestaurantsViewModel(private val restaurantRepository: RestaurantRepo
                     if (response.success) {
                         response.message?.let {
                             Log.e(
-                                "linkRestorer from AdminRestaurantsViewModel sucess message :", it
+                                "AdminRestaurantsViewModel linkARestorer", "message: $it"
                             )
                         }
                     } else Log.e(
-                        "AdminRestaurantsViewModel",
-                        "response from linkARestorer null, problem to fix !"
+                        "AdminRestaurantsViewModel linkARestorer",
+                        "response from linkARestorer null"
                     )
-
                 }
             } catch (e: Exception) {
                 Log.e(
-                    "AdminRestaurantsViewModel", "Exception during linkARestorer: ${e.message}"
+                    "AdminRestaurantsViewModel linkARestorer",
+                    "Exception during linkARestorer: ${e.message}"
                 )
             }
         }
     }
-
-
 }

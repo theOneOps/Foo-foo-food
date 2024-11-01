@@ -62,7 +62,7 @@ fun CounterProductBought(quantity: MutableState<Int>) {
 
 @Composable
 fun RoundIconButton(
-    isAdd: Boolean, // true pour "+" et false pour "-"
+    isAdd: Boolean,
     colorText: Color, colorBack: Color, colorBorder: Color, onClick: () -> Unit
 ) {
     var elevation = 0.dp
@@ -71,12 +71,12 @@ fun RoundIconButton(
     }
     Box(
         modifier = Modifier
-            .size(48.dp) // Légèrement plus grand que le bouton pour l'ombre
+            .size(48.dp)
             .shadow(
-                elevation = elevation, // Ajustez la taille de l'ombre
+                elevation = elevation,
                 shape = CircleShape,
-                ambientColor = colorResource(R.color.orange_alpha), // Couleur orange
-                spotColor = colorResource(R.color.orange) // Couleur orange
+                ambientColor = colorResource(R.color.orange_alpha),
+                spotColor = colorResource(R.color.orange)
             ), contentAlignment = Alignment.Center
     ) {
         Surface(
@@ -86,14 +86,14 @@ fun RoundIconButton(
                 .border(width = 1.dp, color = colorBorder, shape = CircleShape)
                 .clip(CircleShape),
             shape = CircleShape,
-            color = colorBack, // Couleur du bouton
+            color = colorBack,
         ) {
             IconButton(onClick = onClick) {
                 Icon(
                     imageVector = if (isAdd) Icons.Default.Add else Icons.Default.Remove,
                     contentDescription = if (isAdd) "Add" else "Remove",
-                    tint = colorText, // Couleur de l'icône
-                    modifier = Modifier.size(24.dp) // Taille de l'icône
+                    tint = colorText,
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }

@@ -50,7 +50,6 @@ fun OrderTrackingScreen(
     val errorMessage by orderTrackingViewModel.errorMessage.observeAsState()
     val context = LocalContext.current
 
-    // Afficher les messages d'erreur
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -58,15 +57,12 @@ fun OrderTrackingScreen(
         }
     }
 
-    // Récupérer la commande actuelle lorsque l'écran est chargé
     LaunchedEffect(Unit) {
         orderTrackingViewModel.fetchCurrentOrder()
     }
 
-    // Statut précédent pour comparaison
     var previousStatus by remember { mutableStateOf(order?.status) }
 
-    // Notifier lorsque le statut de la commande change
     LaunchedEffect(order?.status) {
         val currentOrder = order
         if (currentOrder != null && previousStatus != null && currentOrder.status != previousStatus) {
@@ -79,14 +75,10 @@ fun OrderTrackingScreen(
         } else if (currentOrder == null && previousStatus != null) {
             Toast.makeText(context, "Votre commande a été livrée.", Toast.LENGTH_SHORT).show()
             previousStatus = null
-            // Naviguer vers un autre écran si nécessaire
-            // navController.navigate("home") {
-            //     popUpTo("orderTracking") { inclusive = true }
-            // }
         }
     }
 
-    val currentOrder = order // Capturer 'order' à nouveau pour l'interface utilisateur
+    val currentOrder = order
 
     Column(
         modifier = Modifier
@@ -94,14 +86,12 @@ fun OrderTrackingScreen(
             .padding(16.dp)
     ) {
         if (currentOrder != null) {
-            // Afficher les détails de la commande
             Text(
                 text = "Détails de la commande",
                 style = MaterialTheme.typography.titleLarge.copy(color = colorResource(R.color.orange)),
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // Informations sur le restaurant
             Text(
                 text = "Restaurant : ${currentOrder.restaurantName}",
                 style = MaterialTheme.typography.bodyLarge,
@@ -109,9 +99,8 @@ fun OrderTrackingScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Adresse de livraison
             val deliveryAddress = currentOrder.deliveryAddress
-            // todo à check
+
             if (deliveryAddress != null) {
                 Text(
                     text = "Adresse de livraison :",
@@ -138,7 +127,6 @@ fun OrderTrackingScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Statut de la commande
             Text(
                 text = "Statut : ${currentOrder.status.displayName}",
                 style = MaterialTheme.typography.bodyLarge.copy(color = colorResource(R.color.orange))
@@ -146,14 +134,12 @@ fun OrderTrackingScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Articles de la commande
             Text(
                 text = "Articles :",
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Liste des articles avec poids pour prendre plus d'espace
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -166,7 +152,6 @@ fun OrderTrackingScreen(
                 }
             }
 
-            // Prix total
             val totalPrice = currentOrder.items.sumOf { it.menu.price * it.quantity }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -176,7 +161,6 @@ fun OrderTrackingScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
         } else {
-            // Afficher un message s'il n'y a pas de commande active
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -188,7 +172,6 @@ fun OrderTrackingScreen(
             }
         }
 
-        // Inclure le bouton de rafraîchissement en bas sans espace inutile
         Button(
             onClick = { orderTrackingViewModel.refreshOrder() },
             modifier = Modifier
@@ -211,7 +194,6 @@ fun OrderItemRow(dish: OrderItem) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Détails de l'article
         Column(
             modifier = Modifier.weight(1f)
         ) {
@@ -227,7 +209,7 @@ fun OrderItemRow(dish: OrderItem) {
                 style = MaterialTheme.typography.bodyMedium
             )
         }
-        // Sous-total
+
         Text(
             text = "$${"%.2f".format(dish.menu.price * dish.quantity)}",
             style = MaterialTheme.typography.bodyLarge,

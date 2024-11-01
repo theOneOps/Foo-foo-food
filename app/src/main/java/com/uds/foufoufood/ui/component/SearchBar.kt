@@ -23,7 +23,7 @@ fun SearchBar(searchText: String, onSearchTextChanged: (String) -> Unit) {
     TextField(
         value = searchText,
         onValueChange = onSearchTextChanged,
-        placeholder = { Text("Rechercher...") }, // Placeholder
+        placeholder = { Text("Rechercher...") },
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
         modifier = Modifier
             .fillMaxWidth()
@@ -42,5 +42,4 @@ fun SearchBar(searchText: String, onSearchTextChanged: (String) -> Unit) {
             cursorColor = colorResource(R.color.grey)
         )
     )
-
 }

@@ -40,10 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.uds.foufoufood.firebase_management.FirebaseInstance
-import com.uds.foufoufood.firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
 import com.uds.foufoufood.R
 import com.uds.foufoufood.data_class.model.Menu
+import com.uds.foufoufood.firebase_management.FirebaseInstance
+import com.uds.foufoufood.firebase_management.FirebaseInstance.downloadAndCompressImageFromUrl
 import com.uds.foufoufood.navigation.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +52,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit, navController: NavController) {
-    // State pour les champs du formulaire
     val nameState = remember { mutableStateOf(menu.name) }
     val descriptorState = remember { mutableStateOf(menu.description) }
     val priceState = remember { mutableStateOf(menu.price.toString()) }
@@ -62,7 +61,6 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit, navController: NavContr
 
     val allIngredientsFilled = ingredientsState.value.all { it.isNotEmpty() }
 
-
     val context = LocalContext.current
     val scrollState = rememberLazyListState()
 
@@ -70,53 +68,38 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit, navController: NavContr
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            // Convertir le Uri en String (ici, en supposant qu'il s'agit d'une URL valide)
-            val imageUrl = it.toString() // Assurez-vous que c'est une URL valide
-
-            // Appeler la fonction pour télécharger et compresser l'image
+            val imageUrl = it.toString()
             CoroutineScope(Dispatchers.Main).launch {
-                val compressedImage =
-                    downloadAndCompressImageFromUrl(imageUrl, context)
+                val compressedImage = downloadAndCompressImageFromUrl(imageUrl, context)
 
                 if (compressedImage != null) {
-                    // Référence Firebase où l'image sera stockée
-                    val storageRef =
-                        FirebaseInstance.storageRef.child(
-                            "images/${menu._id}/${menu.restaurantId}" +
-                                    "${System.currentTimeMillis()}.webp"
-                        )
+                    val storageRef = FirebaseInstance.storageRef.child(
+                        "images/${menu._id}/${menu.restaurantId}" + "${System.currentTimeMillis()}.webp"
+                    )
 
-                    // Envoie l'image compressée sur Firebase
                     val uploadTask = storageRef.putBytes(compressedImage)
 
-                    // Gérer le succès ou l'échec de l'envoi
                     uploadTask.addOnSuccessListener {
-                        // Récupérer l'URL de téléchargement une fois l'image envoyée
                         storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                            // Mets à jour imageState avec l'URL de l'image sur Firebase
                             imageState.value = downloadUrl.toString()
-                            println("L'image a été téléchargée : ${imageState.value}")
-                            Log.d("FormNewMenu", imageState.value)
                         }
                     }.addOnFailureListener { e ->
-                        Log.e("Firebase", "Échec de l'upload de l'image : ${e.message}", e)
+                        Log.e("Firebase", "Error uploading image", e)
                     }
                 } else {
                     Log.e(
-                        "Image",
-                        "Erreur lors du téléchargement ou de la compression de l'image."
+                        "Image", "Error compressing image"
                     )
                 }
             }
         }
     }
 
-    Column (modifier = Modifier
-        .fillMaxSize()
+    Column(
+        modifier = Modifier.fillMaxSize()
     ) {
         LazyColumn(
-            state = scrollState,
-            modifier = Modifier
+            state = scrollState, modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
@@ -153,67 +136,68 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit, navController: NavContr
                     label = "Prix",
                     errorMessage = "Le prix ne peut pas être vide et doit être un nombre",
                     isValid = {
-                        it.isNotEmpty() &&  it.toDoubleOrNull() != null
+                        it.isNotEmpty() && it.toDoubleOrNull() != null
                     },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardType = KeyboardType.Decimal
                 )
             }
 
-            // Gestion dynamique des ingrédients
             item {
                 Text(
                     text = "Ingrédients : ",
                     fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.sofiapro_regular)),
-                    modifier = Modifier.padding(vertical = 8.dp))
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
                 ingredientsState.value.forEachIndexed { index, ingredient ->
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        TextField(
-                            value = ingredient,
-                            onValueChange = { newIngredient ->
-                                val ingredients = ingredientsState.value.toMutableList()
-                                ingredients[index] = newIngredient
-                                ingredientsState.value = ingredients
-                            },
-                            label = {
-                                Text(
-                                    text = "Ingrédient ${index + 1}",
-                                    color = Color.Gray,
-                                    fontFamily = FontFamily(Font(R.font.sofiapro_regular))
-                                )
-                            },
-                            colors = TextFieldDefaults.textFieldColors(
-                                focusedTextColor = colorResource(id = R.color.black),
-                                unfocusedTextColor = colorResource(id = R.color.black),
-                                focusedIndicatorColor = colorResource(id = R.color.orange),
-                                unfocusedIndicatorColor = Color.Gray,
-                                errorIndicatorColor = Color.Red,
-                                cursorColor = colorResource(id = R.color.orange),
-                                containerColor = colorResource(id = R.color.grey_bg_alpha),
-                                errorContainerColor = colorResource(id = R.color.white_grey),
-                            ),
-                            modifier = Modifier.weight(1f)
+                        TextField(value = ingredient, onValueChange = { newIngredient ->
+                            val ingredients = ingredientsState.value.toMutableList()
+                            ingredients[index] = newIngredient
+                            ingredientsState.value = ingredients
+                        }, label = {
+                            Text(
+                                text = "Ingrédient ${index + 1}",
+                                color = Color.Gray,
+                                fontFamily = FontFamily(Font(R.font.sofiapro_regular))
+                            )
+                        }, colors = TextFieldDefaults.textFieldColors(
+                            focusedTextColor = colorResource(id = R.color.black),
+                            unfocusedTextColor = colorResource(id = R.color.black),
+                            focusedIndicatorColor = colorResource(id = R.color.orange),
+                            unfocusedIndicatorColor = Color.Gray,
+                            errorIndicatorColor = Color.Red,
+                            cursorColor = colorResource(id = R.color.orange),
+                            containerColor = colorResource(id = R.color.grey_bg_alpha),
+                            errorContainerColor = colorResource(id = R.color.white_grey),
+                        ), modifier = Modifier.weight(1f)
                         )
-                        IconButton(
-                            onClick = {
-                                ingredientsState.value = ingredientsState.value.toMutableList().apply { removeAt(index) }
-                            }
-                        ) {
-                            Icon(imageVector = Icons.Default.Remove, contentDescription = "Supprimer")
+                        IconButton(onClick = {
+                            ingredientsState.value =
+                                ingredientsState.value.toMutableList().apply { removeAt(index) }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Remove, contentDescription = "Supprimer"
+                            )
                         }
                     }
                 }
                 IconButton(
                     onClick = {
-                        ingredientsState.value = ingredientsState.value.toMutableList().apply { add("") }
-                    },
-                    enabled = allIngredientsFilled
+                        ingredientsState.value =
+                            ingredientsState.value.toMutableList().apply { add("") }
+                    }, enabled = allIngredientsFilled
                 ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "Ajouter un ingrédient")
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Ajouter un ingrédient"
+                    )
                 }
             }
 
@@ -229,8 +213,7 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit, navController: NavContr
             }
 
             item {
-                TextField(
-                    value = imageState.value,
+                TextField(value = imageState.value,
                     onValueChange = { imageState.value = it },
                     label = {
                         Text(
@@ -257,8 +240,7 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit, navController: NavContr
                                 contentDescription = "Sélectionner une image"
                             )
                         }
-                    }
-                )
+                    })
             }
 
             item {
@@ -274,27 +256,35 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit, navController: NavContr
 
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
                 ) {
                     Button(
                         onClick = {
                             if (nameState.value == "" || descriptorState.value == "" || priceState.value == "") {
-                                Toast.makeText(context, "Veuillez remplir tous les champs obligatoires", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Veuillez remplir tous les champs obligatoires",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 return@Button
                             }
 
                             if (priceState.value == "" || priceState.value.toDoubleOrNull() == null) {
-                                Toast.makeText(context, "Le prix doit être un nombre", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context, "Le prix doit être un nombre", Toast.LENGTH_SHORT
+                                ).show()
                                 return@Button
                             }
 
                             if (!allIngredientsFilled) {
-                                Toast.makeText(context, "Veuillez remplir tous les champs d'ingrédients", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Veuillez remplir tous les champs d'ingrédients",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 return@Button
                             }
 
-                            // Créer un nouvel objet Menu avec les valeurs mises à jour
                             val updatedMenu = Menu(
                                 menu._id,
                                 name = nameState.value,
@@ -305,7 +295,7 @@ fun FormModifyMenu(menu: Menu, onUpdate: (Menu) -> Unit, navController: NavContr
                                 image = imageState.value,
                                 ingredients = ingredientsState.value
                             )
-                            onUpdate(updatedMenu) // Appeler la fonction de mise à jour
+                            onUpdate(updatedMenu)
                             Toast.makeText(context, "menu bien modifié", Toast.LENGTH_SHORT).show()
                             navController.navigate(Screen.ClientRestaurantAllMenusPage.route)
                         },

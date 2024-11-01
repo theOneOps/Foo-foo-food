@@ -99,7 +99,7 @@ fun UnifiedNavHost(
         }
     }
     Scaffold(bottomBar = {
-        if (emailValidated && connectUser.isNotEmpty()) { // Only show when connected
+        if (emailValidated && connectUser.isNotEmpty()) {
             if (connectUser == "admin" && showAdminBottomBar) {
                 BottomNavBarAdmin(selectedItem = selectedItem) { index ->
                     selectedItem = index
@@ -161,7 +161,7 @@ fun getStartDestination(connectUser: String, emailValidated: Boolean): String {
     }
 }
 
-/////////////////////////////AUTH
+///////////////////////////// AUTH
 
 fun NavGraphBuilder.addAuthGraph(
     navController: NavHostController,
@@ -203,7 +203,7 @@ fun NavGraphBuilder.addAuthGraph(
 }
 
 
-/////////////////////////////ADMIN
+///////////////////////////// ADMIN
 
 fun NavGraphBuilder.addAdminGraph(
     navController: NavHostController,
@@ -236,7 +236,6 @@ fun NavGraphBuilder.addAdminGraph(
             })
     }
 
-    // Page de profil utilisateur
     composable(
         route = Screen.AdminUserProfile.route,
         arguments = listOf(navArgument("userEmail") { type = NavType.StringType })
@@ -251,7 +250,6 @@ fun NavGraphBuilder.addAdminGraph(
             })
     }
 
-    // Page de gestion des restaurants
     composable(Screen.AdminRestaurant.route) {
         adminRestaurantsViewModel.fetchRestaurants()
         val allRestaurants by adminRestaurantsViewModel.restaurants.observeAsState()
@@ -265,7 +263,6 @@ fun NavGraphBuilder.addAdminGraph(
         }
     }
 
-    // Page pour ajouter un restaurant
     composable("addRestaurant") {
         AddRestaurantPage(navController = navController,
             onRestaurantAdded = { newRestaurant: Restaurant ->
@@ -273,7 +270,6 @@ fun NavGraphBuilder.addAdminGraph(
             })
     }
 
-    // page pour linker un restaurateur à un restaurant
     composable(Screen.AdminLinkARestorerToAResto.route) {
         val selectAdRestaurant by adminRestaurantsViewModel.selected_Restorer.observeAsState()
         selectAdRestaurant?.let { it1 ->
@@ -284,7 +280,7 @@ fun NavGraphBuilder.addAdminGraph(
     }
 }
 
-/////////////////////////////DELIVERY
+///////////////////////////// DELIVERY
 
 fun NavGraphBuilder.addDeliveryGraph(
     navController: NavHostController,
@@ -318,7 +314,7 @@ fun NavGraphBuilder.addDeliveryGraph(
     }
 }
 
-/////////////////////////////CONNECTED
+///////////////////////////// CONNECTED
 
 fun NavGraphBuilder.addConnectedGraph(
     navController: NavHostController,
@@ -336,14 +332,12 @@ fun NavGraphBuilder.addConnectedGraph(
         HomeScreenMenu(navController, restaurantsViewModel, userViewModel, menuViewModel)
     }
 
-    // Profile Screen
     composable(Screen.Profile.route) {
         ProfileScreen(
             navController = navController, userViewModel = userViewModel
         )
     }
 
-    // Verify Code Screen
     composable(
         route = "verify_code/{email}",
         arguments = listOf(navArgument("email") { type = NavType.StringType })
@@ -354,48 +348,42 @@ fun NavGraphBuilder.addConnectedGraph(
         )
     }
 
-    // Address Screen
     composable(Screen.Address.route) {
         AddressScreen(navController, userViewModel)
     }
 
-    // Update Address Screen
     composable(Screen.UpdateAddress.route) {
         UpdateAddressScreen(navController, userViewModel)
     }
 
-    // Client Restaurant All Menus Page (accessible pour 'client' et 'restaurateur')
     composable(Screen.ClientRestaurantAllMenusPage.route) {
-        Log.d("ConnectedNavHost", "ClientRestaurantAllMenusPage")
         val restaurant by menuViewModel.sharedRestaurant.observeAsState()
         restaurant?.let { theRestaurant ->
             ClientRestaurantScreen(
                 navController, menuViewModel, theRestaurant
             )
-        } ?: Log.d("ConnectedNavHost", "Restaurant data is null")
+        } ?: Log.d("ConnectedNavHost ClientRestaurantAllMenusPage", "Restaurant data is null")
     }
 
     composable(Screen.ModifyRestaurantPage.route) {
-        Log.d("ConnectedNavHost", Screen.ModifyRestaurantPage.route)
         if (userViewModel.user.value?.role == "restaurateur") {
             val restaurant by menuViewModel.sharedRestaurant.observeAsState()
             restaurant?.let { theRestaurant ->
                 FormModifyRestaurantScreen(theRestaurant, restaurantsViewModel, navController)
-            } ?: Log.d("ConnectedNavHost", "Menu data is null")
+            } ?: Log.d("ConnectedNavHost ModifyRestaurantPage", "Menu data is null")
         } else {
-            Log.d("ConnectedNavHost", "Invalid role or no menu selected")
+            Log.d("ConnectedNavHost ModifyRestaurantPage", "Invalid role or no menu selected")
         }
     }
 
     composable(Screen.ClientInstanceMenuPage.route) {
-        Log.d("ConnectedNavHost", Screen.ClientInstanceMenuPage.route)
         if (userViewModel.user.value?.role == "client" || userViewModel.user.value?.role == "restaurateur") {
             val menu by menuViewModel.sharedCurrentMenu.observeAsState()
             menu?.let { selectMenu ->
                 MenuRestaurantScreen(selectMenu, menuViewModel, cartViewModel, navController)
-            } ?: Log.d("ConnectedNavHost", "Menu data is null")
+            } ?: Log.d("ConnectedNavHost ClientInstanceMenuPage", "Menu data is null")
         } else {
-            Log.d("ConnectedNavHost", "Invalid role or no menu selected")
+            Log.d("ConnectedNavHost ClientInstanceMenuPage", "Invalid role or no menu selected")
         }
     }
 

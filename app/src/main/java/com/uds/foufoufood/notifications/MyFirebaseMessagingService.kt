@@ -13,11 +13,11 @@ import com.uds.foufoufood.R
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // Vérifiez les données du message pour identifier l'événement (commande assignée, statut changé, etc.)
+        // Check the message data to identify the event (order assigned, status changed, etc.)
         val eventTitle = remoteMessage.data["title"] ?: "Notification"
         val eventBody = remoteMessage.data["body"] ?: "Un événement est survenu"
 
-        // Créez une notification pour l'afficher à l'utilisateur
+        // Create and send the notification
         sendNotification(eventTitle, eventBody)
     }
 
@@ -28,11 +28,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 this, android.Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            val builder = NotificationCompat.Builder(this, "event_channel")
-                .setSmallIcon(R.drawable.full_logo)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+            val builder =
+                NotificationCompat.Builder(this, "event_channel").setSmallIcon(R.drawable.full_logo)
+                    .setContentTitle(title).setContentText(message)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
 
             with(NotificationManagerCompat.from(this)) {
                 notify(System.currentTimeMillis().toInt(), builder.build())
@@ -55,5 +54,4 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationManager.createNotificationChannel(channel)
         }
     }
-
 }

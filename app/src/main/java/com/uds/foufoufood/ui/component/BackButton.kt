@@ -21,18 +21,16 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.uds.foufoufood.R
 
-
 @Composable
 fun BackButton(navController: NavController) {
-    // Bouton de retour en haut à gauche
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
-            .zIndex(1f) // Pour s'assurer qu'il est au-dessus de l'image
+            .zIndex(1f)
     ) {
         IconButton(
-            onClick = { navController.popBackStack() }, // Action de retour
+            onClick = { navController.popBackStack() },
             modifier = Modifier
                 .shadow(8.dp, shape = RoundedCornerShape(12.dp))
                 .align(Alignment.TopStart)

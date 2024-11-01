@@ -19,36 +19,38 @@ class AdminRepository(private val api: UserApi, private val context: Context) {
             val response = api.getAllUsers(token)
             if (response.isSuccessful) {
                 Log.d(
-                    "AdminRepository",
-                    "Réponse API réussie, utilisateurs récupérés: ${response.body()?.size}"
+                    "AdminRepository getAllUsers",
+                    "Response from API: ${response.body()?.size} users"
                 )
                 response
             } else {
                 Log.e(
-                    "AdminRepository",
-                    "Erreur lors de l'appel API: ${response.errorBody()?.string()}"
+                    "AdminRepository getAllUsers",
+                    "Error in getAllUsers, response not successful or null, ${
+                        response.errorBody()?.string()
+                    }"
                 )
                 null
             }
         } catch (e: Exception) {
-            Log.e("AdminRepository", "Exception lors de l'appel API: ${e.message}")
+            Log.e("AdminRepository getAllUsers", "Exception in getAllUsers: ${e.message}")
             null
         }
     }
 
     suspend fun updateUserRole(userEmail: String, newRole: String): ApiResponse {
-        Log.d("AdminRepository", "Mise à jour du rôle de l'utilisateur: $newRole")
-        // Crée la requête pour mettre à jour le rôle
+        Log.d("AdminRepository updateUserRole", "Updating role of user $userEmail to $newRole")
+        // Create a RoleUpdateRequest object
         val roleUpdateRequest = RoleUpdateRequest(newRole)
 
-        // Appel à l'API via Retrofit pour mettre à jour le rôle
+        // Call the API to update the user's role
         val response = api.updateUserRole(userEmail, roleUpdateRequest)
 
-        // Vérification de la réponse de l'API
+        // Check if the response is successful
         if (response.isSuccessful) {
-            return response.body() ?: throw Exception("Erreur lors de la mise à jour du rôle")
+            return response.body() ?: throw Exception("Error updating role: response body is null")
         } else {
-            throw Exception("Échec de la mise à jour du rôle : ${response.errorBody()?.string()}")
+            throw Exception("Failed to update role: ${response.errorBody()?.string()}")
         }
     }
 
@@ -59,13 +61,13 @@ class AdminRepository(private val api: UserApi, private val context: Context) {
                 response.body()
             } else {
                 Log.e(
-                    "blockAccount AdminRepository",
+                    "AdminRepository blockAccount",
                     "Problem in blockAccount, response not successful or null"
                 )
                 null
             }
         } catch (e: Exception) {
-            Log.e("blockAccount AdminRepository", e.message ?: "Unknown error")
+            Log.e("AdminRepository blockAccount", e.message ?: "Unknown error")
             null
         }
     }
@@ -77,13 +79,13 @@ class AdminRepository(private val api: UserApi, private val context: Context) {
                 response.body()
             } else {
                 Log.e(
-                    "unlockAccount AdminRepository",
+                    "AdminRepository unlockAccount",
                     "Problem in unlockAccount, response not successful or null"
                 )
                 null
             }
         } catch (e: Exception) {
-            Log.e("unlockAccount AdminRepository", e.message ?: "Unknown error")
+            Log.e("AdminRepository unlockAccount", e.message ?: "Unknown error")
             null
         }
     }
@@ -105,5 +107,4 @@ class AdminRepository(private val api: UserApi, private val context: Context) {
             null
         }
     }
-
 }

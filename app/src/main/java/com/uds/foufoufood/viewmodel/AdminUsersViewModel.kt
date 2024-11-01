@@ -22,10 +22,8 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
 
     var searchText by mutableStateOf("")
 
-    // Filtered list of restaurants based on the selected category and search query
     private var _filteredUsers = MutableLiveData<List<User>?>()
     val filteredUsers: MutableLiveData<List<User>?> get() = _filteredUsers
-
 
     fun fetchUsers(role: String) {
         viewModelScope.launch {
@@ -33,30 +31,25 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
                 val response = repository.getAllUsers()
                 if (response != null && response.isSuccessful) {
                     val usersList = response.body()
-                    Log.d("AdminViewModel", "Réponse API: $usersList")
                     if (!usersList.isNullOrEmpty()) {
                         _users.value = usersList
                         selectedRole = role
                         filterUsers(selectedRole)
-                        Log.d(
-                            "AdminViewModel", "Nombre d'utilisateurs récupérés: ${usersList.size}"
-                        )
                     } else {
-                        Log.e("AdminViewModel", "Aucun utilisateur trouvé dans la réponse.")
+                        Log.e("AdminViewModel fetchUsers", "Users list is empty")
                     }
                 } else {
                     _apiError.value =
-                        "Erreur lors de la récupération des utilisateurs: ${response?.message() ?: "Réponse nulle"}"
+                        "Error fetching users: ${response?.message() ?: "Unknown error"}"
                     Log.e(
-                        "AdminViewModel",
-                        "Erreur lors de la récupération des utilisateurs: ${response?.message()}"
+                        "AdminViewModel fetchUsers", "Error fetching users: ${response?.message()}"
                     )
                 }
             } catch (e: Exception) {
-                _apiError.value = "Erreur: ${e.message}"
+                _apiError.value = "Error : ${e.message}"
                 Log.e(
-                    "AdminViewModel",
-                    "Exception lors de la récupération des utilisateurs: ${e.message}"
+                    "AdminViewModel fetchUsers",
+                    "Failed to fetch users: ${e.message}"
                 )
             }
         }
@@ -72,12 +65,10 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
             if (it.email == user.email) it.copy(role = newRole) else it
         } ?: emptyList()
 
-        // Synchronisation avec le serveur
         viewModelScope.launch {
             try {
                 repository.updateUserRole(user.email, newRole)
             } catch (e: Exception) {
-                // Gérer l'erreur de mise à jour
             }
         }
     }
@@ -97,15 +88,16 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
             try {
                 val response = repository.blockAccount(id)
                 if (response != null) {
-                    if (response.success) Log.d(
-                        "blockAccount from AdminUsersViewModel",
-                        "account blocked successfully"
+                    if (response.success)
+                        Log.d(
+                        "AdminUsersViewModel blockAccount",
+                        "Account blocked successfully"
                     )
                 } else Log.e(
-                    "AdminUsersViewModel", "response from blockAccount null, problem to fix !"
+                    "AdminUsersViewModel blockAccount", "Response from blockAccount null"
                 )
             } catch (e: Exception) {
-                e.message?.let { Log.e("AdminUsersViewModel", it) }
+                e.message?.let { Log.e("AdminUsersViewModel blockAccount", it) }
             }
         }
     }
@@ -115,15 +107,16 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
             try {
                 val response = repository.unlockAccount(id)
                 if (response != null) {
-                    if (response.success) Log.d(
-                        "unlockAccount from AdminUsersViewModel",
-                        "account unlocked successfully"
+                    if (response.success)
+                        Log.d(
+                        "AdminUsersViewModel unlockAccount",
+                        "Account unlocked successfully"
                     )
                 } else Log.e(
-                    "AdminUsersViewModel", "response from unlockAccount null, problem to fix !"
+                    "AdminUsersViewModel unlockAccount", "Response from unlockAccount null"
                 )
             } catch (e: Exception) {
-                e.message?.let { Log.e("AdminUsersViewModel", it) }
+                e.message?.let { Log.e("AdminUsersViewModel unlockAccount", it)}
             }
         }
     }
@@ -134,17 +127,14 @@ class AdminUsersViewModel(private val repository: AdminRepository) : ViewModel()
                 val response = repository.deleteAccount(id)
                 if (response != null) {
                     if (response.success) Log.d(
-                        "deleteAccount from AdminUsersViewModel", "account deleted successfully"
+                        "AdminUsersViewModel deleteAccount", "Account deleted successfully"
                     )
                 } else Log.e(
-                    "AdminUsersViewModel", "response from deleteAccount null, problem to fix !"
+                    "AdminUsersViewModel deleteAccount", "Response from deleteAccount null"
                 )
             } catch (e: Exception) {
-                e.message?.let { Log.e("AdminUsersViewModel", it) }
+                e.message?.let { Log.e("AdminUsersViewModel deleteAccount", it) }
             }
         }
     }
-
-
 }
-

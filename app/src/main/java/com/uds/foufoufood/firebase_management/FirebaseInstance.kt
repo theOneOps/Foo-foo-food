@@ -18,15 +18,15 @@ object FirebaseInstance {
     suspend fun downloadAndCompressImageFromUrl(imageUrl: String, context: Context): ByteArray? {
         return withContext(Dispatchers.IO) {
             try {
-                // Utiliser Glide pour télécharger l'image en tant que Bitmap
+                // Use Glide to download the image
                 val bitmap: Bitmap =
                     Glide.with(context).asBitmap().load(imageUrl).submit(500, 500).get()
 
-                // Compresser le bitmap en WebP
+                // Compress the image
                 val outputStream = ByteArrayOutputStream()
                 bitmap.compress(Bitmap.CompressFormat.WEBP, 60, outputStream)
 
-                // Retourner l'image compressée en ByteArray
+                // Return the compressed image as a byte array
                 outputStream.toByteArray()
             } catch (e: Exception) {
                 e.printStackTrace()

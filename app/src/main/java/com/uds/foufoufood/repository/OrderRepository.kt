@@ -18,18 +18,18 @@ class OrderRepository(private val api: OrderApi) {
         return try {
             api.getOrderById(orderId)
         } catch (e: Exception) {
-            Log.e("OrderRepository", "Erreur lors de la récupération de la commande : ${e.message}")
+            Log.e("OrderRepository getOrderById", "Error getting order by ID: ${e.message}")
             throw e
         }
     }
 
     suspend fun getOrderByDeliverManEmail(email: String): Order? {
         return try {
-            Log.d("OrderRepository", "Récupération de la commande pour l'email du livreur : $email")
+            Log.d(
+                "OrderRepository getOrderByDeliverManEmail",
+                "Getting orders for delivery man email: $email"
+            )
             val orders = api.getOrdersByDeliveryManEmail(email)
-            Log.d("OrderRepository", "Commandes récupérées : ${orders.body()}")
-            // Supposons que vous avez une liste de commandes,
-            // la commande si son status est PREPARING ou DELIVERING
             val ordersList = orders.body() ?: emptyList()
             ordersList.firstOrNull { order -> order.status == OrderStatus.PREPARING || order.status == OrderStatus.DELIVERING }
         } catch (e: Exception) {
@@ -40,39 +40,37 @@ class OrderRepository(private val api: OrderApi) {
 
     suspend fun getOrdersByDeliveryManEmail(email: String): List<Order> {
         return try {
-            Log.d("OrderRepository", "Récupération des commandes pour l'email du livreur : $email")
+            Log.d(
+                "OrderRepository getOrdersByDeliveryManEmail",
+                "Getting order for delivery man email: $email"
+            )
             val response = api.getOrdersByDeliveryManEmail(email)
             if (response.isSuccessful) {
                 val ordersList = response.body() ?: emptyList()
-                Log.d("OrderRepository", "Commandes récupérées : $ordersList")
-                // Retourne toutes les commandes récupérées
                 ordersList
             } else {
                 Log.e(
-                    "OrderRepository", "Erreur lors de la récupération des commandes : ${
+                    "OrderRepository getOrdersByDeliveryManEmail", "Error during order retrieval: ${
                         response.errorBody()?.string()
                     }"
                 )
                 emptyList()
             }
         } catch (e: Exception) {
-            Log.e("OrderRepository", "Erreur lors de la récupération des commandes : ${e.message}")
+            Log.e(
+                "OrderRepository getOrdersByDeliveryManEmail",
+                "Error during order retrieval: ${e.message}"
+            )
             e.printStackTrace()
             emptyList()
         }
     }
 
-
     suspend fun updateOrderStatus(orderId: String, newStatus: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                // Crée l'objet de requête avec le statut à mettre à jour
                 val request = OrderStatusUpdateRequest(status = newStatus)
-
-                // Effectue l'appel à l'API
                 val response = api.updateOrderStatus(orderId, request)
-
-                // Vérifie si la mise à jour a été réussie
                 response.isSuccessful
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -88,11 +86,14 @@ class OrderRepository(private val api: OrderApi) {
                 if (response.isSuccessful) {
                     response.body()
                 } else {
-                    Log.e("OrderRepository", "Failed to create order: ${response.message()}")
+                    Log.e(
+                        "OrderRepository createOrder",
+                        "Failed to create order: ${response.message()}"
+                    )
                     null
                 }
             } catch (e: Exception) {
-                Log.e("OrderRepository", "Exception creating order: ${e.message}")
+                Log.e("OrderRepository createOrder", "Exception creating order: ${e.message}")
                 null
             }
         }
@@ -100,10 +101,10 @@ class OrderRepository(private val api: OrderApi) {
     suspend fun hasActiveOrder(token: String, clientEmail: String): Boolean {
         return try {
             val response = api.hasActiveOrder("Bearer $token", clientEmail)
-            Log.d("OrderRepository", "Has active order response: ${response.body()}")
-            response.body()?.hasActiveOrder ?: false // Extract the Boolean field
+            Log.d("OrderRepository hasActiveOrder", "Has active order response: ${response.body()}")
+            response.body()?.hasActiveOrder ?: false
         } catch (e: Exception) {
-            Log.e("OrderRepository", "Error checking active order: ${e.message}")
+            Log.e("OrderRepository hasActiveOrder", "Error checking active order: ${e.message}")
             false
         }
     }
@@ -113,14 +114,20 @@ class OrderRepository(private val api: OrderApi) {
             val response = api.getCurrentOrder("Bearer $token", clientEmail)
             if (response.isSuccessful) {
                 val order = response.body()
-                Log.d("OrderRepository", "Received order: $order")
+                Log.d("OrderRepository getCurrentOrder", "Received order: $order")
                 order
             } else {
-                Log.e("OrderRepository", "Failed to get current order: ${response.message()}")
+                Log.e(
+                    "OrderRepository getCurrentOrder",
+                    "Failed to get current order: ${response.message()}"
+                )
                 null
             }
         } catch (e: Exception) {
-            Log.e("OrderRepository", "Exception fetching current order: ${e.message}")
+            Log.e(
+                "OrderRepository getCurrentOrder",
+                "Exception fetching current order: ${e.message}"
+            )
             null
         }
     }
@@ -128,17 +135,14 @@ class OrderRepository(private val api: OrderApi) {
     suspend fun updateOrder(updatedOrder: Order): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                // Crée un objet de requête pour mettre à jour la commande
                 val request = OrderUpdateRequest(
                     orderId = updatedOrder.orderId,
                     status = updatedOrder.status.displayName,
                     deliveryManEmail = updatedOrder.deliveryManEmail
                 )
 
-                // Appel réel à l'API pour mettre à jour la commande
                 val response = api.updateOrder(request)
 
-                // Vérifie si la mise à jour a réussi
                 response.isSuccessful
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -155,21 +159,18 @@ class OrderRepository(private val api: OrderApi) {
                     response.body()
                 } else {
                     Log.e(
-                        "OrderRepository",
-                        "Erreur d'assignation de la commande: ${response.message()}"
+                        "OrderRepository assignOrderToDelivery",
+                        "Error assigning order to delivery: ${response.message()}"
                     )
                     null
                 }
             } catch (e: Exception) {
                 Log.e(
-                    "OrderRepository",
-                    "Exception lors de l'assignation de la commande: ${e.message}"
+                    "OrderRepository assignOrderToDelivery",
+                    "Exception assigning order to delivery: ${e.message}"
                 )
                 null
             }
         }
     }
-
-
 }
-
